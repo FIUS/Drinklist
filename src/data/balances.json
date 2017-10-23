@@ -1,0 +1,12 @@
+[{
+    "name": "Sandro",
+    "balance": 465
+},
+{
+    "name": "Heiko",
+    "balance": -342
+},
+{
+    "name": "Tobias",
+    "balance": "000"
+}]

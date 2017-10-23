@@ -1,0 +1,14 @@
+[
+ {
+  "id": 1,
+  "user": "MC",
+  "beverage": "Sprite",
+  "timestamp": "2017-8-21 9:18:45"
+ },
+ {
+  "id": 2,
+  "user": "Sandro",
+  "beverage": "Mate",
+  "timestamp": "2017-8-21 9:18:45"
+ }
+]

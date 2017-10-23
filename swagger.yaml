@@ -1,0 +1,165 @@
+swagger: "2.0"
+info:
+  title: "Getränke Liste"
+  version: "0.0.1"
+  description: "The API for the Getränke Liste of the Fachschaft Fakultät 5 Uni Stuttgart"
+host: "localhost"
+basePath: "/"
+tags:
+- name: "locale"
+  description: "Access to the language packs"
+- name: "beverage"
+  description: "Access to all the beverages in the system"
+- name: "user"
+  description: "Access to all the user data"
+- name: "history"
+  description: "Access to the history data"
+- name: "order"
+  description: "Allows the ordering of beverages"
+schemes:
+- "https"
+paths:
+  /locales:
+    get:
+      tags:
+        - "locale"
+      summary: "Get a list of all available translations"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/LanguagePacks"
+  /locales/{localeId}:
+    get:
+      tags:
+      - "locale"
+      summary: "Get a language pack"
+      description: "Returns the language pack"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "localeId"
+        in: "path"
+        description: "ID of the language pack to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/LanguagePack"
+        404:
+          description: "Language pack not found"
+  /beverages:
+    get:
+      tags:
+      - "beverage"
+      summary: "Get all beverages"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Beverages"
+  /users:
+    get:
+      tags:
+      - "user"
+      summary: "Get all users"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Users"
+  /histories:
+    get:
+      tags:
+      - "history"
+      summary: "Get the global history of all users"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/History"
+  /orders:
+    post:
+      tags:
+      - "order"
+      summary: "Order a beverage"
+      parameters: 
+      - name: "user"
+        in: "query"
+        type: "string"
+        description: "The user that ordered"
+      - name: "beverage"
+        in: "query"
+        type: "string"
+        description: "The beverage that was chosen"
+      responses:
+        200:
+          description: OK
+        400:
+          description: "Fail to order the beverage for the user"
+definitions:
+  LanguagePack:
+    type: "object"
+    properties:
+      .+:
+        type: "string"
+        description: "A Map of technical name to translated string"
+  LanguagePacks:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "The short language name as id for the pack"
+        name:
+          type: "string"
+          description: "The name of the language which is displayed to the user"
+  Beverages:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          description: "Name of the beverage"
+        price:
+          type: "integer"
+          format: "int32"
+          description: "Price of the beverage in euro cents"
+  Users:
+    type: "array"
+    items:
+      type: "string"
+      description: "Name of the user"
+  History:
+    type: "array"
+    items:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        user:
+          type: "string"
+          description: "Name of the user"
+        reason:
+          type: "string"
+          description: "Reason for the change in money"
+        amount:
+          type: "integer"
+          format: "int32"
+          description: "Amount of the change in euro cent"
+        timestamp:
+          type: "string"
+          description: "Timestamp in YYYY-MM-DD hh-mm-ss"
