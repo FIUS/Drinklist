@@ -1,0 +1,23 @@
+[
+	{
+		"id": 3,
+		"user": "Sandro Speth",
+		"reason": "Reines Koffein",
+		"amount": -500,
+		"timestamp": "2017-8-21 11:14:21"
+	},
+	{
+		"id": 2,
+		"user": "Sandro Speth",
+		"reason": "Einzahlung Bar",
+		"amount": 5000,
+		"timestamp": "2017-8-21 9:20:52"
+	},
+	{
+		"id": 1,
+		"user": "Sandro Speth",
+		"reason": "Kaffee",
+		"amount": -80,
+		"timestamp": "2017-8-21 9:18:45"
+	}
+]

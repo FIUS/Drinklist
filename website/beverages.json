@@ -1,0 +1,34 @@
+[
+	{
+		"name": "Cola",
+		"price": 150
+	},
+	{
+		"name": "Fanta",
+		"price": 160
+	},
+	{
+		"name": "Sprite",
+		"price": 140
+	},
+	{
+		"name": "Mate",
+		"price": 220
+	},
+	{
+		"name": "Hochdörfer",
+		"price": 180
+	},
+	{
+		"name": "Kaffee",
+		"price": 80
+	},
+	{
+		"name": "Wasser",
+		"price": 10
+	},
+	{
+		"name": "Reines Koffein",
+		"price": 500
+	}
+]
