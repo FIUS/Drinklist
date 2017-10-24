@@ -76,6 +76,26 @@ paths:
           description: "Successful operation"
           schema:
             $ref: "#/definitions/Users"
+  /users/{userId}:
+    get:
+      tags:
+      - "user"
+      summary: "Get a specific user data"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID of the user to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: "User not found"
   /histories:
     get:
       tags:
@@ -142,6 +162,16 @@ definitions:
     items:
       type: "string"
       description: "Name of the user"
+  User:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Name of the User"
+      balance:
+        type: "integer"
+        format: "int32"
+        description: "Actual balance of the user"
   History:
     type: "array"
     items:

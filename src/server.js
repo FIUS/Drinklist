@@ -14,12 +14,11 @@ const HashMap = require('hashmap');
 const dirname = fs.realpathSync('./');
 
 // Arrays
-var users = JSON.parse(fs.readFileSync(__dirname + '/data/users.json', 'utf8'));
 var beverages = JSON.parse(fs.readFileSync(__dirname + '/data/beverages.json', 'utf8'));
 var histories = JSON.parse(fs.readFileSync(__dirname + '/data/histories.json', 'utf8'));
 var localesArray = JSON.parse(fs.readFileSync(__dirname + '/data/localesArray.json', 'utf8'));
 // NodeJS HashMap
-var balances = JSON.parse(fs.readFileSync(__dirname + '/data/balances.json', 'utf8'));
+var users = new HashMap(JSON.parse(fs.readFileSync(__dirname + '/data/users.json', 'utf8')));
 
 function contains(array, item) {
     let bool = false;
@@ -37,15 +36,19 @@ app.get('/locales', function (req, res) {
 
 app.get('/locales/:localeId', function (req, res) {
     let localeId = req.params.localeId;
-    // TODO
+    if (localeId === undefined || localeId === '') {
+        res.status(404).end('Language pack not found');
+    } else {
+        res.status(200).end(JSON.parse(fs.readFileSync(__dirname + '/locales/' + localeId + '.json', 'utf8')));
+    }
 });
 
 app.post('/orders/', function (req, res) {
     let user = req.query.user;
     let beverage = req.query.beverage;
     if (user == undefined || beverage == undefined ||
-        user === '' || beverage === '' || !contains(users, user) || !contains(beverages, beverage)) {
-        res.status(400).end(JSON.stringify(false)); // TODO
+        user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
+        res.status(400).end('Fail to order the beverage for the user');
     } else {
         let history = {
             id: uuidv4(),
@@ -60,8 +63,8 @@ app.post('/orders/', function (req, res) {
                 cost = beverages[i].price;
             }
         }
-        balances.get(user).balance += cost;
-        res.status(200).end(JSON.stringify(true)); // TODO
+        users.get(user).balance += cost;
+        res.sendStatus(200);
     }
 });
 
@@ -70,7 +73,16 @@ app.get('/beverages', function (req, res) {
 });
 
 app.get('/users', function (req, res) {
-    res.status(200).end(JSON.stringify(users));
+    res.status(200).end(JSON.stringify(users.keys()));
+});
+
+app.get('/users/:userId', function (req, res) {
+    let userId = req.params.userId;
+    if (userId === undefined || userId === '' || !users.has(userId)) {
+        res.status(404).end('User not found');
+    } else {
+        res.status(200).end(JSON.stringify(users.get(userId)));
+    }
 });
 
 app.get('/histories', function (req, res) {
