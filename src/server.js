@@ -18,6 +18,7 @@ const uuidv4 = require('uuid/v4');
 var beverages = JSON.parse(fs.readFileSync(__dirname + '/data/beverages.json', 'utf8'));
 var histories = JSON.parse(fs.readFileSync(__dirname + '/data/histories.json', 'utf8'));
 var localesArray = JSON.parse(fs.readFileSync(__dirname + '/data/localesArray.json', 'utf8'));
+var auth = JSON.parse(fs.readFileSync(__dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
 var users = new HashMap(JSON.parse(fs.readFileSync(__dirname + '/data/users.json', 'utf8')));
 
@@ -82,6 +83,31 @@ app.get('/locales/:localeId', function (req, res) {
 	}
 });
 
+app.post('/login', function (req, res) {
+	let passwd = req.body.password;
+	if (passwd == undefined || passwd === '') {
+		res.sendStatus(400);
+	} else {
+		let isAuthorized = false;
+		let root = false;
+		auth.forEach(function (element) {
+			if (passwd === element.password) {
+				isAuthorized = true;
+				root = element.root;
+			}
+		});
+		if (isAuthorized) {
+			let token = {
+				token: uuidv4(),
+				root: root
+			};
+			res.status(200).end(JSON.stringify(token));
+		} else {
+			res.sendStatus(403);
+		}
+	}
+});
+
 app.post('/orders/', function (req, res) {
 	let user = req.query.user;
 	let beverage = req.query.beverage;
@@ -109,22 +135,6 @@ app.post('/orders/', function (req, res) {
 	}
 });
 
-app.get('/beverages', function (req, res) {
-	res.status(200).end(JSON.stringify(beverages));
-});
-
-app.get('/users', function (req, res) {
-	res.status(200).end(JSON.stringify(users.keys()));
-});
-
-app.get('/users/:userId', function (req, res) {
-	let userId = req.params.userId;
-	if (userId === undefined || userId === '' || !users.has(userId)) {
-		res.status(404).end('User not found');
-	} else {
-		res.status(200).end(JSON.stringify(users.get(userId)));
-	}
-});
 
 app.get('/orders', function (req, res) {
 	let limit = req.query.limit;
@@ -154,6 +164,23 @@ app.get('/orders/:userId', function (req, res) {
 		});
 		let maxLength = Math.min(limit, userHistories.length);
 		res.status(200).end(JSON.stringify(userHistories.reverse().slice(0, maxLength)));
+	}
+});
+
+app.get('/beverages', function (req, res) {
+	res.status(200).end(JSON.stringify(beverages));
+});
+
+app.get('/users', function (req, res) {
+	res.status(200).end(JSON.stringify(users.keys()));
+});
+
+app.get('/users/:userId', function (req, res) {
+	let userId = req.params.userId;
+	if (userId === undefined || userId === '' || !users.has(userId)) {
+		res.status(404).end('User not found');
+	} else {
+		res.status(200).end(JSON.stringify(users.get(userId)));
 	}
 });
 
