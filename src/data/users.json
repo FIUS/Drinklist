@@ -1,26 +1,26 @@
 {
-    "_data": {
-        "♠Sandro": [
-            "Sandro",
-            {
-                "name": "Sandro",
-                "balance": 465
-            }
-        ],
-        "♠Heiko": [
-            "Heiko",
-            {
-                "name": "Heiko",
-                "balance": -342
-            }
-        ],
-        "♠Tobias": [
-            "Tobias",
-            {
-                "name": "Tobias",
-                "balance": 0
-            }
-        ]
-    },
-    "_count": 3
+	"_data": {
+		"♠Sandro": [
+			"Sandro",
+			{
+				"name": "Sandro",
+				"balance": 465
+			}
+		],
+		"♠Heiko": [
+			"Heiko",
+			{
+				"name": "Heiko",
+				"balance": -342
+			}
+		],
+		"♠Tobias": [
+			"Tobias",
+			{
+				"name": "Tobias",
+				"balance": 0
+			}
+		]
+	},
+	"_count": 3
 }

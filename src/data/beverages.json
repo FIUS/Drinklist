@@ -1,18 +1,18 @@
 [
-    {
-     "name": "Cola",
-     "price": 150
-    },
-    {
-     "name": "Fanta",
-     "price": 160
-    },
-    {
-     "name": "Sprite",
-     "price": 140
-    },
-    {
-     "name": "Mate",
-     "price": 220
-    }
-   ]
+	{
+		"name": "Cola",
+		"price": 150
+	},
+	{
+		"name": "Fanta",
+		"price": 160
+	},
+	{
+		"name": "Sprite",
+		"price": 140
+	},
+	{
+		"name": "Mate",
+		"price": 220
+	}
+]
