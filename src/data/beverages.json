@@ -1,18 +1,54 @@
 [
 	{
+		"name": "Wasser",
+		"price": 30
+	},
+	{
+		"name": "Orangen Limo",
+		"price": 34
+	},
+	{
+		"name": "Zitronen Limo",
+		"price": 34
+	},
+	{
+		"name": "Cola Mix",
+		"price": 39
+	},
+	{
 		"name": "Cola",
-		"price": 150
+		"price": 41
 	},
 	{
-		"name": "Fanta",
-		"price": 160
+		"name": "Limette",
+		"price": 41
 	},
 	{
-		"name": "Sprite",
-		"price": 140
+		"name": "Apfelschorle",
+		"price": 49
 	},
 	{
-		"name": "Mate",
-		"price": 220
+		"name": "Eistee Pfirsich",
+		"price": 49
+	},
+	{
+		"name": "Eistee Zitrone",
+		"price": 49
+	},
+	{
+		"name": "Johannisbeer-Zitrone",
+		"price": 49
+	},
+	{
+		"name": "Saft",
+		"price": 67
+	},
+	{
+		"name": "Baola",
+		"price": 145
+	},
+	{
+		"name": "Rittersport",
+		"price": 90
 	}
 ]
