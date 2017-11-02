@@ -28,7 +28,7 @@ function contains(array, item) {
         }
     }, this);
     return bool;
- } 
+ }
 
 console.log(dirname);
 
@@ -38,12 +38,12 @@ app.get('/', function (req, res) {
 
 app.get('/bootstrap/bootstrap.min.css', function (req, res) {
     console.log('bootstrap/css');
-    res.status(200).sendFile(dirname + '/node_modules/bootstrap/dist/css/bootstrap.min.css');
+    res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/css/bootstrap.min.css');
 });
 
 app.get('/bootstrap/bootstrap.min.js', function (req, res) {
     console.log('bootstrap/js');
-    res.status(200).sendFile(dirname + '/node_modules/bootstrap/dist/js/bootstrap.min.js');
+    res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/js/bootstrap.min.js');
 });
 
 fs.readdirSync(dirname + '/node_modules/font-awesome/fonts').forEach(file => {

@@ -82,7 +82,7 @@ function setupLoginPage() {
 		id: 'password',
 		type: 'password',
 		class: 'form-control',
-		placeholder: ''
+		placeholder: '******'
 	}).on('keyup', function(e) {
 		if (e.keyCode == 13) {
 			// FIXME do actual login
@@ -132,7 +132,7 @@ function setupMain() {
 	if (!localStorage.getItem('token')) {
 		setupLoginPage();
 	} else if (!localStorage.getItem('user')) {
-		$.getJSON('./users.json', function(users) {
+		$.getJSON('./users', function(users) {
 			users.forEach(function(element) {
 				addUserButton(element);
 			}, this);
