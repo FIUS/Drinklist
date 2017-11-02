@@ -47,6 +47,21 @@ function getJSON(url, callback) {
 	});
 }
 
+function getToken(password, callback) {
+	$.ajax({
+		type: 'POST',
+		url: './login',
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		data: 'password=' + password,
+		success: function(data) {
+			callback(JSON.parse(data));
+		},
+		error: function() {
+			callback({});
+		}
+	});
+}
+
 function loadLanguage() {
 	$.getJSON('./locales/' + localStorage.getItem('language'), function(data) {
 		local = data;
@@ -95,9 +110,12 @@ function setupLoginPage() {
 		placeholder: '********'
 	}).on('keyup', function(e) {
 		if (e.keyCode == 13) {
-			// FIXME do actual login
-			localStorage.setItem('token', $('#password').val());
-			deselectUser();
+			getToken($('#password').val(), function(data) {
+				if (data.token !== undefined) {
+					localStorage.setItem('token', data.token);
+					deselectUser();
+				}
+			})
 		}
 	}))));
 }
@@ -124,7 +142,7 @@ function setupAccountPage() {
 	}))).append($('<h1></h1>', {
 		id: 'hlabel'
 	})).append($('<table></table>', {
-		class: 'table table-hover table-responsive table-striped'
+		class: 'table table-hover table-striped'
 	}).append($('<thead></thead>').append($('<tr></tr>').append($('<th></th>', {
 		id: 'hcol0'
 	})).append($('<th></th>', {
