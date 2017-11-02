@@ -139,12 +139,12 @@ function setupMain() {
 		});
 	} else {
 		setupAccountPage();
-		$.getJSON('./beverages.json', function(users) {
+		$.getJSON('./beverages', function(users) {
 			users.forEach(function(element) {
 				addBeverageButton(element);
 			}, this);
 		});
-		$.getJSON('./history.json', function(entrys) {
+		$.getJSON('./histories', function(entrys) {
 			entrys.forEach(function(element) {
 				addHistoryEntry(element);
 			}, this);
