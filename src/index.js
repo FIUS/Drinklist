@@ -92,7 +92,7 @@ function setupLoginPage() {
 		id: 'password',
 		type: 'password',
 		class: 'form-control',
-		placeholder: '******'
+		placeholder: '********'
 	}).on('keyup', function(e) {
 		if (e.keyCode == 13) {
 			// FIXME do actual login
@@ -104,7 +104,8 @@ function setupLoginPage() {
 
 function setupAccountPage() {
 	$('#main').append($('<div></div>', {
-		class: 'col-lg-6'
+		class: 'col-lg-6',
+		style: 'padding-bottom: 79px;'
 	}).append($('<h1></h1>', {
 		id: 'blabel'
 	})).append($('<div></div>', {
@@ -142,19 +143,19 @@ function setupMain() {
 	if (!localStorage.getItem('token')) {
 		setupLoginPage();
 	} else if (!localStorage.getItem('user')) {
-		$.getJSON('./users', function(users) {
+		getJSON('./users', function(users) {
 			users.forEach(function(element) {
 				addUserButton(element);
 			}, this);
 		});
 	} else {
 		setupAccountPage();
-		$.getJSON('./beverages', function(users) {
+		getJSON('./beverages', function(users) {
 			users.forEach(function(element) {
 				addBeverageButton(element);
 			}, this);
 		});
-		$.getJSON('./orders/' + localStorage.getItem('user'), function(entrys) {
+		getJSON('./orders/' + localStorage.getItem('user'), function(entrys) {
 			entrys.forEach(function(element) {
 				addHistoryEntry(element);
 			}, this);
@@ -284,7 +285,7 @@ function updateRecent() {
 }
 
 function updateMoney() {
-	$.getJSON('./users/' + localStorage.getItem('user'), function(user) {
+	getJSON('./users/' + localStorage.getItem('user'), function(user) {
 		$('#money').text(moneyFormat(user.balance));
 		if (user.balance < 0) {
 			$('#money').addClass('text-danger');
