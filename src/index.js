@@ -262,7 +262,7 @@ function update() {
 }
 
 function updateRecent() {
-	$.getJSON('./orders?length=5', function(orders) {
+	$.getJSON('./orders?limit=5', function(orders) {
 		let text = '';
 		orders.forEach(function(order) {
 			text += order.user + ': ' + order.reason + '@' + order.timestamp + ', ';

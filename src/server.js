@@ -41,12 +41,12 @@ app.get('/', function (req, res) {
 	res.status(200).sendFile(__dirname + '/index.html');
 });
 
-app.get('/bootstrap/bootstrap.min.css', function (req, res) {
+app.get('/bootstrap/css', function (req, res) {
 	console.log('bootstrap/css');
 	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/css/bootstrap.min.css');
 });
 
-app.get('/bootstrap/bootstrap.min.js', function (req, res) {
+app.get('/bootstrap/js', function (req, res) {
 	console.log('bootstrap/js');
 	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/js/bootstrap.min.js');
 });
@@ -57,7 +57,7 @@ fs.readdirSync(dirname + '/node_modules/font-awesome/fonts').forEach(file => {
 	})
 });
 
-app.get('/font-awesome/css/font-awesome.min.css', function (req, res) {
+app.get('/font-awesome/css/css', function (req, res) {
 	console.log('font-awesome');
 	res.status(200).sendFile(dirname + '/node_modules/font-awesome/css/font-awesome.min.css');
 });
@@ -133,9 +133,8 @@ app.get('/orders', function (req, res) {
 	if (limit === undefined) {
 		limit = 1000;
 	}
-	let maxLength = Math.min(limit + 1, histories.length);
-	let limitHistories = histories.reverse().slice(0, maxLength);
-	res.status(200).end(JSON.stringify(limitHistories));
+	let maxLength = Math.min(limit, histories.length);
+	res.status(200).end(JSON.stringify(histories.slice().reverse().slice(0, maxLength)));
 });
 
 app.get('/orders/:userId', function (req, res) {
@@ -153,7 +152,7 @@ app.get('/orders/:userId', function (req, res) {
 				userHistories.push(history);
 			}
 		});
-		let maxLength = Math.min(limit + 1, userHistories.length);
+		let maxLength = Math.min(limit, userHistories.length);
 		res.status(200).end(JSON.stringify(userHistories.reverse().slice(0, maxLength)));
 	}
 });
