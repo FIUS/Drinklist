@@ -12,6 +12,7 @@ const fs = require('fs');
 app.use(bodyParser.urlencoded({ extended: true }));
 const HashMap = require('hashmap');
 const dirname = fs.realpathSync('./');
+const uuidv4 = require('uuid/v4');
 
 // Arrays
 var beverages = JSON.parse(fs.readFileSync(__dirname + '/data/beverages.json', 'utf8'));
@@ -23,7 +24,11 @@ var users = new HashMap(JSON.parse(fs.readFileSync(__dirname + '/data/users.json
 function contains(array, item) {
 	let bool = false;
 	array.forEach(function (element) {
-		if (element === item) {
+		if (typeof element === 'object') {
+			if (element.name === item) {
+				bool = true;
+			}
+		} else if (element === item) {
 			bool = true;
 		}
 	}, this);
@@ -86,20 +91,22 @@ app.post('/orders/', function (req, res) {
 		user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
 		res.status(400).end('Fail to order the beverage for the user');
 	} else {
-		let history = {
-			id: uuidv4(),
-			user: user,
-			beverage: beverage,
-			timestamp: new Date().toUTCString()
-		};
-		histories.push(history);
 		let cost = 0;
 		for (i = 0; i < beverages.length; i++) {
 			if (beverages[i].name === beverage) {
 				cost = beverages[i].price;
+				break;
 			}
 		}
-		users.get(user).balance += cost;
+		let history = {
+			id: uuidv4(),
+			user: user,
+			reason: beverage,
+			amount: -cost,
+			timestamp: new Date().toUTCString()
+		};
+		users.get(user).balance -= cost;
+		histories.push(history);
 		res.sendStatus(200);
 	}
 });
@@ -122,23 +129,23 @@ app.get('/users/:userId', function (req, res) {
 });
 
 app.get('/orders', function (req, res) {
-	let length = req.query.length;
-	if (length === undefined) {
-		length = 1000;
+	let limit = req.query.limit;
+	if (limit === undefined) {
+		limit = 1000;
 	}
-	let maxLength = Math.min(length + 1, histories.length - 1);
+	let maxLength = Math.min(limit + 1, histories.length);
 	let limitHistories = histories.reverse().slice(0, maxLength);
 	res.status(200).end(JSON.stringify(limitHistories));
 });
 
 app.get('/orders/:userId', function (req, res) {
 	let userId = req.params.userId;
-	let length = req.query.length;
+	let limit = req.query.limit;
 	if (userId === undefined || userId === '' || !users.has(userId)) {
 		res.status(404).end('User not found');
 	} else {
-		if (length === undefined) {
-			length = 1000;
+		if (limit === undefined) {
+			limit = 1000;
 		}
 		let userHistories = [];
 		histories.forEach(function (history) {
@@ -146,7 +153,7 @@ app.get('/orders/:userId', function (req, res) {
 				userHistories.push(history);
 			}
 		});
-		let maxLength = Math.min(length + 1, userHistories.length - 1);
+		let maxLength = Math.min(limit + 1, userHistories.length);
 		res.status(200).end(JSON.stringify(userHistories.reverse().slice(0, maxLength)));
 	}
 });

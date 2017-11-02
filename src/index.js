@@ -142,7 +142,7 @@ function setupMain() {
 				addBeverageButton(element);
 			}, this);
 		});
-		$.getJSON('./histories', function(entrys) {
+		$.getJSON('./orders/' + localStorage.getItem('user'), function(entrys) {
 			entrys.forEach(function(element) {
 				addHistoryEntry(element);
 			}, this);
@@ -262,7 +262,13 @@ function update() {
 }
 
 function updateRecent() {
-	$('#marquee').text('Example Text, Please load me from Backend!!!');
+	$.getJSON('./orders?length=5', function(orders) {
+		let text = '';
+		orders.forEach(function(order) {
+			text += order.user + ': ' + order.reason + '@' + order.timestamp + ', ';
+		});
+		$('#marquee').text(text);
+	});
 }
 
 function updateMoney() {
