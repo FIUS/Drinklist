@@ -35,8 +35,6 @@ function contains(array, item) {
 	return bool;
 }
 
-console.log(dirname);
-
 app.get('/', function (req, res) {
 	res.status(200).sendFile(__dirname + '/index.html');
 });
@@ -130,6 +128,8 @@ app.get('/users/:userId', function (req, res) {
 
 app.get('/orders', function (req, res) {
 	let limit = req.query.limit;
+	let header = req.header;
+	console.log(header);
 	if (limit === undefined) {
 		limit = 1000;
 	}
