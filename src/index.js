@@ -35,6 +35,18 @@ $('#btnlogout').click(function(e) {
 setupMain();
 setupFooter();
 
+function getJSON(url, callback) {
+	$.ajax({
+		type: 'GET',
+		url: url,
+		data: null,
+		headers: { 'X-Auth-Token': 'fa8426a0-8eaf-4d22-8e13-7c1b16a9370c' },
+		success: function(data) {
+			callback(JSON.parse(data));
+		}
+	});
+}
+
 function loadLanguage() {
 	$.getJSON('./locales/' + localStorage.getItem('language'), function(data) {
 		local = data;
@@ -262,7 +274,7 @@ function update() {
 }
 
 function updateRecent() {
-	$.getJSON('./orders?limit=5', function(orders) {
+	getJSON('./orders?limit=5', function(orders) {
 		let text = '';
 		orders.forEach(function(order) {
 			text += order.user + ': ' + order.reason + '@' + order.timestamp + ', ';
