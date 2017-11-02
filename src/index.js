@@ -3,8 +3,6 @@
  */
 // contains all frontent text in the current language
 var local;
-// TODO remove
-var balance = 1000;
 
 // load the current translation
 if (!localStorage.getItem('language')) {
@@ -227,8 +225,10 @@ function addBeverageButton(beverage) {
 		class: 'btn btn-lg btn-block',
 		style: 'margin-top: .5rem'
 	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function() {
-		balance = balance - beverage.price;
-		updateMoney();
+		$.post('./orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name, function(data) {
+			console.log(data);
+			updateMoney();
+		});
 	}));
 }
 
@@ -266,14 +266,16 @@ function updateRecent() {
 }
 
 function updateMoney() {
-	$('#money').text(moneyFormat(balance));
-	if (balance < 0) {
-		$('#money').addClass('text-danger');
-		$('#money').removeClass('text-success');
-	} else {
-		$('#money').addClass('text-success');
-		$('#money').removeClass('text-danger');
-	}
+	$.getJSON('./users/' + localStorage.getItem('user'), function(user) {
+		$('#money').text(moneyFormat(user.balance));
+		if (user.balance < 0) {
+			$('#money').addClass('text-danger');
+			$('#money').removeClass('text-success');
+		} else {
+			$('#money').addClass('text-success');
+			$('#money').removeClass('text-danger');
+		}
+	});
 }
 
 $(document).ready(function() {
