@@ -12,7 +12,7 @@ if (!localStorage.getItem('language')) {
 	localStorage.setItem('language', 'en');
 }
 // setup the language select
-$.getJSON('./locales.json', function(data) {
+$.getJSON('./locales', function(data) {
 	data.forEach(function(element) {
 		$('#langselect').append($('<option></option>', {
 			value: element.id,
@@ -38,7 +38,7 @@ setupMain();
 setupFooter();
 
 function loadLanguage() {
-	$.getJSON('./locales/' + localStorage.getItem('language') + '.json', function(data) {
+	$.getJSON('./locales/' + localStorage.getItem('language'), function(data) {
 		local = data;
 		$("html").attr("lang", localStorage.getItem('language'));
 		setupStaticText();

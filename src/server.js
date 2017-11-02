@@ -30,6 +30,42 @@ function contains(array, item) {
     return bool;
  } 
 
+console.log(dirname);
+
+app.get('/', function (req, res) {
+    res.status(200).sendFile(__dirname + '/index.html');
+});
+
+app.get('/bootstrap/bootstrap.min.css', function (req, res) {
+    console.log('bootstrap/css');
+    res.status(200).sendFile(dirname + '/node_modules/bootstrap/dist/css/bootstrap.min.css');
+});
+
+app.get('/bootstrap/bootstrap.min.js', function (req, res) {
+    console.log('bootstrap/js');
+    res.status(200).sendFile(dirname + '/node_modules/bootstrap/dist/js/bootstrap.min.js');
+});
+
+fs.readdirSync(dirname + '/node_modules/font-awesome/fonts').forEach(file => {
+    app.get('/font-awesome/fonts/' + file, function (req, res) {
+        res.status(200).sendFile(dirname + '/node_modules/font-awesome/fonts/' + file);
+    })
+});
+
+app.get('/font-awesome/css/font-awesome.min.css', function (req, res) {
+    console.log('font-awesome');
+    res.status(200).sendFile(dirname + '/node_modules/font-awesome/css/font-awesome.min.css');
+});
+
+app.get('/index.js', function (req, res) {
+    res.status(200).sendFile(__dirname + '/index.js');
+});
+
+app.get('/jquery', function (req, res) {
+    console.log('jquery');
+    res.status(200).sendFile(dirname + '/node_modules/jquery/dist/jquery.min.js');
+});
+
 app.get('/locales', function (req, res) {
     res.status(200).end(JSON.stringify(localesArray));
 });
@@ -39,7 +75,7 @@ app.get('/locales/:localeId', function (req, res) {
     if (localeId === undefined || localeId === '') {
         res.status(404).end('Language pack not found');
     } else {
-        res.status(200).end(JSON.parse(fs.readFileSync(__dirname + '/locales/' + localeId + '.json', 'utf8')));
+        res.status(200).sendFile(__dirname + '/locales/' + localeId + '.json');
     }
 });
 
