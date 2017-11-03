@@ -12,7 +12,11 @@
 	<body>
 		<!-- Logout and Language Select -->
 		<nav class="navbar fixed-top justify-content-between">
-			<button id="btnlogout" type="button" class="btn btn-outline-danger">
+			<button
+				id="btnlogout"
+				type="button"
+				class="btn btn-outline-danger"
+				onclick="logout();">
 				<i class="fa fa-sign-out fa-rotate-180" aria-hidden="true"></i>
 			</button>
 			<p></p>
@@ -39,7 +43,49 @@
 				</h1>
 			</div>
 			<!-- Main -->
-			<div id="main" class="row"></div>
+			<div id="main">
+				<!-- M0 Login Page -->
+				<div id="main0" class="row">
+					<div class="col-12" style="height: 10vh;"></div>
+					<div class="col-12">
+						<div class="container form-group">
+							<label id="plabel" for="password"></label>
+							<input
+								id="password"
+								type="password"
+								class="form-control"
+								placeholder="********"
+								onkeyup="passwordKeyUp(event)"/>
+						</div>
+					</div>
+				</div>
+				<!-- M1 User selection -->
+				<div id="main1" class="row"></div>
+				<!-- M2 Account page -->
+				<div id="main2" class="row">
+					<div class="col-lg-6" style="padding-bottom: 79px;">
+						<h1 id="blabel"></h1>
+						<div id="beverages"></div>
+					</div>
+					<div class="col-lg-6" style="padding-bottom: 64px">
+						<div class="jumbotron" style="margin-top: .5rem">
+							<h1 id="mlabel"></h1>
+							<h1 id="money" class="display-1 text-right"></h1>
+						</div>
+						<h1 id="hlabel"></h1>
+						<table class="table table-hover table-striped">
+							<thead>
+								<tr>
+									<th id="hcol1"></th>
+									<th id="hcol2"></th>
+									<th id="hcol3"></th>
+								</tr>
+							</thead>
+							<tbody id="htablebody"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 			<!-- Footer -->
 			<div id="footer" class="container-fluid fixed-bottom" style="background-color: #ffffff; border-top-style: solid; border-width: 1px; border-color: #bfbfbf">
 				<!-- F1 User selection -->

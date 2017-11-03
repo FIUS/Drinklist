@@ -9,32 +9,45 @@ if (!localStorage.getItem('language')) {
 	// if no language is set choose en [English]
 	localStorage.setItem('language', 'en');
 }
-// setup the language select
+// setup the language select and load the language
 $.getJSON('./locales', function(data) {
+	let language = localStorage.getItem('language');
 	data.forEach(function(element) {
 		$('#langselect').append($('<option></option>', {
 			value: element.id,
-			selected: element.id == localStorage.getItem('language')
+			selected: element.id == language
 		}).text(element.name))
 	});
 	$('#langselect').change(function(e) {
 		localStorage.setItem('language', $('#langselect').val());
-		loadLanguage();
+		loadLanguage($('#langselect').val());
 	});
-});
-// load the local json
-loadLanguage();
-
-// setup logout button
-$('#btnlogout').click(function(e) {
-	localStorage.removeItem('token');
-	location.reload();
+	loadLanguage(language);
 });
 
-// setup the page
-setupHeader();
-setupMain();
-setupFooter();
+function loadLanguage(language) {
+	$.getJSON('./locales/' + language, function(data) {
+		local = data;
+		Object.keys(local).forEach(function(key) {
+			$('#' + key).text(local[key]);
+		});
+		$("html").attr("lang", language);
+	});
+}
+
+// update user and beverage list if logged in
+if (localStorage.getItem('token')) {
+	updateUserList();
+	updateBeveageList();
+	updateRecent();
+	if (localStorage.getItem('user')) {
+		updateMoney();
+		updateUserHistory();
+	}
+}
+
+// selest the page
+selectPage();
 
 function getJSON(url, callback) {
 	$.ajax({
@@ -63,12 +76,71 @@ function getToken(password, callback) {
 	});
 }
 
-function loadLanguage() {
-	$.getJSON('./locales/' + localStorage.getItem('language'), function(data) {
-		local = data;
-		$("html").attr("lang", localStorage.getItem('language'));
-		setupStaticText();
-	});
+function passwordKeyUp(event) {
+	if (event.keyCode == 13) {
+		getToken($('#password').val(), function(data) {
+			if (data.token !== undefined) {
+				localStorage.setItem('token', data.token);
+				updateUserList();
+				updateBeveageList();
+				deselectUser();
+			}
+		})
+	}
+}
+
+function selectUser(newUser) {
+	localStorage.setItem('user', newUser);
+	$('#header2User').text(newUser + ', ');
+	updateMoney();
+	updateUserHistory();
+	selectPage();
+}
+
+function deselectUser() {
+	localStorage.removeItem('user');
+	updateRecent();
+	selectPage();
+}
+
+function logout() {
+	localStorage.removeItem('token');
+	// TODO invalidate token
+	location.reload();
+}
+
+function selectPage() {
+	if (!localStorage.getItem('token')) {
+		$('#btnlogout').hide();
+		$('#header0').show();
+		$('#header1').hide();
+		$('#header2').hide();
+		$('#main0').show();
+		$('#main1').hide();
+		$('#main2').hide();
+		$('#footer1').hide();
+		$('#footer2').hide();
+	} else if (!localStorage.getItem('user')) {
+		$('#btnlogout').show();
+		$('#header0').hide();
+		$('#header1').show();
+		$('#header2').hide();
+		$('#main0').hide();
+		$('#main1').show();
+		$('#main2').hide();
+		$('#footer1').show();
+		$('#footer2').hide();
+	} else {
+		$('#btnlogout').show();
+		$('#header0').hide();
+		$('#header1').hide();
+		$('#header2').show();
+		$('#main0').hide();
+		$('#main1').hide();
+		$('#main2').show();
+		$('#footer1').hide();
+		$('#footer2').show();
+	}
 }
 
 function moneyFormat(money) {
@@ -76,202 +148,31 @@ function moneyFormat(money) {
 	return (money < 0 ? '-' : '') + Math.floor(absolut/100) + ',' + ((absolut%100 < 10) ? '0' : '') + (absolut%100) + '€';
 }
 
-function redraw() {
-	setupHeader();
-	setupMain();
-	setupFooter();
-	setupStaticText();
-	update();
-}
-
-function selectUser(newUser) {
-	localStorage.setItem('user', newUser);
-	$('#header2User').text(newUser + ', ');
-	redraw();
-}
-
-function deselectUser() {
-	localStorage.removeItem('user');
-	redraw();
-}
-
-function setupHeader() {
-	if (!localStorage.getItem('token')) {
-		$('#header0').show();
-		$('#header1').hide();
-		$('#header2').hide();
-	} else if (!localStorage.getItem('user')) {
-		$('#header0').hide();
-		$('#header1').show();
-		$('#header2').hide();
-	} else {
-		$('#header0').hide();
-		$('#header1').hide();
-		$('#header2').show();
-	}
-}
-
-function setupLoginPage() {
-	$('#main').append($('<div></div>', {
-		class: 'col-12',
-		style: 'height: 10vh'
-	})).append($('<div></div>', {
-		class: 'col-12'
-	}).append($('<div></div>', {
-		class: 'container form-group'
-	}).append($('<label></label>', {
-		id: 'plabel',
-		for: 'password'
-	})).append($('<input></input>', {
-		id: 'password',
-		type: 'password',
-		class: 'form-control',
-		placeholder: '********'
-	}).on('keyup', function(e) {
-		if (e.keyCode == 13) {
-			getToken($('#password').val(), function(data) {
-				if (data.token !== undefined) {
-					localStorage.setItem('token', data.token);
-					deselectUser();
-				}
-			})
-		}
-	}))));
-}
-
-function setupAccountPage() {
-	$('#main').append($('<div></div>', {
-		class: 'col-lg-6',
-		style: 'padding-bottom: 79px;'
-	}).append($('<h1></h1>', {
-		id: 'blabel'
-	})).append($('<div></div>', {
-		id: 'beverages'
-	}))).append($('<div></div>', {
-		class: 'col-lg-6',
-		style: 'padding-bottom: 64px'
-	}).append($('<div></div>', {
-		class: 'jumbotron',
-		style: 'margin-top: .5rem'
-	}).append($('<h1></h1>', {
-		id: 'mlabel'
-	})).append($('<h1></h1>', {
-		id: 'money',
-		class: 'display-1 text-right'
-	}))).append($('<h1></h1>', {
-		id: 'hlabel'
-	})).append($('<table></table>', {
-		class: 'table table-hover table-striped'
-	}).append($('<thead></thead>').append($('<tr></tr>').append($('<th></th>', {
-		id: 'hcol1'
-	})).append($('<th></th>', {
-		id: 'hcol2'
-	})).append($('<th></th>', {
-		id: 'hcol3'
-	})))).append($('<tbody></tbody>', {
-		id: 'htablebody'
-	}))));
-}
-
-function setupMain() {
-	$('#main').empty();
-	if (!localStorage.getItem('token')) {
-		setupLoginPage();
-	} else if (!localStorage.getItem('user')) {
-		getJSON('./users', function(users) {
-			users.forEach(function(element) {
-				addUserButton(element);
-			}, this);
-		});
-	} else {
-		setupAccountPage();
-		getJSON('./beverages', function(users) {
-			users.forEach(function(element) {
-				addBeverageButton(element);
-			}, this);
-		});
-		getJSON('./orders/' + localStorage.getItem('user'), function(entrys) {
-			entrys.forEach(function(element) {
-				addHistoryEntry(element);
-			}, this);
-		});
-	}
-}
-
-function setupFooter() {
-	if (!localStorage.getItem('token')) {
-		$('#footer1').hide();
-		$('#footer2').hide();
-	} else if (!localStorage.getItem('user')) {
-		$('#footer1').show();
-		$('#footer2').hide();
-	} else {
-		$('#footer1').hide();
-		$('#footer2').show();
-	}
-}
-
-function setupStaticText() {
-	Object.keys(local).forEach(function(key) {
-		$('#' + key).text(local[key]);
+function updateUserList() {
+	$('#main1').empty();
+	getJSON('./users', function(users) {
+		users.forEach(function(element) {
+			addUserButton(element);
+		}, this);
 	});
 }
 
-function addUserButton(user) {
-	$('#main').append($('<div></div>', {
-		class: 'col-sm-6 col-md-4 col-lg-3 col-xl-2'
-	}).append($('<button/>', {
-		type: 'button',
-		class: 'btn btn-primary btn-lg btn-block',
-		style: 'margin-top: .5rem'
-	}).text(user).click( function() {
-		selectUser(user);
-	})));
+function updateBeveageList() {
+	$('#beverages').empty();
+	getJSON('./beverages', function(users) {
+		users.forEach(function(element) {
+			addBeverageButton(element);
+		}, this);
+	});
 }
 
-function addBeverageButton(beverage) {
-	$('#beverages').append($('<button/>', {
-		type: 'button',
-		class: 'btn btn-lg btn-block',
-		style: 'margin-top: .5rem'
-	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function() {
-		$.ajax({
-			type: 'POST',
-			url: './orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name,
-			data: 'null',
-			headers: { 'X-Auth-Token': localStorage.getItem('token') },
-			success: function(data) {
-				// TODO react to fail
-				// TODO update user history
-				updateMoney();
-			}
-		});
-	}));
-}
-
-function addHistoryEntry(entry) {
-	$('#htablebody')
-		.append($('<tr></tr>', {
-			id: 'entry_' + entry.id
-		})
-		.append($('<td></td>')
-		.text(entry.reason))
-		.append($('<td></td>')
-		.text(moneyFormat(entry.amount)))
-		.append($('<td></td>')
-		.text(entry.timestamp)));
-}
-
-function update() {
-	if (!localStorage.getItem('token')) {
-		$('#btnlogout').hide();
-	} else if (!localStorage.getItem('user')) {
-		$('#btnlogout').show();
-		updateRecent();
-	} else {
-		$('#btnlogout').show();
-		updateMoney();
-	}
+function updateUserHistory() {
+	$('#htablebody').empty();
+	getJSON('./orders/' + localStorage.getItem('user'), function(entrys) {
+		entrys.forEach(function(element) {
+			addHistoryEntry(element);
+		}, this);
+	});
 }
 
 function updateRecent() {
@@ -297,6 +198,47 @@ function updateMoney() {
 	});
 }
 
-$(document).ready(function() {
-	update();
-});
+function addUserButton(user) {
+	$('#main1').append($('<div></div>', {
+		class: 'col-sm-6 col-md-4 col-lg-3 col-xl-2'
+	}).append($('<button/>', {
+		type: 'button',
+		class: 'btn btn-primary btn-lg btn-block',
+		style: 'margin-top: .5rem'
+	}).text(user).click( function() {
+		selectUser(user);
+	})));
+}
+
+function addBeverageButton(beverage) {
+	$('#beverages').append($('<button/>', {
+		type: 'button',
+		class: 'btn btn-lg btn-block',
+		style: 'margin-top: .5rem'
+	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function() {
+		$.ajax({
+			type: 'POST',
+			url: './orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name,
+			data: 'null',
+			headers: { 'X-Auth-Token': localStorage.getItem('token') },
+			success: function(data) {
+				// TODO react to fail
+				updateMoney();
+				updateUserHistory();
+			}
+		});
+	}));
+}
+
+function addHistoryEntry(entry) {
+	$('#htablebody')
+		.append($('<tr></tr>', {
+			id: 'entry_' + entry.id
+		})
+		.append($('<td></td>')
+		.text(entry.reason))
+		.append($('<td></td>')
+		.text(moneyFormat(entry.amount)))
+		.append($('<td></td>')
+		.text(entry.timestamp)));
+}
