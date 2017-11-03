@@ -144,8 +144,6 @@ function setupAccountPage() {
 	})).append($('<table></table>', {
 		class: 'table table-hover table-striped'
 	}).append($('<thead></thead>').append($('<tr></tr>').append($('<th></th>', {
-		id: 'hcol0'
-	})).append($('<th></th>', {
 		id: 'hcol1'
 	})).append($('<th></th>', {
 		id: 'hcol2'
@@ -268,10 +266,6 @@ function addHistoryEntry(entry) {
 		.append($('<tr></tr>', {
 			id: 'entry_' + entry.id
 		})
-		.append($('<th></th>', {
-			scope: 'row'
-		})
-		.text(entry.id))
 		.append($('<td></td>')
 		.text(entry.reason))
 		.append($('<td></td>')
