@@ -37,48 +37,54 @@ function contains(array, item) {
 }
 
 app.get('/', function (req, res) {
+	console.log('[load] index.html');
 	res.status(200).sendFile(__dirname + '/index.html');
 });
 
 app.get('/bootstrap/css', function (req, res) {
-	console.log('bootstrap/css');
+	console.log('[load] [lib] bootstrap/css');
 	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/css/bootstrap.min.css');
 });
 
 app.get('/bootstrap/js', function (req, res) {
-	console.log('bootstrap/js');
+	console.log('[load] [lib] bootstrap/js');
 	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/js/bootstrap.min.js');
 });
 
 fs.readdirSync(dirname + '/node_modules/font-awesome/fonts').forEach(file => {
 	app.get('/font-awesome/fonts/' + file, function (req, res) {
+		console.log('[load] [lib] font-awesome/fonts/' + file);
 		res.status(200).sendFile(dirname + '/node_modules/font-awesome/fonts/' + file);
 	})
 });
 
 app.get('/font-awesome/css/css', function (req, res) {
-	console.log('font-awesome');
+	console.log('[load] [lib] font-awesome/css');
 	res.status(200).sendFile(dirname + '/node_modules/font-awesome/css/font-awesome.min.css');
 });
 
 app.get('/index.js', function (req, res) {
+	console.log('[load] index.js');
 	res.status(200).sendFile(__dirname + '/index.js');
 });
 
 app.get('/jquery', function (req, res) {
-	console.log('jquery');
+	console.log('[load] [lib] jquery');
 	res.status(200).sendFile(dirname + '/node_modules/jquery/dist/jquery.min.js');
 });
 
 app.get('/locales', function (req, res) {
+	console.log('[load] [locales] index');
 	res.status(200).end(JSON.stringify(localesArray));
 });
 
 app.get('/locales/:localeId', function (req, res) {
 	let localeId = req.params.localeId;
 	if (localeId === undefined || localeId === '') {
+		console.log('[FAIL] [locales] ' + localeId);
 		res.status(404).end('Language pack not found');
 	} else {
+		console.log('[load] [locales] ' + localeId);
 		res.status(200).sendFile(__dirname + '/locales/' + localeId + '.json');
 	}
 });
@@ -86,6 +92,7 @@ app.get('/locales/:localeId', function (req, res) {
 app.post('/login', function (req, res) {
 	let passwd = req.body.password;
 	if (passwd == undefined || passwd === '') {
+		console.log('[FAIL] [login] no password');
 		res.sendStatus(400);
 	} else {
 		let isAuthorized = false;
@@ -101,8 +108,10 @@ app.post('/login', function (req, res) {
 				token: uuidv4(),
 				root: root
 			};
+			console.log('[ OK ] [login] login with token ' + token.token);
 			res.status(200).end(JSON.stringify(token));
 		} else {
+			console.log('[FAIL] [login] no correct password');
 			res.sendStatus(403);
 		}
 	}
@@ -139,7 +148,7 @@ app.post('/orders/', function (req, res) {
 app.get('/orders', function (req, res) {
 	let limit = req.query.limit;
 	let header = req.header('X-Auth-Token');
-	console.log(header);
+	//console.log(header);
 	if (limit === undefined) {
 		limit = 1000;
 	}
