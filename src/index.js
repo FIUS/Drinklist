@@ -235,9 +235,16 @@ function addBeverageButton(beverage) {
 		class: 'btn btn-lg btn-block',
 		style: 'margin-top: .5rem'
 	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function() {
-		$.post('./orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name, function(data) {
-			console.log(data);
-			updateMoney();
+		$.ajax({
+			type: 'POST',
+			url: './orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name,
+			data: 'null',
+			headers: { 'X-Auth-Token': localStorage.getItem('token') },
+			success: function(data) {
+				// TODO react to fail
+				// TODO update user history
+				updateMoney();
+			}
 		});
 	}));
 }
