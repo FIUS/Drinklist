@@ -21,6 +21,7 @@ var localesArray = JSON.parse(fs.readFileSync(__dirname + '/data/localesArray.js
 var auth = JSON.parse(fs.readFileSync(__dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
 var users = new HashMap(JSON.parse(fs.readFileSync(__dirname + '/data/users.json', 'utf8')));
+var tokens = new HashMap();
 
 function contains(array, item) {
 	let bool = false;
@@ -109,6 +110,7 @@ app.post('/login', function (req, res) {
 				root: root
 			};
 			console.log('[ OK ] [login] login with token ' + token.token);
+			tokens.set(token.token, token);
 			res.status(200).end(JSON.stringify(token));
 		} else {
 			console.log('[FAIL] [login] no correct password');
@@ -120,6 +122,10 @@ app.post('/login', function (req, res) {
 app.post('/orders/', function (req, res) {
 	let user = req.query.user;
 	let beverage = req.query.beverage;
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		res.status(403).end('Forbidden');
+	}
 	if (user == undefined || beverage == undefined ||
 		user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
 		res.status(400).end('Fail to order the beverage for the user');
@@ -147,8 +153,10 @@ app.post('/orders/', function (req, res) {
 
 app.get('/orders', function (req, res) {
 	let limit = req.query.limit;
-	let header = req.header('X-Auth-Token');
-	//console.log(header);
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		res.status(403).end('Forbidden');
+	}
 	if (limit === undefined) {
 		limit = 1000;
 	}
@@ -159,6 +167,10 @@ app.get('/orders', function (req, res) {
 app.get('/orders/:userId', function (req, res) {
 	let userId = req.params.userId;
 	let limit = req.query.limit;
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		res.status(403).end('Forbidden');
+	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
 		res.status(404).end('User not found');
 	} else {
@@ -177,20 +189,41 @@ app.get('/orders/:userId', function (req, res) {
 });
 
 app.get('/beverages', function (req, res) {
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		res.status(403).end('Forbidden');
+	}
 	res.status(200).end(JSON.stringify(beverages));
 });
 
 app.get('/users', function (req, res) {
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		console.log('Wrong token' + token);
+		res.status(403).end('Forbidden');
+	}
 	res.status(200).end(JSON.stringify(users.keys()));
 });
 
 app.get('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		res.status(403).end('Forbidden');
+	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
 		res.status(404).end('User not found');
 	} else {
 		res.status(200).end(JSON.stringify(users.get(userId)));
 	}
+});
+
+app.post('/logout', function (req, res) {
+	let token = req.params.token;
+	if (token != undefined) {
+		tokens.remove(token);
+	}
+	res.sendStatus(200);
 });
 
 var server = app.listen(8081, function () {
