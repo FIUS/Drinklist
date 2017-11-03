@@ -40,7 +40,7 @@ function getJSON(url, callback) {
 		type: 'GET',
 		url: url,
 		data: null,
-		headers: { 'X-Auth-Token': 'fa8426a0-8eaf-4d22-8e13-7c1b16a9370c' },
+		headers: { 'X-Auth-Token': localStorage.getItem('token') },
 		success: function(data) {
 			callback(JSON.parse(data));
 		}
