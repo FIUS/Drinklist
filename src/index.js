@@ -32,6 +32,7 @@ $('#btnlogout').click(function(e) {
 });
 
 // setup the page
+setupHeader();
 setupMain();
 setupFooter();
 
@@ -76,6 +77,7 @@ function moneyFormat(money) {
 }
 
 function redraw() {
+	setupHeader();
 	setupMain();
 	setupFooter();
 	setupStaticText();
@@ -84,12 +86,29 @@ function redraw() {
 
 function selectUser(newUser) {
 	localStorage.setItem('user', newUser);
+	$('#header2User').text(newUser + ', ');
 	redraw();
 }
 
 function deselectUser() {
 	localStorage.removeItem('user');
 	redraw();
+}
+
+function setupHeader() {
+	if (!localStorage.getItem('token')) {
+		$('#header0').show();
+		$('#header1').hide();
+		$('#header2').hide();
+	} else if (!localStorage.getItem('user')) {
+		$('#header0').hide();
+		$('#header1').show();
+		$('#header2').hide();
+	} else {
+		$('#header0').hide();
+		$('#header1').hide();
+		$('#header2').show();
+	}
 }
 
 function setupLoginPage() {
@@ -180,57 +199,19 @@ function setupMain() {
 }
 
 function setupFooter() {
-	$('#footer').empty();
 	if (!localStorage.getItem('token')) {
+		$('#footer1').hide();
+		$('#footer2').hide();
 	} else if (!localStorage.getItem('user')) {
-		$('#footer').append($('<h5></h5>', {
-			style: 'margin-top: .5rem'
-		}).append($('<table></table>').append($('<tr></tr>').append($('<td></td>', {
-			style: 'white-space: nowrap; padding-right: .5rem'
-		}).append($('<strong></strong>', {
-			id: 'rlabel'
-		}))).append($('<td></td>', {
-			style: 'width:100%'
-		}).append($('<marquee></marquee>', {
-			id: 'marquee'
-		}))))));
+		$('#footer1').show();
+		$('#footer2').hide();
 	} else {
-		$('#footer').append($('<button></button>', {
-			id: 'btnfinish',
-			type: 'button',
-			class: 'btn btn-primary btn-lg btn-block',
-			style: 'margin-top: .5rem; margin-bottom: .5rem'
-		}).click(function() {
-			deselectUser();
-		}));
+		$('#footer1').hide();
+		$('#footer2').show();
 	}
 }
 
 function setupStaticText() {
-	if (!localStorage.getItem('token')) {
-		$('#header')
-		.removeClass('display-4')
-		.addClass('display-1')
-		.text(local.header01)
-		.append($('<small></small>', {
-			class: 'text-muted'
-		})
-		.text(local.header02));
-	} else if (!localStorage.getItem('user')) {
-		$('#header')
-			.removeClass('display-4')
-			.addClass('display-1')
-			.text(local.header1);
-	} else {
-		$('#header')
-			.removeClass('display-1')
-			.addClass('display-4')
-			.text(local.header21 + ' ' + localStorage.getItem('user') + ', ')
-			.append($('<small></small>', {
-				class: 'text-muted'
-			})
-			.text(local.header22));
-	}
 	Object.keys(local).forEach(function(key) {
 		$('#' + key).text(local[key]);
 	});

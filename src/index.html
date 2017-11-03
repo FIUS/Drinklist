@@ -22,9 +22,52 @@
 		</nav>
 		<!-- Main HTML DOM -->
 		<div class="container-fluid">
-			<h1 id="header" class="text-center" style="margin-top: 0.5rem"></h1>
+			<!-- Header -->
+			<div id=header class="text-center" style="margin-top: 0.5rem">
+				<!-- H0 Login Page -->
+				<h1 id="header0" class="display-1">
+					<span id="header01"></span>
+					<small id="header02" class="text-muted"></small>
+				</h1>
+				<!-- H1 User selection -->
+				<h1 id="header1" class="display-1"></h1>
+				<!-- H2 Account page -->
+				<h1 id="header2" class="display-4">
+					<span id="header21"></span>
+					<span id="header2User"></span>
+					<small id="header22" class="text-muted"></small>
+				</h1>
+			</div>
+			<!-- Main -->
 			<div id="main" class="row"></div>
-			<div id="footer" class="container-fluid fixed-bottom" style="background-color: #ffffff; border-top-style: solid; border-width: 1px; border-color: #bfbfbf"></div>
+			<!-- Footer -->
+			<div id="footer" class="container-fluid fixed-bottom" style="background-color: #ffffff; border-top-style: solid; border-width: 1px; border-color: #bfbfbf">
+				<!-- F1 User selection -->
+				<div id="footer1">
+					<h5 style="margin-top: .5rem;">
+						<table>
+							<tr>
+								<td style="white-space: nowrap; padding-right: .5rem;">
+									<strong id="rlabel"></strong>
+								</td>
+								<td style="width: 100%;">
+									<marquee id="marquee"></marquee>
+								</td>
+							</tr>
+						</table>
+					</h5>
+				</div>
+				<!-- F2 Accout page -->
+				<div id="footer2">
+					<button
+						id="btnfinish"
+						type="button"
+						class="btn btn-primary btn-lg btn-block"
+						style="margin-top: .5rem; margin-bottom: .5rem;"
+						onclick="deselectUser();">
+					</button>
+				</div>
+			</div>
 		</div>
 
 		<!-- JavaScript Files -->
