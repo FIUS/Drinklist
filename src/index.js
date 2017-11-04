@@ -188,12 +188,21 @@ function updateRecent() {
 function updateMoney() {
 	getJSON('./users/' + localStorage.getItem('user'), function(user) {
 		$('#money').text(moneyFormat(user.balance));
-		if (user.balance < 0) {
-			$('#money').addClass('text-danger');
-			$('#money').removeClass('text-success');
-		} else {
+		if (user.balance >= 0) {
+			$('#mjumbo').removeClass('bg-danger');
 			$('#money').addClass('text-success');
 			$('#money').removeClass('text-danger');
+			$('#money').removeClass('text-white');
+		} else if (user.balance > -2000) {
+			$('#mjumbo').removeClass('bg-danger');
+			$('#money').removeClass('text-success');
+			$('#money').addClass('text-danger');
+			$('#money').removeClass('text-white');
+		} else {
+			$('#mjumbo').addClass('bg-danger');
+			$('#money').removeClass('text-success');
+			$('#money').removeClass('text-danger');
+			$('#money').addClass('text-white');
 		}
 	});
 }
