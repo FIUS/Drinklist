@@ -55,6 +55,9 @@ function getJSON(url, callback) {
 		url: url,
 		data: null,
 		headers: { 'X-Auth-Token': localStorage.getItem('token') },
+		statusCode: {
+			403: logout,
+		},
 		success: function(data) {
 			callback(JSON.parse(data));
 		}
@@ -214,7 +217,7 @@ function addUserButton(user) {
 		type: 'button',
 		class: 'btn btn-primary btn-lg btn-block',
 		style: 'margin-top: .5rem'
-	}).text(user).click( function() {
+	}).text(user).click(function() {
 		selectUser(user);
 	})));
 }
@@ -243,11 +246,23 @@ function addHistoryEntry(entry) {
 	$('#htablebody')
 		.append($('<tr></tr>', {
 			id: 'entry_' + entry.id
-		})
-		.append($('<td></td>')
+		}).click(function(){
+			//TODO delete entry.id
+			updateMoney();
+			updateUserHistory();
+		}).append($('<td></td>')
 		.text(entry.reason))
 		.append($('<td></td>')
 		.text(moneyFormat(entry.amount)))
 		.append($('<td></td>')
-		.text(entry.timestamp)));
+		.text(entry.timestamp))
+		.append($('<td></td>', {
+			style: 'text-align: right;'
+		}).append($('<i></i>', {
+			class: isTimePassed(entry.timestamp) ? 'fa fa-trash-o' : ''
+		}))));
+}
+
+function isTimePassed(date) {
+	return +(new Date(new Date(date).getTime() + 30000)) > +(new Date())
 }
