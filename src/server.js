@@ -42,6 +42,11 @@ app.get('/', function (req, res) {
 	res.status(200).sendFile(__dirname + '/index.html');
 });
 
+app.get('/favicon.ico', function (req, res) {
+	console.log('[load] favicon.ico');
+	res.status(200).sendFile(dirname + '/assets/box.ico');
+});
+
 app.get('/bootstrap/css', function (req, res) {
 	console.log('[load] [lib] bootstrap/css');
 	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/css/bootstrap.min.css');
