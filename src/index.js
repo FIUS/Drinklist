@@ -1,3 +1,6 @@
+// API location
+const API = 'http://localhost:8080/';
+
 /*
  * Setup Variables
  */
@@ -63,7 +66,7 @@ function _(object) {
 function getJSON(url, callback) {
 	$.ajax({
 		type: 'GET',
-		url: url,
+		url: API + url,
 		data: null,
 		headers: { 'X-Auth-Token': localStorage.getItem('token') },
 		statusCode: {
@@ -78,7 +81,7 @@ function getJSON(url, callback) {
 function getToken(password, callback) {
 	$.ajax({
 		type: 'POST',
-		url: './login',
+		url: API + './login',
 		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 		data: 'password=' + password,
 		success: function(data) {
@@ -241,7 +244,7 @@ function addBeverageButton(beverage) {
 	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function() {
 		$.ajax({
 			type: 'POST',
-			url: './orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name,
+			url: API + './orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name,
 			data: 'null',
 			headers: { 'X-Auth-Token': localStorage.getItem('token') },
 			success: function(data) {
