@@ -3,6 +3,8 @@
  */
 // contains all frontent text in the current language
 var local;
+// contains all cached jquery objects
+var cache = {};
 
 // load the current translation
 if (!localStorage.getItem('language')) {
@@ -13,14 +15,14 @@ if (!localStorage.getItem('language')) {
 $.getJSON('./locales', function(data) {
 	let language = localStorage.getItem('language');
 	data.forEach(function(element) {
-		$('#langselect').append($('<option></option>', {
+		_('#langselect').append($('<option></option>', {
 			value: element.id,
 			selected: element.id == language
 		}).text(element.name))
 	});
-	$('#langselect').change(function(e) {
-		localStorage.setItem('language', $('#langselect').val());
-		loadLanguage($('#langselect').val());
+	_('#langselect').change(function(e) {
+		localStorage.setItem('language', _('#langselect').val());
+		loadLanguage(_('#langselect').val());
 	});
 	loadLanguage(language);
 });
@@ -29,9 +31,9 @@ function loadLanguage(language) {
 	$.getJSON('./locales/' + language, function(data) {
 		local = data;
 		Object.keys(local).forEach(function(key) {
-			$('#' + key).text(local[key]);
+			_('#' + key).text(local[key]);
 		});
-		$("html").attr("lang", language);
+		_("html").attr("lang", language);
 	});
 }
 
@@ -48,6 +50,15 @@ if (localStorage.getItem('token')) {
 
 // selest the page
 selectPage();
+
+// cached jquery object loader
+function _(object) {
+	if (!cache[object]) {
+		cache[object] = $(object);
+	}
+	
+	return cache[object];
+}
 
 function getJSON(url, callback) {
 	$.ajax({
@@ -81,7 +92,7 @@ function getToken(password, callback) {
 
 function passwordKeyUp(event) {
 	if (event.keyCode == 13) {
-		getToken($('#password').val(), function(data) {
+		getToken(_('#password').val(), function(data) {
 			if (data.token !== undefined) {
 				localStorage.setItem('token', data.token);
 				updateUserList();
@@ -94,7 +105,7 @@ function passwordKeyUp(event) {
 
 function selectUser(newUser) {
 	localStorage.setItem('user', newUser);
-	$('#header2User').text(newUser + ', ');
+	_('#header2User').text(newUser + ', ');
 	updateMoney();
 	updateUserHistory();
 	selectPage();
@@ -114,35 +125,35 @@ function logout() {
 
 function selectPage() {
 	if (!localStorage.getItem('token')) {
-		$('#btnlogout').hide();
-		$('#header0').show();
-		$('#header1').hide();
-		$('#header2').hide();
-		$('#main0').show();
-		$('#main1').hide();
-		$('#main2').hide();
-		$('#footer1').hide();
-		$('#footer2').hide();
+		_('#btnlogout').hide();
+		_('#header0').show();
+		_('#header1').hide();
+		_('#header2').hide();
+		_('#main0').show();
+		_('#main1').hide();
+		_('#main2').hide();
+		_('#footer1').hide();
+		_('#footer2').hide();
 	} else if (!localStorage.getItem('user')) {
-		$('#btnlogout').show();
-		$('#header0').hide();
-		$('#header1').show();
-		$('#header2').hide();
-		$('#main0').hide();
-		$('#main1').show();
-		$('#main2').hide();
-		$('#footer1').show();
-		$('#footer2').hide();
+		_('#btnlogout').show();
+		_('#header0').hide();
+		_('#header1').show();
+		_('#header2').hide();
+		_('#main0').hide();
+		_('#main1').show();
+		_('#main2').hide();
+		_('#footer1').show();
+		_('#footer2').hide();
 	} else {
-		$('#btnlogout').show();
-		$('#header0').hide();
-		$('#header1').hide();
-		$('#header2').show();
-		$('#main0').hide();
-		$('#main1').hide();
-		$('#main2').show();
-		$('#footer1').hide();
-		$('#footer2').show();
+		_('#btnlogout').show();
+		_('#header0').hide();
+		_('#header1').hide();
+		_('#header2').show();
+		_('#main0').hide();
+		_('#main1').hide();
+		_('#main2').show();
+		_('#footer1').hide();
+		_('#footer2').show();
 	}
 }
 
@@ -152,7 +163,7 @@ function moneyFormat(money) {
 }
 
 function updateUserList() {
-	$('#main1').empty();
+	_('#main1').empty();
 	getJSON('./users', function(users) {
 		users.forEach(function(element) {
 			addUserButton(element);
@@ -161,7 +172,7 @@ function updateUserList() {
 }
 
 function updateBeveageList() {
-	$('#beverages').empty();
+	_('#beverages').empty();
 	getJSON('./beverages', function(users) {
 		users.forEach(function(element) {
 			addBeverageButton(element);
@@ -170,7 +181,7 @@ function updateBeveageList() {
 }
 
 function updateUserHistory() {
-	$('#htablebody').empty();
+	_('#htablebody').empty();
 	getJSON('./orders/' + localStorage.getItem('user'), function(entrys) {
 		entrys.forEach(function(element) {
 			addHistoryEntry(element);
@@ -184,34 +195,34 @@ function updateRecent() {
 		orders.forEach(function(order) {
 			text += order.user + ': ' + order.reason + '@' + order.timestamp + ', ';
 		});
-		$('#marquee').text(text);
+		_('#marquee').text(text);
 	});
 }
 
 function updateMoney() {
 	getJSON('./users/' + localStorage.getItem('user'), function(user) {
-		$('#money').text(moneyFormat(user.balance));
+		_('#money').text(moneyFormat(user.balance));
 		if (user.balance >= 0) {
-			$('#mjumbo').removeClass('bg-danger');
-			$('#money').addClass('text-success');
-			$('#money').removeClass('text-danger');
-			$('#money').removeClass('text-white');
+			_('#mjumbo').removeClass('bg-danger');
+			_('#money').addClass('text-success');
+			_('#money').removeClass('text-danger');
+			_('#money').removeClass('text-white');
 		} else if (user.balance > -2000) {
-			$('#mjumbo').removeClass('bg-danger');
-			$('#money').removeClass('text-success');
-			$('#money').addClass('text-danger');
-			$('#money').removeClass('text-white');
+			_('#mjumbo').removeClass('bg-danger');
+			_('#money').removeClass('text-success');
+			_('#money').addClass('text-danger');
+			_('#money').removeClass('text-white');
 		} else {
-			$('#mjumbo').addClass('bg-danger');
-			$('#money').removeClass('text-success');
-			$('#money').removeClass('text-danger');
-			$('#money').addClass('text-white');
+			_('#mjumbo').addClass('bg-danger');
+			_('#money').removeClass('text-success');
+			_('#money').removeClass('text-danger');
+			_('#money').addClass('text-white');
 		}
 	});
 }
 
 function addUserButton(user) {
-	$('#main1').append($('<div></div>', {
+	_('#main1').append($('<div></div>', {
 		class: 'col-sm-6 col-md-4 col-lg-3 col-xl-2'
 	}).append($('<button/>', {
 		type: 'button',
@@ -223,7 +234,7 @@ function addUserButton(user) {
 }
 
 function addBeverageButton(beverage) {
-	$('#beverages').append($('<button/>', {
+	_('#beverages').append($('<button/>', {
 		type: 'button',
 		class: 'btn btn-lg btn-block',
 		style: 'margin-top: .5rem'
@@ -243,7 +254,7 @@ function addBeverageButton(beverage) {
 }
 
 function addHistoryEntry(entry) {
-	$('#htablebody')
+	_('#htablebody')
 		.append($('<tr></tr>', {
 			id: 'entry_' + entry.id
 		}).click(function(){
