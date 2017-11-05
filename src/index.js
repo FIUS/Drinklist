@@ -226,7 +226,7 @@ function addUserButton(user) {
 		class: 'col-sm-6 col-md-4 col-lg-3 col-xl-2'
 	}).append($('<button/>', {
 		type: 'button',
-		class: 'btn btn-primary btn-lg btn-block',
+		class: 'btn btn-warning btn-lg btn-block',
 		style: 'margin-top: .5rem'
 	}).text(user).click(function() {
 		selectUser(user);
