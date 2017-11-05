@@ -73,7 +73,7 @@ api.post('/login', function (req, res) {
 				token: uuidv4(),
 				root: root
 			};
-			console.log('[ OK ] [login] login with token ' + token.token);
+			console.log('[API] [ OK ] [login] login with token ' + token.token);
 			tokens.set(token.token, token);
 			res.status(200).end(JSON.stringify(token));
 		} else {
@@ -88,6 +88,7 @@ api.post('/orders/', function (req, res) {
 	let beverage = req.query.beverage;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
+		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (user == undefined || beverage == undefined ||
@@ -119,6 +120,7 @@ api.get('/orders', function (req, res) {
 	let limit = req.query.limit;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
+		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (limit === undefined) {
@@ -133,6 +135,7 @@ api.get('/orders/:userId', function (req, res) {
 	let limit = req.query.limit;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
+		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
@@ -155,6 +158,7 @@ api.get('/orders/:userId', function (req, res) {
 api.get('/beverages', function (req, res) {
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
+		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
 	}
 	res.status(200).end(JSON.stringify(beverages));
@@ -163,7 +167,7 @@ api.get('/beverages', function (req, res) {
 api.get('/users', function (req, res) {
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('Wrong token' + token);
+		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
 	}
 	res.status(200).end(JSON.stringify(users.keys()));
@@ -173,6 +177,7 @@ api.get('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
+		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
