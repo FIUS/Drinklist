@@ -46,6 +46,12 @@
 					</ul>
 					<ul class="nav nav-pills flex-column" data-ng-hide="!auth.isAdmin">
 						<li class="nav-item">
+							<a href="#!beverage" class="nav-link text-dark" data-ng-class="{ active: isActive('beverage'), 'bg-warning': isActive('beverage') }">
+								<i class="fa fa-fw fa-beer" aria-hidden="true"></i>
+								Beverages
+							</a>
+						</li>
+						<li class="nav-item">
 							<a href="#!history" class="nav-link text-dark" data-ng-class="{ active: isActive('history'), 'bg-warning': isActive('history') }">
 								<i class="fa fa-fw fa-history" aria-hidden="true"></i>
 								History
@@ -90,6 +96,7 @@
 		<script src="./app/services/authentication.js"></script>
 		<script src="./app/controllers/main.js"></script>
 		<script src="./app/controllers/overview.js"></script>
+		<script src="./app/controllers/beverage.js"></script>
 		<script src="./app/controllers/history.js"></script>
 		<script src="./app/controllers/user.js"></script>
 		<script src="./app/controllers/token.js"></script>

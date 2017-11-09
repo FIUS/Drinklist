@@ -106,28 +106,28 @@ app.controller('historyController', function($scope, $http, $window) {
 	$scope.collumnSet = [
 		{
 			name: "id",
-			displayname: "ID",
+			displayname: "ID:",
 			display: function(data) {
 				return data.toString().substring(1, data.toString().indexOf("-"));
 			}
 		},
 		{
 			name: "user",
-			displayname: "User",
+			displayname: "User:",
 			display: function(data) {
 				return data;
 			}
 		},
 		{
 			name: "reason",
-			displayname: "Reason",
+			displayname: "Reason:",
 			display: function(data) {
 				return data;
 			}
 		},
 		{
 			name: "amount",
-			displayname: "Amount",
+			displayname: "Amount:",
 			display: function(money) {
 				absolut = Math.abs(money);
 				return (money < 0 ? '-' : '') + Math.floor(absolut/100) + ',' + ((absolut%100 < 10) ? '0' : '') + (absolut%100) + '€';
@@ -135,7 +135,7 @@ app.controller('historyController', function($scope, $http, $window) {
 		},
 		{
 			name: "timestamp",
-			displayname: "Timestamp",
+			displayname: "Timestamp:",
 			display: function(data) {
 				return data;
 			}

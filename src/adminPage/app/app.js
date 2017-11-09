@@ -6,6 +6,10 @@ app.config(function ($routeProvider) {
 			controller: 'overviewController',
 			templateUrl: './app/partials/overview.html',
 			activetab: 'overview'
+		}).when('/beverage', {
+			controller: 'beverageController',
+			templateUrl: './app/partials/listPartial.html',
+			activetab: 'beverage'
 		}).when('/history', {
 			controller: 'historyController',
 			templateUrl: './app/partials/listPartial.html',
