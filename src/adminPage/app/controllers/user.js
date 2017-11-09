@@ -81,7 +81,7 @@ app.controller('userController', function($scope, $http, $window) {
 		} else if (entry > 0) {
 			return 'text-success'
 		}
-	}
+	};
 
 	$scope.apiGet('/users').then(function(response) {
 		$scope.dataSet = response.data;

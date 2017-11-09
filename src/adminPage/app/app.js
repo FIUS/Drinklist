@@ -14,5 +14,9 @@ app.config(function ($routeProvider) {
 			controller: 'userController',
 			templateUrl: './app/partials/listPartial.html',
 			activetab: 'user'
+		}).when('/token', {
+			controller: 'tokenController',
+			templateUrl: './app/partials/listPartial.html',
+			activetab: 'token'
 		}).otherwise({ redirectTo: '/'});
 });

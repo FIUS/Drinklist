@@ -57,6 +57,12 @@
 								Users
 							</a>
 						</li>
+						<li class="nav-item">
+								<a href="#!token" class="nav-link text-dark" data-ng-class="{ active: isActive('token'), 'bg-warning': isActive('token') }">
+									<i class="fa fa-fw fa-key" aria-hidden="true"></i>
+									Active Tokens
+								</a>
+							</li>
 					</ul>
 					<ul class="nav nav-pills flex-column" data-ng-hide="!auth.isLoggedIn">
 						<li class="nav-item">
@@ -86,5 +92,6 @@
 		<script src="./app/controllers/overview.js"></script>
 		<script src="./app/controllers/history.js"></script>
 		<script src="./app/controllers/user.js"></script>
+		<script src="./app/controllers/token.js"></script>
 	</body>
 </html>

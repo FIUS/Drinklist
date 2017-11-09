@@ -152,7 +152,7 @@ app.controller('historyController', function($scope, $http, $window) {
 		} else if (entry > 0) {
 			return 'text-success'
 		}
-	}
+	};
 
 	$scope.apiGet('/orders').then(function(response) {
 		$scope.dataSet = response.data;
