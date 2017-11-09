@@ -98,7 +98,8 @@ function passwordKeyUp(event) {
 		getToken(_('#password').val(), function(data) {
 			if (data.token !== undefined) {
 				localStorage.setItem('token', data.token);
-				if (data.root) {
+				localStorage.setItem('root', data.root);
+				if (localStorage.getItem('root')) {
 					_('#btnadmin').show();
 					_('#spnavbtn').addClass('btn-group');
 				} else {
@@ -137,6 +138,13 @@ function logout() {
 }
 
 function selectPage() {
+	if (localStorage.getItem('root') == 'true') {
+		_('#btnadmin').show();
+		_('#spnavbtn').addClass('btn-group');
+	} else {
+		_('#btnadmin').hide();
+		_('#spnavbtn').removeClass('btn-group');
+	}
 	if (!localStorage.getItem('token')) {
 		_('#spnavbtn').hide();
 		_('#header0').show();
@@ -179,7 +187,11 @@ function updateUserList() {
 	_('#main1').empty();
 	getJSON('./users', function(users) {
 		users.forEach(function(element) {
-			addUserButton(element);
+			if (typeof element === 'object') {
+				addUserButton(element.name);
+			} else {
+				addUserButton(element);
+			}
 		}, this);
 	});
 }
