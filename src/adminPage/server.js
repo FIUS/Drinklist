@@ -28,6 +28,11 @@ app.get('/favicon.ico', function (req, res) {
 	res.status(200).sendFile(dirname + '/assets/box.ico');
 });
 
+app.get('/assets/logo.svg', function (req, res) {
+	console.log('[adminPage] [load] [asset] logo.svg');
+	res.status(200).sendFile(dirname + '/assets/logo.svg');
+});
+
 app.get('/jquery', function (req, res) {
 	console.log('[adminPage] [load] [lib] jquery');
 	res.status(200).sendFile(dirname + '/node_modules/jquery/dist/jquery.min.js');
