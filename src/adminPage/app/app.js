@@ -10,5 +10,9 @@ app.config(function ($routeProvider) {
 			controller: 'historyController',
 			templateUrl: './app/partials/listPartial.html',
 			activetab: 'history'
+		}).when('/user', {
+			controller: 'userController',
+			templateUrl: './app/partials/listPartial.html',
+			activetab: 'user'
 		}).otherwise({ redirectTo: '/'});
 });
