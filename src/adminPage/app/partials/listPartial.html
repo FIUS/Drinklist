@@ -13,7 +13,7 @@
 		</div>
 		<div class="row">
 			<div class="col-12" data-ng-if="ctabs.length > 0">
-				<div id="accordion" role="tablist" aria-multiselectable="true">
+				<div id="accordion" role="tablist" aria-multiselectable="false">
 					<div class="card">
 						<div class="card-header bg-dark" role="tab" id="header">
 							<div class="nav">
@@ -62,7 +62,7 @@
 									</div>
 									<button
 										type="submit"
-										class="btn btn-inverse btn-block"
+										class="btn btn-warning btn-block"
 										data-ng-click="ctab.submit(ctab.data)">
 										Submit
 									</button>

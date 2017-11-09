@@ -47,6 +47,58 @@ app.controller('historyController', function($scope, $http, $window) {
 			submit: function(data) {
 				alert(JSON.stringify(data));
 			}
+		},
+		{
+			name: 'mod',
+			icon: 'fa-cog',
+			displayname: 'Modify',
+			data: {},
+			fields: [
+				{
+					name: 'id',
+					displayname: 'ID:',
+					placeholder: '',
+					disabled: true,
+				},
+				{
+					name: 'user',
+					displayname: 'User:',
+					placeholder: 'mustermx',
+					disabled: false,
+				},
+				{
+					name: 'reason',
+					displayname: 'Reason:',
+					placeholder: 'Bar Einzahlung',
+					disabled: false,
+				},
+				{
+					name: 'amount',
+					displayname: 'Amount:',
+					placeholder: '1000 [to add 10€ to a Account] / -254 [to remove 2,54€ from a account]',
+					disabled: false,
+				}
+			],
+			submit: function(data) {
+				alert(JSON.stringify(data));
+			}
+		},
+		{
+			name: 'remove',
+			icon: 'fa-minus',
+			displayname: 'Remove',
+			data: {},
+			fields: [
+				{
+					name: 'id',
+					displayname: 'ID:',
+					placeholder: '',
+					disabled: false,
+				}
+			],
+			submit: function(data) {
+				alert(JSON.stringify(data));
+			}
 		}
 	];
 
