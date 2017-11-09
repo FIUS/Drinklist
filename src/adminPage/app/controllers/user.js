@@ -85,6 +85,5 @@ app.controller('userController', function($scope, $http, $window) {
 
 	$scope.apiGet('/users').then(function(response) {
 		$scope.dataSet = response.data;
-		alert(JSON.stringify(response.data))
 	});
 });
