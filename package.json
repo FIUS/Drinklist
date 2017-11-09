@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/spethso/Drinklist#readme",
   "dependencies": {
+    "angular": "^1.6.6",
+    "angular-route": "^1.6.6",
     "body-parser": "^1.17.2",
     "bootstrap-beta": "^4.0.0-beta",
     "express": "^4.15.3",
