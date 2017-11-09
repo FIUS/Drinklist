@@ -128,8 +128,11 @@ function deselectUser() {
 }
 
 function logout() {
+	$.ajax({
+		type: 'POST',
+		url: API + './logout?token=' + localStorage.getItem('token')
+	});
 	localStorage.removeItem('token');
-	// TODO invalidate token
 	location.reload();
 }
 

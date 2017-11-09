@@ -24,7 +24,10 @@ function authService($window, $http) {
 	};
 
 	this.logout = function() {
-		//FIXME code logout
+		$http({
+			method: 'POST',
+			url: api + '/logout?token=' + this.password
+		});
 		this.isLoggedIn = false;
 		$window.location.reload();
 	};
