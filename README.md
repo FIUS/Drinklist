@@ -6,8 +6,8 @@ The Drinklist is essentially a digital tally sheet which is intended for trackin
 > This was designed and buid for the [FIUS](https://fius.informatik.uni-stuttgart.de) by its members.
 
 ## Interfaces
-| Name      | Port | Description |
-|-----------|------|-------------|
-| API       | 8080 | This is the api used to store and manage all informations |
-| user page | 8081 | This is the page accessible for the users to mark there 'expenses' |
-|           |      |             |
+| Name       | Port | Description                                                                                  |
+|------------|------|----------------------------------------------------------------------------------------------|
+| API        | 8080 | This is the api used to store and manage all informations                                    |
+| user page  | 8081 | This is the page accessible for the users to mark there 'expenses'                           |
+| admin page | 8082 | This is the page used by the administrators to add and track beverages and view the accounts |
