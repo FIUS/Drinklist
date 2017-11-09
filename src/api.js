@@ -244,7 +244,11 @@ api.get('/users', function (req, res) {
 		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
 	}
-	res.status(200).end(JSON.stringify(users.keys()));
+	if (!tokens.get(token).root) {
+		res.status(200).end(JSON.stringify(users.keys()));
+	} else {
+		res.status(200).end(JSON.stringify(users.values()));
+	}
 });
 
 api.get('/users/:userId', function (req, res) {
