@@ -71,7 +71,10 @@ api.post('/login', function (req, res) {
 		if (isAuthorized) {
 			let token = {
 				token: uuidv4(),
-				root: root
+				root: root,
+				useragent: req.header('user-agent'),
+				referrer: req.header('referrer'),
+				userip: req.header('x-forwarded-for') || req.connection.remoteAddress // Get IP - allow for proxy
 			};
 			console.log('[API] [ OK ] [login] login with token ' + token.token);
 			tokens.set(token.token, token);
@@ -81,6 +84,19 @@ api.post('/login', function (req, res) {
 			res.sendStatus(403);
 		}
 	}
+});
+
+api.get('/token', function (req, res) {
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		console.log('[API] [WARN] Wrong token' + token);
+		res.status(403).end('Forbidden');
+	}
+	if (!tokens.get(token).root) {
+		res.status(401).end('Unauthorized');
+	}
+	
+	res.status(200).end(JSON.stringify(tokens.values()));
 });
 
 api.post('/orders/', function (req, res) {
