@@ -5,6 +5,20 @@ The Drinklist is essentially a digital tally sheet which is intended for trackin
 
 > This was designed and buid for the [FIUS](https://fius.informatik.uni-stuttgart.de) by its members.
 
+## Install
+
+First install all dependencies with:
+```Bash
+npm install
+```
+
+Then start the node js server with:
+```Bash
+npm start
+```
+
+Lastly navigate to the [Admin Page](http://localhost:8082) or the [User Page](http://localhost:8081) and start using the system.
+
 ## Interfaces
 | Name       | Port | Description                                                                                  |
 |------------|------|----------------------------------------------------------------------------------------------|
