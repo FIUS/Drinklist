@@ -171,6 +171,39 @@ api.get('/orders/:userId', function (req, res) {
 	}
 });
 
+api.delete('/orders/:orderId', function (req, res) {
+	let orderId = req.params.orderId;
+	let token = req.header('X-Auth-Token');
+	if (!tokens.has(token)) {
+		console.log('[API] [WARN] Wrong token' + token);
+		res.status(403).end('Forbidden');
+	}
+	console.log(tokens.get(token));
+	if (!tokens.get(token).root) {
+		res.status(401).end('Unauthorized');
+	}
+	if (orderId != undefined && orderId != '') {
+		let deleted = false;
+		let history = {};
+		for(let i = 0; i < histories.length; i++) {
+			history = histories[i];
+			if (history.id == orderId) { // TODO check time
+				users.get(history.user).balance -= history.amount;
+				histories.splice(i,1);
+				deleted = true;
+				break;
+			}
+		}
+		if (deleted) {
+			res.sendStatus(200);
+		} else {
+			res.sendStatus(400);
+		}
+	} else {
+		res.sendStatus(400);
+	}
+});
+
 api.get('/beverages', function (req, res) {
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
@@ -342,7 +375,7 @@ api.patch('/users/:userId', function (req, res) {
 });
 
 api.post('/logout', function (req, res) {
-	let token = req.query.token;
+	let token = req.params.token;
 	if (token != undefined) {
 		tokens.remove(token);
 	}
