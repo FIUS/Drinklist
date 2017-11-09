@@ -98,6 +98,13 @@ function passwordKeyUp(event) {
 		getToken(_('#password').val(), function(data) {
 			if (data.token !== undefined) {
 				localStorage.setItem('token', data.token);
+				if (data.root) {
+					_('#btnadmin').show();
+					_('#spnavbtn').addClass('btn-group');
+				} else {
+					_('#btnadmin').hide();
+					_('#spnavbtn').removeClass('btn-group');
+				}
 				updateUserList();
 				updateBeveageList();
 				deselectUser();
@@ -128,7 +135,7 @@ function logout() {
 
 function selectPage() {
 	if (!localStorage.getItem('token')) {
-		_('#btnlogout').hide();
+		_('#spnavbtn').hide();
 		_('#header0').show();
 		_('#header1').hide();
 		_('#header2').hide();
@@ -138,7 +145,7 @@ function selectPage() {
 		_('#footer1').hide();
 		_('#footer2').hide();
 	} else if (!localStorage.getItem('user')) {
-		_('#btnlogout').show();
+		_('#spnavbtn').show();
 		_('#header0').hide();
 		_('#header1').show();
 		_('#header2').hide();
@@ -148,7 +155,7 @@ function selectPage() {
 		_('#footer1').show();
 		_('#footer2').hide();
 	} else {
-		_('#btnlogout').show();
+		_('#spnavbtn').show();
 		_('#header0').hide();
 		_('#header1').hide();
 		_('#header2').show();

@@ -15,13 +15,22 @@
 	<body>
 		<!-- Logout and Language Select -->
 		<nav class="navbar fixed-top justify-content-between">
-			<button
-				id="btnlogout"
-				type="button"
-				class="btn btn-outline-danger"
-				onclick="logout();">
-				<i class="fa fa-sign-out fa-rotate-180" aria-hidden="true"></i>
-			</button>
+			<div id="spnavbtn">
+				<button
+					id="btnlogout"
+					type="button"
+					class="btn btn-outline-danger"
+					onclick="logout();">
+					<i class="fa fa-sign-out fa-rotate-180" aria-hidden="true"></i>
+				</button>
+				<a
+					id='btnadmin'
+					role="button"
+					class="btn btn-outline-danger"
+					href="http://localhost:8082/">
+					<i class="fa fa-cogs" aria-hidden="true"></i>
+				</a>
+			</div>
 			<p></p>
 			<form class="navbar-form pull-right">
 				<select id="langselect" class="form-control"></select>
