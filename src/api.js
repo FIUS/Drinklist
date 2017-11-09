@@ -342,7 +342,7 @@ api.patch('/users/:userId', function (req, res) {
 });
 
 api.post('/logout', function (req, res) {
-	let token = req.params.token;
+	let token = req.query.token;
 	if (token != undefined) {
 		tokens.remove(token);
 	}
