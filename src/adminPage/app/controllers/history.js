@@ -7,7 +7,7 @@ app.controller('historyController', function($scope, $http, $window) {
 	$scope.title = "History Overview";
 	$scope.icon = "fa-history";
 	
-	$scope.searchableGlobal = true;
+	$scope.searchableGlobal = false;
 	$scope.searchableLocal = true;
 	$scope.enumerate = true;
 
@@ -27,11 +27,26 @@ app.controller('historyController', function($scope, $http, $window) {
 			fields: [
 				{
 					name: 'user',
-					displayname: 'User',
+					displayname: 'User:',
 					placeholder: 'mustermx',
 					disabled: false,
+				},
+				{
+					name: 'reason',
+					displayname: 'Reason:',
+					placeholder: 'Bar Einzahlung',
+					disabled: false,
+				},
+				{
+					name: 'amount',
+					displayname: 'Amount:',
+					placeholder: '1000 [to add 10€ to a Account] / -254 [to remove 2,54€ from a account]',
+					disabled: false,
 				}
-			]
+			],
+			submit: function(data) {
+				alert(JSON.stringify(data));
+			}
 		}
 	];
 
