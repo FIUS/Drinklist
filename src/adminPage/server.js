@@ -40,7 +40,7 @@ app.get('/bootstrap/css', function (req, res) {
 
 app.get('/bootstrap/js', function (req, res) {
 	console.log('[adminPage] [load] [lib] bootstrap/js');
-	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/js/bootstrap.min.js');
+	res.status(200).sendFile(dirname + '/node_modules/bootstrap/dist/js/bootstrap.min.js');
 });
 
 app.get('/font-awesome/css/css', function (req, res) {

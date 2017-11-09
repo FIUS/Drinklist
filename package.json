@@ -22,6 +22,7 @@
     "angular": "^1.6.6",
     "angular-route": "^1.6.6",
     "body-parser": "^1.17.2",
+    "bootstrap": "^4.0.0-alpha.6",
     "bootstrap-beta": "^4.0.0-beta",
     "express": "^4.15.3",
     "font-awesome": "^4.7.0",
