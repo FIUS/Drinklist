@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(function (req, res, next) {
-	
+
 	// Website you wish to allow to connect
 	res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -52,6 +52,11 @@ function contains(array, item) {
 		}
 	}, this);
 	return bool;
+}
+
+// Actual wrong method
+function isTimePassed(date) {
+	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()))
 }
 
 api.post('/login', function (req, res) {
@@ -95,7 +100,7 @@ api.get('/token', function (req, res) {
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
 	}
-	
+
 	res.status(200).end(JSON.stringify(tokens.values()));
 });
 
@@ -185,11 +190,12 @@ api.delete('/orders/:orderId', function (req, res) {
 	if (orderId != undefined && orderId != '') {
 		let deleted = false;
 		let history = {};
-		for(let i = 0; i < histories.length; i++) {
+		for (let i = 0; i < histories.length; i++) {
 			history = histories[i];
-			if (history.id == orderId) { // TODO check time
+			console.log('Is time passed? ' + isTimePassed(history.timestamp));
+			if (history.id == orderId && !isTimePassed(history.timestamp)) {
 				users.get(history.user).balance -= history.amount;
-				histories.splice(i,1);
+				histories.splice(i, 1);
 				deleted = true;
 				break;
 			}
@@ -224,7 +230,7 @@ api.post('/beverages', function (req, res) {
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
 	}
-	if (bev!= undefined && price != undefined && bev != '') {
+	if (bev != undefined && price != undefined && bev != '') {
 		let beverage = {
 			name: bev,
 			price: price
@@ -246,8 +252,8 @@ api.patch('/beverages', function (req, res) {
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
 	}
-	if (bev!= undefined && price != undefined && bev != '') {
-		for(let i = 0; i < beverages.length; i++) {
+	if (bev != undefined && price != undefined && bev != '') {
+		for (let i = 0; i < beverages.length; i++) {
 			let beverage = beverages[i];
 			console.log(beverage);
 			if (beverage.name == bev) {
@@ -271,9 +277,9 @@ api.delete('/beverages', function (req, res) {
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
 	}
-	if (bev!= undefined && bev != '') {
+	if (bev != undefined && bev != '') {
 		let index = 0;
-		for(let i = 0; i < beverages.length; i++) {
+		for (let i = 0; i < beverages.length; i++) {
 			let beverage = beverages[i];
 			if (beverage.name == bev) {
 				index = i;
@@ -358,6 +364,7 @@ api.delete('/users/:userId', function (req, res) {
 api.patch('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
 	let balance = req.query.balance;
+	let reason = req.query.reason;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token' + token);
@@ -366,8 +373,18 @@ api.patch('/users/:userId', function (req, res) {
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
 	}
-	if (userId != undefined && balance != undefined && userId != '' && users.has(userId)) {
-		users.get(userId).balance += new Number(balance);
+	if (userId != undefined && balance != undefined && reason != undefined
+		&& userId != '' && reason != '' && balance != '' && users.has(userId)) {
+		balance = new Number(balance);
+		let history = {
+			id: uuidv4(),
+			user: userId,
+			reason: reason,
+			amount: balance,
+			timestamp: new Date().toUTCString()
+		};
+		histories.push(history);
+		users.get(userId).balance += balance;
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
