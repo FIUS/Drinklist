@@ -23,7 +23,7 @@ function authService($window, $http) {
 		}.bind(this));
 	};
 
-	this.logout = function() {
+	this.logout = function(api) {
 		$http({
 			method: 'POST',
 			url: api + '/logout?token=' + this.password

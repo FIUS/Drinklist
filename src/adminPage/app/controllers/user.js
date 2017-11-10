@@ -12,7 +12,12 @@ app.controller('userController', function($scope, $http, $window) {
 	$scope.enumerate = true;
 
 	$scope.config = {
-		button: false
+		button: true,
+		icon: 'fa-trash',
+		click: function(data) {
+			$scope.ctabs[1].data = data;
+			$('#collapseremove').collapse('show');
+		}
 	};
 
 	$scope.ctabs = [
@@ -30,7 +35,7 @@ app.controller('userController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				alert(JSON.stringify(data));
+				$scope.apiPost('/users/' + encodeURI(data.name));
 			}
 		},
 		{
@@ -47,7 +52,7 @@ app.controller('userController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				alert(JSON.stringify(data));
+				$scope.apiDelete('/users/' + encodeURI(data.name));
 			}
 		}
 	];

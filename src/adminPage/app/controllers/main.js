@@ -16,17 +16,34 @@ app.controller('mainController', function($scope, $route, $http, authService) {
 			}
 		});
 	};
-	$scope.apiPost = function(path, data) {
+	$scope.apiPost = function(path, data, callback) {
 		$http.post($scope.api + path, data, {
 			headers: {
 				'X-Auth-Token': $scope.auth.token
 			}
 		}).then(function(response) {
-			if (response.data.error) {
-				alert('Error Occured');
+			if (callback) {
+				callback(response);
 			}
-			//alert(JSON.stringify(response.data));
 			$route.reload();
+		}, function(response) {
+			auth.logout($scope.api);
 		});
 	};
+	$scope.apiDelete = function(path, callback) {
+		$http({
+			method: 'DELETE',
+			url: $scope.api + path,
+			headers: {
+				'X-Auth-Token': $scope.auth.token
+			}
+		}).then( function(response) {
+			if (callback) {
+				callback(response);
+			}
+			$route.reload();
+		}, function(response) {
+			auth.logout($scope.api);
+		});
+	}
 });

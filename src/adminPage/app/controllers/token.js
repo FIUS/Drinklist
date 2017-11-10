@@ -13,8 +13,10 @@ app.controller('tokenController', function($scope, $http, $window) {
 
 	$scope.config = {
 		button: true,
-		icon: 'fa-minus',
-		click: function(entry) {
+		icon: 'fa-trash',
+		click: function(data) {
+			$scope.ctabs[0].data = data;
+			$('#collapseremove').collapse('show');
 		}
 	};
 
@@ -33,7 +35,12 @@ app.controller('tokenController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				alert(JSON.stringify(data));
+				$http({
+					method: 'POST',
+					url: $scope.api + '/logout?token=' + data.token
+				}).then(function(response) {
+					alert('Invalidated Token: ' + data.token);
+				}.bind(this));
 			}
 		}
 	];
