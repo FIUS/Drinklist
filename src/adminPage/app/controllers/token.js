@@ -11,14 +11,15 @@ app.controller('tokenController', function($scope, $http, $window) {
 	$scope.searchableLocal = true;
 	$scope.enumerate = true;
 
-	$scope.config = {
-		button: true,
-		icon: 'fa-trash',
-		click: function(data) {
-			$scope.ctabs[0].data = data;
-			$('#collapseremove').collapse('show');
+	$scope.config = [
+		{
+			icon: 'fa-trash',
+			click: function(data) {
+				$scope.ctabs[0].data = data;
+				$('#collapseremove').collapse('show');
+			}
 		}
-	};
+	];
 
 	$scope.ctabs = [
 		{

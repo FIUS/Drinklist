@@ -101,14 +101,15 @@
 									data-ng-repeat="collumn in collumnSet">
 									{{ collumn.display(data[collumn.name]) }}
 								</td>
-								<td data-ng-if="config.button" style="padding: 4px; vertical-align: middle;">
+								<td data-ng-if="config.length > 0" style="padding: 4px; vertical-align: middle;">
 									<button
+										data-ng-repeat="singleConfig in config"
 										type="button"
 										class="btn btn-warning btn-sm"
 										aria-label="Left Align"
-										data-ng-click="config.click(data)"
+										data-ng-click="singleConfig.click(data)"
 										style="padding: 2px 4px;">
-										<i class="fa fa-fw" data-ng-class="config.icon" aria-hidden="true"></i>
+										<i class="fa fa-fw" data-ng-class="singleConfig.icon" aria-hidden="true"></i>
 									</button>
 								</td>
 							</tr>

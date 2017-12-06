@@ -6,7 +6,7 @@
 */
 
 const api = require('./api.js');
-const userPage = require('./userPage.js');
+const userPage = require('./userPage/server.js');
 const adminPage = require('./adminPage/server.js');
 
 var apiServer = api.listen(8080, function () {

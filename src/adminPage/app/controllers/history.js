@@ -11,12 +11,13 @@ app.controller('historyController', function($scope, $http, $window) {
 	$scope.searchableLocal = true;
 	$scope.enumerate = true;
 
-	$scope.config = {
-		button: true,
-		icon: 'fa-cog',
-		click: function(entry) {
+	$scope.config = [
+		{
+			icon: 'fa-cog',
+			click: function(entry) {
+			}
 		}
-	};
+	];
 
 	$scope.ctabs = [
 		{

@@ -45,5 +45,5 @@ app.controller('mainController', function($scope, $route, $http, authService) {
 		}, function(response) {
 			auth.logout($scope.api);
 		});
-	}
+	};
 });

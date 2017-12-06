@@ -11,12 +11,18 @@ app.controller('beverageController', function($scope, $http, $window) {
 	$scope.searchableLocal = true;
 	$scope.enumerate = true;
 
-	$scope.config = {
-		button: true,
-		icon: 'fa-cog',
-		click: function(entry) {
+	$scope.config = [
+		{
+			icon: 'fa-cog',
+			click: function(entry) {
+			}
+		},
+		{
+			icon: 'fa-minus',
+			click: function(entry) {
+			}
 		}
-	};
+	];
 
 	$scope.ctabs = [
 		{

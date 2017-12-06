@@ -10,7 +10,7 @@ const app = module.exports = express();
 const fs = require('fs');
 
 const dirname = fs.realpathSync('./');
-var localesArray = JSON.parse(fs.readFileSync(__dirname + '/data/localesArray.json', 'utf8'));
+var localesArray = JSON.parse(fs.readFileSync(__dirname + '/locales.json', 'utf8'));
 
 
 app.get('/', function (req, res) {
