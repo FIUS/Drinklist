@@ -120,6 +120,8 @@ api.post('/orders/', function (req, res) {
 		for (i = 0; i < beverages.length; i++) {
 			if (beverages[i].name === beverage) {
 				cost = beverages[i].price;
+				beverages[i].count--;
+				fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
 				break;
 			}
 		}
@@ -132,7 +134,7 @@ api.post('/orders/', function (req, res) {
 		};
 		users.get(user).balance -= cost;
 		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
-		histories.push(history);
+		histories.push(history); //TODO SQL
 		res.sendStatus(200);
 	}
 });
@@ -167,6 +169,7 @@ api.get('/orders/:userId', function (req, res) {
 			limit = 1000;
 		}
 		let userHistories = [];
+		// TODO SQL
 		histories.forEach(function (history) {
 			if (history.user === userId) {
 				userHistories.push(history);
@@ -191,12 +194,21 @@ api.delete('/orders/:orderId', function (req, res) {
 	if (orderId != undefined && orderId != '') {
 		let deleted = false;
 		let history = {};
+		// TODO SQL
 		for (let i = 0; i < histories.length; i++) {
 			history = histories[i];
 			console.log('Is time passed? ' + isTimePassed(history.timestamp));
 			if (history.id == orderId && !isTimePassed(history.timestamp)) {
 				users.get(history.user).balance -= history.amount;
 				fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
+				let reason = history.reason;
+				for(let k = 0; k < beverages.length; k++) {
+					if (beverages[k].name == reason) {
+						beverages[k].count++;
+						fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
+						break;
+					}
+				}
 				histories.splice(i, 1);
 				deleted = true;
 				break;
@@ -235,7 +247,8 @@ api.post('/beverages', function (req, res) {
 	if (bev != undefined && price != undefined && bev != '') {
 		let beverage = {
 			name: bev,
-			price: price
+			price: price,
+			count: 0
 		};
 		beverages.push(beverage);
 		fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
@@ -246,6 +259,7 @@ api.post('/beverages', function (req, res) {
 api.patch('/beverages', function (req, res) {
 	let bev = req.query.beverage;
 	let price = req.query.price;
+	let count = req.query.count;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token' + token);
@@ -255,12 +269,17 @@ api.patch('/beverages', function (req, res) {
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
 	}
-	if (bev != undefined && price != undefined && bev != '') {
+	if (bev != undefined && bev != '') {
 		for (let i = 0; i < beverages.length; i++) {
 			let beverage = beverages[i];
 			console.log(beverage);
 			if (beverage.name == bev) {
-				beverage.price = price;
+				if (price != undefined) {
+					beverage.price = price;
+				}
+				if (count != undefined) {
+					beverage.count += count;
+				}
 				fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
 				break;
 			}
