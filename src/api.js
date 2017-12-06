@@ -96,9 +96,11 @@ api.get('/token', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 
 	res.status(200).end(JSON.stringify(tokens.values()));
@@ -111,17 +113,19 @@ api.post('/orders/', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (user == undefined || beverage == undefined ||
 		user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
 		res.status(400).end('Fail to order the beverage for the user');
+		return;
 	} else {
 		let cost = 0;
 		for (i = 0; i < beverages.length; i++) {
 			if (beverages[i].name === beverage) {
 				cost = beverages[i].price;
 				beverages[i].count--;
-				fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
+				fs.writeFile(__dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 				break;
 			}
 		}
@@ -133,7 +137,7 @@ api.post('/orders/', function (req, res) {
 			timestamp: new Date().toUTCString()
 		};
 		users.get(user).balance -= cost;
-		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
 		histories.push(history); //TODO SQL
 		res.sendStatus(200);
 	}
@@ -146,6 +150,7 @@ api.get('/orders', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (limit === undefined) {
 		limit = 1000;
@@ -161,9 +166,11 @@ api.get('/orders/:userId', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
 		res.status(404).end('User not found');
+		return;
 	} else {
 		if (limit === undefined) {
 			limit = 1000;
@@ -186,10 +193,12 @@ api.delete('/orders/:orderId', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	console.log(tokens.get(token));
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 	if (orderId != undefined && orderId != '') {
 		let deleted = false;
@@ -200,12 +209,12 @@ api.delete('/orders/:orderId', function (req, res) {
 			console.log('Is time passed? ' + isTimePassed(history.timestamp));
 			if (history.id == orderId && !isTimePassed(history.timestamp)) {
 				users.get(history.user).balance -= history.amount;
-				fs.writeFile(dirname + '/data/users.json', users, 'utf8');
+				fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
 				let reason = history.reason;
 				for(let k = 0; k < beverages.length; k++) {
 					if (beverages[k].name == reason) {
 						beverages[k].count++;
-						fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
+						fs.writeFile(__dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 						break;
 					}
 				}
@@ -229,6 +238,7 @@ api.get('/beverages', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	res.status(200).end(JSON.stringify(beverages));
 });
@@ -240,9 +250,11 @@ api.post('/beverages', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 	if (bev != undefined && price != undefined && bev != '') {
 		let beverage = {
@@ -251,7 +263,7 @@ api.post('/beverages', function (req, res) {
 			count: 0
 		};
 		beverages.push(beverage);
-		fs.writeFile(dirname + '/data/beverages.json', beverages, 'utf8');
+		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 		res.sendStatus(200);
 	}
 });
@@ -264,10 +276,12 @@ api.patch('/beverages', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	console.log(tokens.get(token));
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 	if (bev != undefined && bev != '') {
 		for (let i = 0; i < beverages.length; i++) {
@@ -280,7 +294,7 @@ api.patch('/beverages', function (req, res) {
 				if (count != undefined) {
 					beverage.count += count;
 				}
-				fs.writeFile(dirname + '/data/beverages.json', beverages, 'utf8');
+				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 				break;
 			}
 		}
@@ -296,9 +310,11 @@ api.delete('/beverages', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 	if (bev != undefined && bev != '') {
 		let index = 0;
@@ -310,7 +326,7 @@ api.delete('/beverages', function (req, res) {
 			}
 		}
 		beverages.splice(index, 1);
-		fs.writeFile(dirname + '/data/beverages.json', beverages, 'utf8');
+		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -322,6 +338,7 @@ api.get('/users', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (!tokens.get(token).root) {
 		res.status(200).end(JSON.stringify(users.keys()));
@@ -336,6 +353,7 @@ api.get('/users/:userId', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
 		res.status(404).end('User not found');
@@ -350,9 +368,11 @@ api.post('/users/:userId', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 	if (userId != undefined && userId != '') {
 		let user = {
@@ -360,7 +380,7 @@ api.post('/users/:userId', function (req, res) {
 			balance: 0
 		};
 		users.set(userId, user);
-		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -373,14 +393,16 @@ api.delete('/users/:userId', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 	if (userId != undefined && userId != '' && users.has(userId)) {
 		let user = users.get(userId);
 		users.remove(userId);
-		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
 		res.status(200).send(JSON.stringify(user));
 	} else {
 		res.sendStatus(400);
@@ -395,9 +417,11 @@ api.patch('/users/:userId', function (req, res) {
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token' + token);
 		res.status(403).end('Forbidden');
+		return;
 	}
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
+		return;
 	}
 	if (userId != undefined && amount != undefined && reason != undefined
 		&& userId != '' && reason != '' && amount != '' && users.has(userId)) {
@@ -411,7 +435,7 @@ api.patch('/users/:userId', function (req, res) {
 		};
 		histories.push(history);
 		users.get(userId).balance += amount;
-		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
