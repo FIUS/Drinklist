@@ -1,6 +1,8 @@
 var fs = require('fs');
 var readline = require('readline');
+var sqlite3 = require('sqlite3');
 
+var db = new sqlite3.Database(__dirname + '/data/history.db');
 var data = [
 	{
 		"password": "",
@@ -11,6 +13,12 @@ var data = [
 		"root": true
 	}
 ];
+
+db.serialize(function() {
+	db.run('DROP TABLE IF EXISTS History;');
+	db.run('CREATE TABLE History (id varchar, user varchar, reason varchar, amount integer, timestamp varchar);');
+});
+db.close();
 
 let readUser = readline.createInterface(process.stdin, process.stdout);
 readUser.setPrompt('User Password> ');

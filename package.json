@@ -30,6 +30,7 @@
     "hashmap": "^2.1.0",
     "i18n": "^0.8.3",
     "jquery": "^3.2.1",
+    "sqlite3": "^3.1.13",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
