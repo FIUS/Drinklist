@@ -4,11 +4,12 @@
 * Author: Sandro Speth
 * Author: Tobias Wältken
 */
-
+const sqlite3 = require('sqlite3');
 const express = require('express');
 const api = module.exports = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
+
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(function (req, res, next) {
 
@@ -28,10 +29,13 @@ api.use(function (req, res, next) {
 	// Pass to next layer of middleware
 	next();
 });
+
 const HashMap = require('hashmap');
 const uuidv4 = require('uuid/v4');
 const dirname = fs.realpathSync('./');
 
+// Database
+var db = new sqlite3.Database(dirname + '/data/history.db');
 // Arrays
 var beverages = JSON.parse(fs.readFileSync(dirname + '/data/beverages.json', 'utf8'));
 var histories = JSON.parse(fs.readFileSync(dirname + '/data/histories.json', 'utf8'));
@@ -175,15 +179,11 @@ api.get('/orders/:userId', function (req, res) {
 		if (limit === undefined) {
 			limit = 1000;
 		}
-		let userHistories = [];
-		// TODO SQL
-		histories.forEach(function (history) {
-			if (history.user === userId) {
-				userHistories.push(history);
-			}
+
+		db.each("SELECT id, user, reason, amount, timestamp FROM History WHERE user = '" + userId + "' LIMIT " + limit, function(err, row) {
+			console.log(JSON.stringify(row));
 		});
-		let maxLength = Math.min(limit, userHistories.length);
-		res.status(200).end(JSON.stringify(userHistories.reverse().slice(0, maxLength)));
+		res.status(200).end(JSON.stringify({}));
 	}
 });
 
