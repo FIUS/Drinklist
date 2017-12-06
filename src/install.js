@@ -2,8 +2,11 @@ var fs = require('fs');
 var readline = require('readline');
 var sqlite3 = require('sqlite3');
 
-var db = new sqlite3.Database(__dirname + '/data/history.db');
-var data = [
+const HashMap = require('hashmap');
+const dirname = fs.realpathSync('./');
+
+var db = new sqlite3.Database(dirname + '/data/history.db');
+var authData = [
 	{
 		"password": "",
 		"root": false
@@ -20,30 +23,56 @@ db.serialize(function() {
 });
 db.close();
 
+writeFile('/data/beverages.json', [
+	{
+		name: 'Sample Juice',
+		price: 100,
+		count: 10
+	},
+	{
+		name: 'Supreme Sample Juice',
+		price: 150,
+		count: 5
+	},
+]);
+
+let map = new HashMap();
+map.set('Max Mustermann', {
+	name: "Max Mustermann",
+	balance: 0
+});
+map.set('Maria Mustermann', {
+	name: "Maria Mustermann",
+	balance: 0
+});
+writeFile('/data/users.json', map);
+
 let readUser = readline.createInterface(process.stdin, process.stdout);
 readUser.setPrompt('User Password> ');
-readUser.prompt();
 readUser.on('line', function(line) {
-	data[0].password = line
+	authData[0].password = line
 	readUser.close();
 }).on('close',function(){
 	let readAdmin = readline.createInterface(process.stdin, process.stdout);
 	readAdmin.setPrompt('Admin Password> ');
 	readAdmin.prompt();
 	readAdmin.on('line', function(line) {
-		data[1].password = line
+		authData[1].password = line
 		readAdmin.close();
 	}).on('close',function(){
-		writeFile();
+		writeFile('/data/auth.json', authData);
 	});
 });
 
-function writeFile() {
-	fs.writeFile(__dirname + '/data/auth.json', JSON.stringify(data), function(err) {
+readUser.prompt();
+
+
+function writeFile(path, data) {
+	fs.writeFile(dirname + path, JSON.stringify(data), function(err) {
 		if(err) {
 			return console.log(err);
 		}
 	
-		console.log("The ./data/auth.json file was created!");
+		console.log("The " + path + " file was created!");
 	});
 }

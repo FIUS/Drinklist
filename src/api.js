@@ -33,11 +33,11 @@ const uuidv4 = require('uuid/v4');
 const dirname = fs.realpathSync('./');
 
 // Arrays
-var beverages = JSON.parse(fs.readFileSync(__dirname + '/data/beverages.json', 'utf8'));
-var histories = JSON.parse(fs.readFileSync(__dirname + '/data/histories.json', 'utf8'));
-var auth = JSON.parse(fs.readFileSync(__dirname + '/data/auth.json', 'utf8'));
+var beverages = JSON.parse(fs.readFileSync(dirname + '/data/beverages.json', 'utf8'));
+var histories = JSON.parse(fs.readFileSync(dirname + '/data/histories.json', 'utf8'));
+var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
-var users = new HashMap(JSON.parse(fs.readFileSync(__dirname + '/data/users.json', 'utf8')));
+var users = new HashMap(JSON.parse(fs.readFileSync(dirname + '/data/users.json', 'utf8')));
 var tokens = new HashMap();
 
 function contains(array, item) {
@@ -94,7 +94,7 @@ api.post('/login', function (req, res) {
 api.get('/token', function (req, res) {
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (!tokens.get(token).root) {
@@ -109,7 +109,7 @@ api.post('/orders/', function (req, res) {
 	let beverage = req.query.beverage;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (user == undefined || beverage == undefined ||
@@ -131,7 +131,7 @@ api.post('/orders/', function (req, res) {
 			timestamp: new Date().toUTCString()
 		};
 		users.get(user).balance -= cost;
-		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
 		histories.push(history);
 		res.sendStatus(200);
 	}
@@ -142,7 +142,7 @@ api.get('/orders', function (req, res) {
 	let limit = req.query.limit;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (limit === undefined) {
@@ -157,7 +157,7 @@ api.get('/orders/:userId', function (req, res) {
 	let limit = req.query.limit;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
@@ -181,7 +181,7 @@ api.delete('/orders/:orderId', function (req, res) {
 	let orderId = req.params.orderId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	console.log(tokens.get(token));
@@ -196,7 +196,7 @@ api.delete('/orders/:orderId', function (req, res) {
 			console.log('Is time passed? ' + isTimePassed(history.timestamp));
 			if (history.id == orderId && !isTimePassed(history.timestamp)) {
 				users.get(history.user).balance -= history.amount;
-				fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
+				fs.writeFile(dirname + '/data/users.json', users, 'utf8');
 				histories.splice(i, 1);
 				deleted = true;
 				break;
@@ -215,7 +215,7 @@ api.delete('/orders/:orderId', function (req, res) {
 api.get('/beverages', function (req, res) {
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	res.status(200).end(JSON.stringify(beverages));
@@ -226,7 +226,7 @@ api.post('/beverages', function (req, res) {
 	let price = req.query.price;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (!tokens.get(token).root) {
@@ -238,7 +238,7 @@ api.post('/beverages', function (req, res) {
 			price: price
 		};
 		beverages.push(beverage);
-		fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
+		fs.writeFile(dirname + '/data/beverages.json', beverages, 'utf8');
 		res.sendStatus(200);
 	}
 });
@@ -248,7 +248,7 @@ api.patch('/beverages', function (req, res) {
 	let price = req.query.price;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	console.log(tokens.get(token));
@@ -261,7 +261,7 @@ api.patch('/beverages', function (req, res) {
 			console.log(beverage);
 			if (beverage.name == bev) {
 				beverage.price = price;
-				fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
+				fs.writeFile(dirname + '/data/beverages.json', beverages, 'utf8');
 				break;
 			}
 		}
@@ -275,7 +275,7 @@ api.delete('/beverages', function (req, res) {
 	let bev = req.query.beverage;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (!tokens.get(token).root) {
@@ -291,7 +291,7 @@ api.delete('/beverages', function (req, res) {
 			}
 		}
 		beverages.splice(index, 1);
-		fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
+		fs.writeFile(dirname + '/data/beverages.json', beverages, 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -301,7 +301,7 @@ api.delete('/beverages', function (req, res) {
 api.get('/users', function (req, res) {
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (!tokens.get(token).root) {
@@ -315,7 +315,7 @@ api.get('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
@@ -329,7 +329,7 @@ api.post('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
+		console.log('[API] [WARN] Wrong token ' + token);
 		res.status(403).end('Forbidden');
 	}
 	if (!tokens.get(token).root) {
@@ -341,7 +341,7 @@ api.post('/users/:userId', function (req, res) {
 			balance: 0
 		};
 		users.set(userId, user);
-		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -361,7 +361,7 @@ api.delete('/users/:userId', function (req, res) {
 	if (userId != undefined && userId != '' && users.has(userId)) {
 		let user = users.get(userId);
 		users.remove(userId);
-		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
 		res.status(200).send(JSON.stringify(user));
 	} else {
 		res.sendStatus(400);
@@ -392,7 +392,7 @@ api.patch('/users/:userId', function (req, res) {
 		};
 		histories.push(history);
 		users.get(userId).balance += amount;
-		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
+		fs.writeFile(dirname + '/data/users.json', users, 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
