@@ -159,8 +159,12 @@ api.get('/orders', function (req, res) {
 	if (limit === undefined) {
 		limit = 1000;
 	}
-	let maxLength = Math.min(limit, histories.length);
-	res.status(200).end(JSON.stringify(histories.slice().reverse().slice(0, maxLength)));
+	let histories = [];
+	db.each("SELECT id, user, reason, amount, timestamp FROM History LIMIT " + limit, function(err, row) {
+		histories.push(row);
+	}, function() {
+		res.status(200).end(JSON.stringify(histories));
+	});
 });
 
 api.get('/orders/:userId', function (req, res) {
@@ -179,11 +183,12 @@ api.get('/orders/:userId', function (req, res) {
 		if (limit === undefined) {
 			limit = 1000;
 		}
-
+		let userHistories = [];
 		db.each("SELECT id, user, reason, amount, timestamp FROM History WHERE user = '" + userId + "' LIMIT " + limit, function(err, row) {
-			console.log(JSON.stringify(row));
+			userHistories.push(row);
+		}, function() {
+			res.status(200).end(JSON.stringify(userHistories));
 		});
-		res.status(200).end(JSON.stringify({}));
 	}
 });
 
