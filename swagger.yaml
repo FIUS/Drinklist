@@ -96,19 +96,24 @@ paths:
             $ref: "#/definitions/User"
         404:
           description: "User not found"
-  /histories:
+  /orders:
     get:
       tags:
       - "history"
-      summary: "Get the global history of all users"
+      summary: "Get the global history of all users of an limit of maximum 1000 items"
       produces:
       - "application/json"
+      parameters:
+      - name: "limit"
+        in: "query"
+        type: "integer"
+        format: "int32"
+        description: "Limit of returned histories"
       responses:
         200:
           description: "Successful operation"
           schema:
             $ref: "#/definitions/History"
-  /orders:
     post:
       tags:
       - "order"
@@ -124,9 +129,32 @@ paths:
         description: "The beverage that was chosen"
       responses:
         200:
-          description: OK
+          description: "OK"
         400:
           description: "Fail to order the beverage for the user"
+  /orders/{userId}:
+    get:
+      tags:
+      - "history"
+      summary: "Get the user history of a limit of maximum 1000 items"
+      parameters:
+      - name: "userId"
+        in: "path"
+        type: "string"
+        required: true
+        description: "User ID of users history"
+      - name: "limit"
+        in: "query"
+        type: "integer"
+        format: "int32"
+        description: "Limit of returned histories"
+      responses:
+        200: 
+          description: "OK"
+          schema:
+            $ref: "#/definitions/History"
+        404:
+          description: "User not found"
 definitions:
   LanguagePack:
     type: "object"

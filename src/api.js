@@ -131,6 +131,7 @@ api.post('/orders/', function (req, res) {
 			timestamp: new Date().toUTCString()
 		};
 		users.get(user).balance -= cost;
+		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
 		histories.push(history);
 		res.sendStatus(200);
 	}
@@ -195,6 +196,7 @@ api.delete('/orders/:orderId', function (req, res) {
 			console.log('Is time passed? ' + isTimePassed(history.timestamp));
 			if (history.id == orderId && !isTimePassed(history.timestamp)) {
 				users.get(history.user).balance -= history.amount;
+				fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
 				histories.splice(i, 1);
 				deleted = true;
 				break;
@@ -236,6 +238,7 @@ api.post('/beverages', function (req, res) {
 			price: price
 		};
 		beverages.push(beverage);
+		fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
 		res.sendStatus(200);
 	}
 });
@@ -258,6 +261,7 @@ api.patch('/beverages', function (req, res) {
 			console.log(beverage);
 			if (beverage.name == bev) {
 				beverage.price = price;
+				fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
 				break;
 			}
 		}
@@ -287,6 +291,7 @@ api.delete('/beverages', function (req, res) {
 			}
 		}
 		beverages.splice(index, 1);
+		fs.writeFile(__dirname + '/data/beverages.json', beverages, 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -336,6 +341,7 @@ api.post('/users/:userId', function (req, res) {
 			balance: 0
 		};
 		users.set(userId, user);
+		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -355,6 +361,7 @@ api.delete('/users/:userId', function (req, res) {
 	if (userId != undefined && userId != '' && users.has(userId)) {
 		let user = users.get(userId);
 		users.remove(userId);
+		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
 		res.status(200).send(JSON.stringify(user));
 	} else {
 		res.sendStatus(400);
@@ -363,7 +370,7 @@ api.delete('/users/:userId', function (req, res) {
 
 api.patch('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
-	let balance = req.query.balance;
+	let balance = req.query.amount;
 	let reason = req.query.reason;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
@@ -373,18 +380,19 @@ api.patch('/users/:userId', function (req, res) {
 	if (!tokens.get(token).root) {
 		res.status(401).end('Unauthorized');
 	}
-	if (userId != undefined && balance != undefined && reason != undefined
-		&& userId != '' && reason != '' && balance != '' && users.has(userId)) {
-		balance = new Number(balance);
+	if (userId != undefined && amount != undefined && reason != undefined
+		&& userId != '' && reason != '' && amount != '' && users.has(userId)) {
+		amount = new Number(amount);
 		let history = {
 			id: uuidv4(),
 			user: userId,
 			reason: reason,
-			amount: balance,
+			amount: amount,
 			timestamp: new Date().toUTCString()
 		};
 		histories.push(history);
-		users.get(userId).balance += balance;
+		users.get(userId).balance += amount;
+		fs.writeFile(__dirname + '/data/users.json', users, 'utf8');
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
