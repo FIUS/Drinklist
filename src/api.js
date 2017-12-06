@@ -131,16 +131,14 @@ api.post('/orders/', function (req, res) {
 				break;
 			}
 		}
-		let history = {
-			id: uuidv4(),
-			user: user,
-			reason: beverage,
-			amount: -cost,
-			timestamp: new Date().toUTCString()
-		};
+		
 		users.get(user).balance -= cost;
 		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
-		histories.push(history); //TODO SQL
+		
+		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount, timestamp) VALUES (?, ?, ?, ?, ?);");
+		stmt.run(uuidv4(), user, beverage, -cost, new Date().toUTCString());
+		stmt.finalize();
+		
 		res.sendStatus(200);
 	}
 });
@@ -428,14 +426,11 @@ api.patch('/users/:userId', function (req, res) {
 	if (userId != undefined && amount != undefined && reason != undefined
 		&& userId != '' && reason != '' && amount != '' && users.has(userId)) {
 		amount = new Number(amount);
-		let history = {
-			id: uuidv4(),
-			user: userId,
-			reason: reason,
-			amount: amount,
-			timestamp: new Date().toUTCString()
-		};
-		histories.push(history);
+		
+		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount, timestamp) VALUES (?, ?, ?, ?, ?);");
+		stmt.run(uuidv4(), userId, reason, amount, new Date().toUTCString());
+		stmt.finalize();
+
 		users.get(userId).balance += amount;
 		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
 		res.sendStatus(200);
