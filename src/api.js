@@ -125,7 +125,9 @@ api.post('/orders/', function (req, res) {
 			if (beverages[i].name === beverage) {
 				cost = beverages[i].price;
 				beverages[i].count--;
-				fs.writeFile(__dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
+				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8', function(error) {
+					console.log('[API] [FAIL] can\'t write /data/beverages.json');
+				});
 				break;
 			}
 		}
@@ -214,7 +216,7 @@ api.delete('/orders/:orderId', function (req, res) {
 				for(let k = 0; k < beverages.length; k++) {
 					if (beverages[k].name == reason) {
 						beverages[k].count++;
-						fs.writeFile(__dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
+						fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 						break;
 					}
 				}
