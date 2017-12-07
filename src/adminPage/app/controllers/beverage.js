@@ -100,6 +100,13 @@ app.controller('beverageController', function($scope, $http, $window) {
 			}
 		},
 		{
+			name: "count",
+			displayname: "Currently in Stock:",
+			display: function(data) {
+				return data;
+			}
+		},
+		{
 			name: "price",
 			displayname: "Price",
 			display: function(money) {
