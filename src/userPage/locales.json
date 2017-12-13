@@ -10,5 +10,9 @@
 	{
 		"id": "tr",
 		"name": "Türkçe"
+	},
+	{
+		"id": "klg",
+		"name": "tlhIngan"
 	}
 ]
