@@ -83,9 +83,9 @@ app.controller('userController', function($scope, $http, $window) {
 	};
 	$scope.cellClass = function(entry) {
 		if (entry < 0) {
-			return 'text-danger'
+			return 'text-danger';
 		} else if (entry > 0) {
-			return 'text-success'
+			return 'text-success';
 		}
 	};
 

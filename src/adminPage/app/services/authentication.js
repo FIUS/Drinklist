@@ -26,7 +26,7 @@ function authService($window, $http) {
 	this.logout = function(api) {
 		$http({
 			method: 'POST',
-			url: api + '/logout?token=' + this.password
+			url: api + '/logout?token=' + this.token
 		});
 		this.isLoggedIn = false;
 		$window.location.reload();

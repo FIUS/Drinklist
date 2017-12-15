@@ -75,8 +75,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPatch('/beverages', {
-					beverage: data.name,
+				$scope.apiPatch('/beverages' + encodeURI(data.name), {
 					price: data.price
 				});
 			}
@@ -95,9 +94,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiDelete('/beverages', null, {
-					beverage: data.name
-				});
+				$scope.apiDelete('/beverages/' + encodeURI(data.name));
 			}
 		}
 	];
