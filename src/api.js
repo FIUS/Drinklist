@@ -274,7 +274,7 @@ api.post('/beverages', function (req, res) {
 });
 
 api.patch('/beverages', function (req, res) {
-	let bev = req.query.beverage;
+	let bev = req.params.beverage;
 	let price = req.query.price;
 	let count = req.query.count;
 	let token = req.header('X-Auth-Token');
@@ -310,7 +310,7 @@ api.patch('/beverages', function (req, res) {
 });
 
 api.delete('/beverages', function (req, res) {
-	let bev = req.query.beverage;
+	let bev = req.params.beverage;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
 		console.log('[API] [WARN] Wrong token ' + token);
