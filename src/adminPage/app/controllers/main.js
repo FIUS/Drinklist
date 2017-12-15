@@ -13,11 +13,15 @@ app.controller('mainController', function($scope, $route, $http, authService) {
 		return $http.get($scope.api + path, {
 			headers: {
 				'X-Auth-Token': $scope.auth.token
-			}
+		}
 		});
 	};
-	$scope.apiPost = function(path, data, callback) {
-		$http.post($scope.api + path, data, {
+	$scope.apiCall = function(method, path, params, data, callback) {
+		$http({
+			method: method,
+			url: $scope.api + path,
+			params: params,
+			data: data,
 			headers: {
 				'X-Auth-Token': $scope.auth.token
 			}
@@ -25,25 +29,20 @@ app.controller('mainController', function($scope, $route, $http, authService) {
 			if (callback) {
 				callback(response);
 			}
+			// TODO DEBUG CODE remove this line
+			alert(JSON.stringify(response));
 			$route.reload();
 		}, function(response) {
-			auth.logout($scope.api);
+			$scope.auth.logout($scope.api);
 		});
 	};
+	$scope.apiPost = function(path, data, callback) {
+		$scope.apiCall('POST', path, data, null, callback);
+	};
+	$scope.apiPatch = function(path, data, callback) {
+		$scope.apiCall('PATCH', path, data, null, callback);
+	};
 	$scope.apiDelete = function(path, callback) {
-		$http({
-			method: 'DELETE',
-			url: $scope.api + path,
-			headers: {
-				'X-Auth-Token': $scope.auth.token
-			}
-		}).then( function(response) {
-			if (callback) {
-				callback(response);
-			}
-			$route.reload();
-		}, function(response) {
-			auth.logout($scope.api);
-		});
+		$scope.apiCall('DELETE', path, null, null, callback);
 	};
 });
