@@ -281,7 +281,17 @@ function addHistoryEntry(entry) {
 		.append($('<tr></tr>', {
 			id: 'entry_' + entry.id
 		}).click(function(){
-			//TODO delete entry.id
+			$.ajax({
+				type: 'DELETE',
+				url: API + './orders/' + entry.id,
+				data: 'null',
+				headers: { 'X-Auth-Token': localStorage.getItem('token') },
+				success: function(data) {
+					// TODO react to fail
+					updateMoney();
+					updateUserHistory();
+				}
+			});
 			updateMoney();
 			updateUserHistory();
 		}).append($('<td></td>')
@@ -298,5 +308,5 @@ function addHistoryEntry(entry) {
 }
 
 function isTimePassed(date) {
-	return +(new Date(new Date(date).getTime() + 30000)) > +(new Date())
+	return +(new Date(new Date(date).getTime() + 30000)) > +(new Date());
 }

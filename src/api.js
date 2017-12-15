@@ -200,34 +200,17 @@ api.delete('/orders/:orderId', function (req, res) {
 		res.status(403).end('Forbidden');
 		return;
 	}
-	console.log(tokens.get(token));
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
+	//if (!tokens.get(token).root) {
+	//	res.status(401).end('Unauthorized');
+	//	return;
+	//}
 	if (orderId != undefined && orderId != '') {
-		let deleted = false;
-		let history = {};
-		// TODO SQL
-		for (let i = 0; i < histories.length; i++) {
-			history = histories[i];
-			console.log('Is time passed? ' + isTimePassed(history.timestamp));
-			if (history.id == orderId && !isTimePassed(history.timestamp)) {
-				users.get(history.user).balance -= history.amount;
-				fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
-				let reason = history.reason;
-				for(let k = 0; k < beverages.length; k++) {
-					if (beverages[k].name == reason) {
-						beverages[k].count++;
-						fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
-						break;
-					}
-				}
-				histories.splice(i, 1);
-				deleted = true;
-				break;
-			}
-		}
+		let deleted = true; //TODO check for  error in sql
+
+		var stmt = db.prepare("DELETE FROM History WHERE id == ?;");
+		stmt.run(orderId);
+		stmt.finalize();
+
 		if (deleted) {
 			res.sendStatus(200);
 		} else {
