@@ -38,7 +38,7 @@ const dirname = fs.realpathSync('./');
 var db = new sqlite3.Database(dirname + '/data/history.db');
 // Arrays
 var beverages = JSON.parse(fs.readFileSync(dirname + '/data/beverages.json', 'utf8'));
-var histories = JSON.parse(fs.readFileSync(dirname + '/data/histories.json', 'utf8'));
+var histories = [];//JSON.parse(fs.readFileSync(dirname + '/data/histories.json', 'utf8'));
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
 var users = new HashMap(JSON.parse(fs.readFileSync(dirname + '/data/users.json', 'utf8')));
@@ -273,7 +273,7 @@ api.post('/beverages', function (req, res) {
 	}
 });
 
-api.patch('/beverages', function (req, res) {
+api.patch('/beverages/:beverage', function (req, res) {
 	let bev = req.params.beverage;
 	let price = req.query.price;
 	let count = req.query.count;
@@ -309,7 +309,7 @@ api.patch('/beverages', function (req, res) {
 	}
 });
 
-api.delete('/beverages', function (req, res) {
+api.delete('/beverages/:beverage', function (req, res) {
 	let bev = req.params.beverage;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
