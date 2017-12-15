@@ -59,7 +59,7 @@ function _(object) {
 	if (!cache[object]) {
 		cache[object] = $(object);
 	}
-	
+
 	return cache[object];
 }
 
@@ -220,7 +220,7 @@ function updateRecent() {
 		orders.forEach(function(order) {
 			text += order.user + ': ' + order.reason + '@' + order.timestamp + ', ';
 		});
-		_('#marquee').text(text);
+		//_('#marquee').text(text);
 	});
 }
 
