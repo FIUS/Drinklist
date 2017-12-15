@@ -215,12 +215,10 @@ function updateUserHistory() {
 }
 
 function updateRecent() {
-	getJSON('./orders?limit=5', function(orders) {
-		let text = '';
-		orders.forEach(function(order) {
-			text += order.user + ': ' + order.reason + '@' + order.timestamp + ', ';
-		});
-		//_('#marquee').text(text);
+	getJSON('./orders?limit=3', function(orders) {
+		_('#ticker0').text(orders[0].user + ': ' + orders[0].reason + ' @ ' + orders[0].timestamp);
+		_('#ticker1').text(orders[1].user + ': ' + orders[1].reason + ' @ ' + orders[1].timestamp);
+		_('#ticker2').text(orders[2].user + ': ' + orders[2].reason + ' @ ' + orders[2].timestamp);
 	});
 }
 
