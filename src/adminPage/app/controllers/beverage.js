@@ -75,7 +75,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPatch('/beverages' + encodeURI(data.name), {
+				$scope.apiPatch('/beverages/' + encodeURI(data.name), {
 					price: data.price
 				});
 			}

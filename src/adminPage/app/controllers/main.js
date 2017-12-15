@@ -8,12 +8,14 @@ app.controller('mainController', function($scope, $route, $http, authService) {
 		return $route.current.activetab == tab;
 	};
 	
-	$scope.api = "http://localhost:8080";
+	$scope.api = "http://129.69.220.160:8080";
 	$scope.apiGet = function(path) {
 		return $http.get($scope.api + path, {
 			headers: {
 				'X-Auth-Token': $scope.auth.token
 		}
+		}).then(null, function(response) {
+			$scope.auth.logout($scope.api);
 		});
 	};
 	$scope.apiCall = function(method, path, params, data, callback) {

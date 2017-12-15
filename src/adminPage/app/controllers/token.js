@@ -1,4 +1,4 @@
-app.controller('tokenController', function($scope, $http, $window) {
+app.controller('tokenController', function($scope, $route, $http, $window) {
 	if (!$scope.auth.isAdmin) {
 		$window.location.href = '#!';
 		return;
@@ -41,6 +41,7 @@ app.controller('tokenController', function($scope, $http, $window) {
 					url: $scope.api + '/logout?token=' + data.token
 				}).then(function(response) {
 					alert('Invalidated Token: ' + data.token);
+					$route.reload();
 				}.bind(this));
 			}
 		}
