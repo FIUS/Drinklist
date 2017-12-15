@@ -14,12 +14,16 @@ app.controller('beverageController', function($scope, $http, $window) {
 	$scope.config = [
 		{
 			icon: 'fa-cog',
-			click: function(entry) {
+			click: function(data) {
+				$scope.ctabs[1].data = data;
+				$('#collapsemod').collapse('show');
 			}
 		},
 		{
 			icon: 'fa-minus',
-			click: function(entry) {
+			click: function(data) {
+				$scope.ctabs[2].data = data;
+				$('#collapseremove').collapse('show');
 			}
 		}
 	];
@@ -45,7 +49,10 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				alert(JSON.stringify(data));
+				$scope.apiPost('/beverages', {
+					beverage: data.name,
+					price: data.price
+				});
 			}
 		},
 		{
@@ -68,7 +75,10 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				alert(JSON.stringify(data));
+				$scope.apiPatch('/beverages', {
+					beverage: data.name,
+					price: data.price
+				});
 			}
 		},
 		{
@@ -85,7 +95,9 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				alert(JSON.stringify(data));
+				$scope.apiDelete('/beverages', null, {
+					beverage: data.name
+				});
 			}
 		}
 	];
