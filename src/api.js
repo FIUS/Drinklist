@@ -38,7 +38,6 @@ const dirname = fs.realpathSync('./');
 var db = new sqlite3.Database(dirname + '/data/history.db');
 // Arrays
 var beverages = JSON.parse(fs.readFileSync(dirname + '/data/beverages.json', 'utf8'));
-var histories = [];//JSON.parse(fs.readFileSync(dirname + '/data/histories.json', 'utf8'));
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
 var users = new HashMap(JSON.parse(fs.readFileSync(dirname + '/data/users.json', 'utf8')));
