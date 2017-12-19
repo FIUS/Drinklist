@@ -400,7 +400,7 @@ api.delete('/users/:userId', function (req, res) {
 
 api.patch('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
-	let balance = req.query.amount;
+	let amount = req.query.amount;
 	let reason = req.query.reason;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
