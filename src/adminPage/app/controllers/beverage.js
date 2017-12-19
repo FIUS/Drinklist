@@ -13,16 +13,24 @@ app.controller('beverageController', function($scope, $http, $window) {
 
 	$scope.config = [
 		{
+			icon: 'fa-plus',
+			click: function(data) {
+				$scope.ctabs[1].data.name = data.name;
+				$scope.ctabs[1].data.amount = "";
+				$('#collapseaddStock').collapse('show');
+			}
+		},
+		{
 			icon: 'fa-cog',
 			click: function(data) {
-				$scope.ctabs[1].data = data;
+				$scope.ctabs[2].data = data;
 				$('#collapsemod').collapse('show');
 			}
 		},
 		{
 			icon: 'fa-minus',
 			click: function(data) {
-				$scope.ctabs[2].data = data;
+				$scope.ctabs[3].data = data;
 				$('#collapseremove').collapse('show');
 			}
 		}
@@ -52,6 +60,31 @@ app.controller('beverageController', function($scope, $http, $window) {
 				$scope.apiPost('/beverages', {
 					beverage: data.name,
 					price: data.price
+				});
+			}
+		},
+		{
+			name: 'addStock',
+			icon: 'fa-plus',
+			displayname: 'Add Stock',
+			data: {},
+			fields: [
+				{
+					name: 'name',
+					displayname: 'Name:',
+					placeholder: 'Dosen Bier',
+					disabled: true,
+				},
+				{
+					name: 'amount',
+					displayname: 'Amount Change:',
+					placeholder: '100 [to add 100 Units]',
+					disabled: false,
+				}
+			],
+			submit: function(data) {
+				$scope.apiPatch('/beverages/' + encodeURI(data.name), {
+					count: data.amount
 				});
 			}
 		},
