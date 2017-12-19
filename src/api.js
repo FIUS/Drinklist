@@ -4,32 +4,12 @@
 * Author: Sandro Speth
 * Author: Tobias Wältken
 */
+// Imports
 const sqlite3 = require('sqlite3');
 const express = require('express');
 const api = module.exports = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
-
-api.use(bodyParser.urlencoded({ extended: true }));
-api.use(function (req, res, next) {
-
-	// Website you wish to allow to connect
-	res.setHeader('Access-Control-Allow-Origin', '*');
-
-	// Request methods you wish to allow
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-	// Request headers you wish to allow
-	res.setHeader('Access-Control-Allow-Headers', 'X-Auth-Token,content-type');
-
-	// Set to true if you need the website to include cookies in the requests sent
-	// to the API (e.g. in case you use sessions)
-	res.setHeader('Access-Control-Allow-Credentials', false);
-
-	// Pass to next layer of middleware
-	next();
-});
-
 const HashMap = require('hashmap');
 const uuidv4 = require('uuid/v4');
 const dirname = fs.realpathSync('./');
@@ -57,10 +37,71 @@ function contains(array, item) {
 	return bool;
 }
 
+var unless = function(path, middleware) {
+	return function(req, res, next) {
+		if (path === req.path) {
+			return next();
+		} else {
+			return middleware(req, res, next);
+		}
+	};
+};
+
 // Actual wrong method
 function isTimePassed(date) {
 	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()));
 }
+
+function userAccess(middleware) {
+	return function(req, res, next) {
+		let token = req.header('X-Auth-Token');
+		if (!tokens.has(token)) {
+			console.log('[API] [WARN] Wrong token ' + token);
+			res.status(403).end('Forbidden');
+			return next();
+		}
+
+		return middleware(req, res, next);
+	};
+}
+
+function adminAccess(middleware) {
+	return function(req, res, next) {
+		let token = req.header('X-Auth-Token');
+		if (!tokens.has(token)) {
+			console.log('[API] [WARN] Wrong token ' + token);
+			res.status(403).end('Forbidden');
+			return next();
+		}
+		if (!tokens.get(token).root) {
+			console.log('[API] [WARN] Unauthorized Access by ' + token);
+			res.status(401).end('Unauthorized');
+			return next();
+		}
+
+		return middleware(req, res, next);
+	};
+}
+
+api.use(bodyParser.urlencoded({ extended: true }));
+api.use(function (req, res, next) {
+
+	// Website you wish to allow to connect
+	res.setHeader('Access-Control-Allow-Origin', '*');
+
+	// Request methods you wish to allow
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+	// Request headers you wish to allow
+	res.setHeader('Access-Control-Allow-Headers', 'X-Auth-Token,content-type');
+
+	// Set to true if you need the website to include cookies in the requests sent
+	// to the API (e.g. in case you use sessions)
+	res.setHeader('Access-Control-Allow-Credentials', false);
+
+	// Pass to next layer of middleware
+	next();
+});
 
 api.post('/login', function (req, res) {
 	let passwd = req.body.password;
@@ -94,30 +135,14 @@ api.post('/login', function (req, res) {
 	}
 });
 
-api.get('/token', function (req, res) {
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
-
+api.get('/token', adminAccess(function (req, res) {
 	res.status(200).end(JSON.stringify(tokens.values()));
-});
+}));
 
-api.post('/orders/', function (req, res) {
+api.post('/orders/', userAccess(function (req, res) {
 	let user = req.query.user;
 	let beverage = req.query.beverage;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
+	
 	if (user == undefined || beverage == undefined ||
 		user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
 		res.status(400).end('Fail to order the beverage for the user');
@@ -144,37 +169,26 @@ api.post('/orders/', function (req, res) {
 		
 		res.sendStatus(200);
 	}
-});
+}));
 
 
-api.get('/orders', function (req, res) {
+api.get('/orders', userAccess(function (req, res) {
 	let limit = req.query.limit;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
 	if (limit === undefined) {
 		limit = 1000;
 	}
+
 	let histories = [];
 	db.each("SELECT id, user, reason, amount, timestamp FROM History LIMIT " + limit, function(err, row) {
 		histories.push(row);
 	}, function() {
 		res.status(200).end(JSON.stringify(histories));
 	});
-});
+}));
 
-api.get('/orders/:userId', function (req, res) {
+api.get('/orders/:userId', userAccess(function (req, res) {
 	let userId = req.params.userId;
 	let limit = req.query.limit;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
 		res.status(404).end('User not found');
 		return;
@@ -189,9 +203,11 @@ api.get('/orders/:userId', function (req, res) {
 			res.status(200).end(JSON.stringify(userHistories));
 		});
 	}
-});
+}));
 
 api.delete('/orders/:orderId', function (req, res) {
+	// FIXME think about using userAccess, adminAcces or keep it locally when
+	//       solving Issue#5 (https://github.com/spethso/Drinklist/issues/5)
 	let orderId = req.params.orderId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
@@ -220,29 +236,13 @@ api.delete('/orders/:orderId', function (req, res) {
 	}
 });
 
-api.get('/beverages', function (req, res) {
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
+api.get('/beverages', userAccess(function (req, res) {
 	res.status(200).end(JSON.stringify(beverages));
-});
+}));
 
-api.post('/beverages', function (req, res) {
+api.post('/beverages', adminAccess(function (req, res) {
 	let bev = req.query.beverage;
 	let price = req.query.price;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
 	if (bev != undefined && price != undefined && bev != '') {
 		let beverage = {
 			name: bev,
@@ -255,23 +255,12 @@ api.post('/beverages', function (req, res) {
 	} else {
 		throw new Error('Test Error');
 	}
-});
+}));
 
-api.patch('/beverages/:beverage', function (req, res) {
+api.patch('/beverages/:beverage', adminAccess(function (req, res) {
 	let bev = req.params.beverage;
 	let price = req.query.price;
 	let count = req.query.count;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
-	console.log(tokens.get(token));
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
 	if (bev != undefined && bev != '') {
 		for (let i = 0; i < beverages.length; i++) {
 			let beverage = beverages[i];
@@ -291,20 +280,10 @@ api.patch('/beverages/:beverage', function (req, res) {
 	} else {
 		res.sendStatus(400);
 	}
-});
+}));
 
-api.delete('/beverages/:beverage', function (req, res) {
+api.delete('/beverages/:beverage', adminAccess(function (req, res) {
 	let bev = req.params.beverage;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
 	if (bev != undefined && bev != '') {
 		let index = 0;
 		for (let i = 0; i < beverages.length; i++) {
@@ -320,49 +299,28 @@ api.delete('/beverages/:beverage', function (req, res) {
 	} else {
 		res.sendStatus(400);
 	}
-});
+}));
 
-api.get('/users', function (req, res) {
+api.get('/users', userAccess(function (req, res) {
 	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
 	if (!tokens.get(token).root) {
 		res.status(200).end(JSON.stringify(users.keys()));
 	} else {
 		res.status(200).end(JSON.stringify(users.values()));
 	}
-});
+}));
 
-api.get('/users/:userId', function (req, res) {
+api.get('/users/:userId', userAccess(function (req, res) {
 	let userId = req.params.userId;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
 	if (userId === undefined || userId === '' || !users.has(userId)) {
 		res.status(404).end('User not found');
 	} else {
 		res.status(200).end(JSON.stringify(users.get(userId)));
 	}
-});
+}));
 
-api.post('/users/:userId', function (req, res) {
+api.post('/users/:userId', adminAccess(function (req, res) {
 	let userId = req.params.userId;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token ' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
 	if (userId != undefined && userId != '') {
 		let user = {
 			name: userId,
@@ -374,20 +332,10 @@ api.post('/users/:userId', function (req, res) {
 	} else {
 		res.sendStatus(400);
 	}
-});
+}));
 
-api.delete('/users/:userId', function (req, res) {
+api.delete('/users/:userId', adminAccess(function (req, res) {
 	let userId = req.params.userId;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
 	if (userId != undefined && userId != '' && users.has(userId)) {
 		let user = users.get(userId);
 		users.remove(userId);
@@ -396,22 +344,12 @@ api.delete('/users/:userId', function (req, res) {
 	} else {
 		res.sendStatus(400);
 	}
-});
+}));
 
-api.patch('/users/:userId', function (req, res) {
+api.patch('/users/:userId', adminAccess(function (req, res) {
 	let userId = req.params.userId;
 	let balance = req.query.amount;
 	let reason = req.query.reason;
-	let token = req.header('X-Auth-Token');
-	if (!tokens.has(token)) {
-		console.log('[API] [WARN] Wrong token' + token);
-		res.status(403).end('Forbidden');
-		return;
-	}
-	if (!tokens.get(token).root) {
-		res.status(401).end('Unauthorized');
-		return;
-	}
 	if (userId != undefined && amount != undefined && reason != undefined
 		&& userId != '' && reason != '' && amount != '' && users.has(userId)) {
 		amount = new Number(amount);
@@ -426,7 +364,7 @@ api.patch('/users/:userId', function (req, res) {
 	} else {
 		res.sendStatus(400);
 	}
-});
+}));
 
 api.post('/logout', function (req, res) {
 	let token = req.query.token;
