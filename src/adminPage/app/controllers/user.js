@@ -13,9 +13,16 @@ app.controller('userController', function($scope, $http, $window) {
 
 	$scope.config = [
 		{
+			icon: 'fa-money',
+			click: function(data) {
+				$scope.ctabs[1].data.name = data.name;
+				$('#collapseaddMoney').collapse('show');
+			}
+		},
+		{
 			icon: 'fa-trash',
 			click: function(data) {
-				$scope.ctabs[1].data = data;
+				$scope.ctabs[2].data.name = data.name;
 				$('#collapseremove').collapse('show');
 			}
 		}
@@ -37,6 +44,38 @@ app.controller('userController', function($scope, $http, $window) {
 			],
 			submit: function(data) {
 				$scope.apiPost('/users/' + encodeURI(data.name));
+			}
+		},
+		{
+			name: 'addMoney',
+			icon: 'fa-money',
+			displayname: 'Add Money',
+			data: {},
+			fields: [
+				{
+					name: 'name',
+					displayname: 'User:',
+					placeholder: 'mustermx',
+					disabled: true,
+				},
+				{
+					name: 'reason',
+					displayname: 'Reason:',
+					placeholder: 'Bargeld Einzahlung',
+					disabled: false,
+				},
+				{
+					name: 'amount',
+					displayname: 'Amount:',
+					placeholder: '1000 [to add 10€]',
+					disabled: false,
+				}
+			],
+			submit: function(data) {
+				$scope.apiPatch('/users/' + encodeURI(data.name), {
+					amount: data.amount,
+					reason: data.reason
+				});
 			}
 		},
 		{
