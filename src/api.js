@@ -60,7 +60,7 @@ function contains(array, item) {
 
 // Actual wrong method
 function isTimePassed(date) {
-	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()))
+	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()));
 }
 
 api.post('/login', function (req, res) {
@@ -253,6 +253,8 @@ api.post('/beverages', function (req, res) {
 		beverages.push(beverage);
 		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 		res.sendStatus(200);
+	} else {
+		throw new Error('Test Error');
 	}
 });
 
@@ -433,4 +435,10 @@ api.post('/logout', function (req, res) {
 		tokens.remove(token);
 	}
 	res.sendStatus(200);
+});
+
+// Error Handler
+api.use(function (err, req, res, next) {
+	console.error(err.stack);
+	res.status(500).send('We messed up, sry!');
 });
