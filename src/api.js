@@ -281,7 +281,7 @@ api.patch('/beverages/:beverage', function (req, res) {
 					beverage.price = price;
 				}
 				if (count != undefined) {
-					beverage.count += count;
+					beverage.count += new Number(count);
 				}
 				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 				break;
