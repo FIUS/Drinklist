@@ -8,7 +8,7 @@ app.controller('mainController', function($scope, $route, $http, authService) {
 		return $route.current.activetab == tab;
 	};
 	
-	$scope.api = "http://129.69.220.160:8080";
+	$scope.api = "http://localhost:8080";
 	$scope.apiGet = function(path) {
 		return $http.get($scope.api + path, {
 			headers: {
