@@ -20,10 +20,8 @@ const dirname = fs.realpathSync('./');
 // Database
 var db = new sqlite3.Database(dirname + '/data/history.db');
 // Arrays
-var beverages = JSON.parse(fs.readFileSync(dirname + '/data/beverages.json', 'utf8'));
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
-var users = new HashMap(JSON.parse(fs.readFileSync(dirname + '/data/users.json', 'utf8')));
 var tokens = new HashMap();
 
 /**
@@ -152,25 +150,10 @@ api.post('/orders', userAccess(function (req, res) {
 	let beverage = req.query.beverage;
 
 	if (user == undefined || beverage == undefined ||
-		user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
+		user === '' || beverage === '') {
 		res.status(400).end('Fail to order the beverage for the user');
 		return;
 	} else {
-		let cost = 0;
-		for (let i = 0; i < beverages.length; i++) {
-			if (beverages[i].name === beverage) {
-				cost = beverages[i].price;
-				beverages[i].count--;
-				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8', function(error) {
-					console.log('[API] [FAIL] can\'t write /data/beverages.json');
-				});
-				break;
-			}
-		}
-
-		users.get(user).balance -= cost;
-		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
-
 		let stmt = db.prepare("SELECT price, stock FROM Beverages WHERE name = ?;");
 		stmt.get(beverage, function(err, result) {
 			if (result == undefined) {
@@ -218,7 +201,7 @@ api.get('/orders', userAccess(function (req, res) {
 api.get('/orders/:userId', userAccess(function (req, res) {
 	let userId = req.params.userId;
 	let limit = req.query.limit;
-	if (userId === undefined || userId === '' || !users.has(userId)) {
+	if (userId === undefined || userId === '') {
 		res.status(404).end('User not found');
 		return;
 	} else {
@@ -369,7 +352,7 @@ api.post('/users/:userId', adminAccess(function (req, res) {
 
 api.delete('/users/:userId', adminAccess(function (req, res) {
 	let userId = req.params.userId;
-	if (userId != undefined && userId != '' && users.has(userId)) {
+	if (userId != undefined && userId != '') {
 		let stmt = db.prepare("DELETE FROM Users WHERE name = ?;");
 		stmt.run(userId);
 		res.sendStatus(200);
@@ -385,7 +368,7 @@ api.patch('/users/:userId', adminAccess(function (req, res) {
 	let amount = req.query.amount;
 	let reason = req.query.reason;
 	if (userId != undefined && amount != undefined && reason != undefined
-		&& userId != '' && reason != '' && amount != '' && users.has(userId)) {
+		&& userId != '' && reason != '' && amount != '') {
 		amount = new Number(amount);
 
 		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);");
