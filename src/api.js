@@ -152,14 +152,14 @@ api.get('/token', adminAccess(function (req, res) {
 api.post('/orders', userAccess(function (req, res) {
 	let user = req.query.user;
 	let beverage = req.query.beverage;
-	
+
 	if (user == undefined || beverage == undefined ||
 		user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
 		res.status(400).end('Fail to order the beverage for the user');
 		return;
 	} else {
 		let cost = 0;
-		for (i = 0; i < beverages.length; i++) {
+		for (let i = 0; i < beverages.length; i++) {
 			if (beverages[i].name === beverage) {
 				cost = beverages[i].price;
 				beverages[i].count--;
@@ -169,14 +169,14 @@ api.post('/orders', userAccess(function (req, res) {
 				break;
 			}
 		}
-		
+
 		users.get(user).balance -= cost;
 		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
-		
-		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount, timestamp) VALUES (?, ?, ?, ?, ?);");
-		stmt.run(uuidv4(), user, beverage, -cost, new Date().toUTCString());
+
+		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);");
+		stmt.run(uuidv4(), user, beverage, -cost);
 		stmt.finalize();
-		
+
 		res.sendStatus(200);
 	}
 }));
@@ -189,7 +189,9 @@ api.get('/orders', userAccess(function (req, res) {
 	}
 
 	let histories = [];
-	db.each("SELECT id, user, reason, amount, timestamp FROM History LIMIT " + limit, function(err, row) {
+	var stmt = db.prepare("SELECT id, user, reason, amount, timestamp FROM History ORDER BY timestamp DESC LIMIT ?;");
+	console.log(stmt);
+	stmt.each(limit, function(err, row) {
 		histories.push(row);
 	}, function() {
 		res.status(200).end(JSON.stringify(histories));
@@ -207,7 +209,8 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 			limit = 1000;
 		}
 		let userHistories = [];
-		db.each("SELECT id, user, reason, amount, timestamp FROM History WHERE user = '" + userId + "' LIMIT " + limit, function(err, row) {
+		var stmt = db.prepare("SELECT id, user, reason, amount, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
+		stmt.each(userId, limit, function(err, row) {
 			userHistories.push(row);
 		}, function() {
 			res.status(200).end(JSON.stringify(userHistories));
@@ -232,7 +235,7 @@ api.delete('/orders/:orderId', function (req, res) {
 	if (orderId != undefined && orderId != '') {
 		let deleted = true; //TODO check for  error in sql
 
-		var stmt = db.prepare("DELETE FROM History WHERE id == ?;");
+		var stmt = db.prepare("DELETE FROM History WHERE id = ?;");
 		stmt.run(orderId);
 		stmt.finalize();
 
@@ -247,20 +250,21 @@ api.delete('/orders/:orderId', function (req, res) {
 });
 
 api.get('/beverages', userAccess(function (req, res) {
-	res.status(200).end(JSON.stringify(beverages));
+	let beverages = [];
+	var stmt = db.prepare("SELECT name, stock, price FROM Beverages ORDER BY name;");
+	stmt.each(function(err, row) {
+		beverages.push(row);
+	}, function() {
+		res.status(200).end(JSON.stringify(beverages));
+	});
 }));
 
 api.post('/beverages', adminAccess(function (req, res) {
 	let bev = req.query.beverage;
 	let price = req.query.price;
 	if (bev != undefined && price != undefined && bev != '') {
-		let beverage = {
-			name: bev,
-			price: price,
-			count: 0
-		};
-		beverages.push(beverage);
-		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
+		let stmt = db.prepare("INSERT INTO Beverages (name, price) VALUES (?, ?)");
+		stmt.run(bev, price);
 		res.sendStatus(200);
 	} else {
 		throw new Error('Test Error');
@@ -272,19 +276,13 @@ api.patch('/beverages/:beverage', adminAccess(function (req, res) {
 	let price = req.query.price;
 	let count = req.query.count;
 	if (bev != undefined && bev != '') {
-		for (let i = 0; i < beverages.length; i++) {
-			let beverage = beverages[i];
-			console.log(beverage);
-			if (beverage.name == bev) {
-				if (price != undefined) {
-					beverage.price = price;
-				}
-				if (count != undefined) {
-					beverage.count += new Number(count);
-				}
-				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
-				break;
-			}
+		if (price != undefined) {
+			let stmt = db.prepere("UPDATE Beverages SET price = ?  WHERE name = ?;");
+			stmt.run(parseInt(price), bev);
+		}
+		if (count != undefined) {
+			let stmt = db.prepere("UPDATE Beverages SET stock = stock + ?  WHERE name = ?;");
+			stmt.run(parseInt(count), bev);
 		}
 		res.sendStatus(200);
 	} else {
@@ -295,16 +293,8 @@ api.patch('/beverages/:beverage', adminAccess(function (req, res) {
 api.delete('/beverages/:beverage', adminAccess(function (req, res) {
 	let bev = req.params.beverage;
 	if (bev != undefined && bev != '') {
-		let index = 0;
-		for (let i = 0; i < beverages.length; i++) {
-			let beverage = beverages[i];
-			if (beverage.name == bev) {
-				index = i;
-				break;
-			}
-		}
-		beverages.splice(index, 1);
-		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
+		let stmt = db.prepare("DELETE FROM Beverages WHERE name = ?;");
+		stmt.run(bev);
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -363,7 +353,7 @@ api.patch('/users/:userId', adminAccess(function (req, res) {
 	if (userId != undefined && amount != undefined && reason != undefined
 		&& userId != '' && reason != '' && amount != '' && users.has(userId)) {
 		amount = new Number(amount);
-		
+
 		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount, timestamp) VALUES (?, ?, ?, ?, ?);");
 		stmt.run(uuidv4(), userId, reason, amount, new Date().toUTCString());
 		stmt.finalize();
