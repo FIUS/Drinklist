@@ -263,7 +263,10 @@ api.post('/beverages', adminAccess(function (req, res) {
 		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 		res.sendStatus(200);
 	} else {
-		throw new Error('Test Error');
+		throw {
+			name: 'Generic Error',
+			message: 'Generic Error Message'
+		};
 	}
 }));
 
