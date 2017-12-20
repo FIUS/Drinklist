@@ -13,81 +13,19 @@ app.controller('historyController', function($scope, $http, $window) {
 
 	$scope.config = [
 		{
-			icon: 'fa-cog',
-			click: function(entry) {
+			icon: 'fa-repeat fa-flip-horizontal',
+			click: function(data) {
+				$scope.ctabs[0].data.id = data.id;
+				$('#collapserevert').collapse('show');
 			}
 		}
 	];
 
 	$scope.ctabs = [
 		{
-			name: 'add',
-			icon: 'fa-plus',
-			displayname: 'Add',
-			data: {},
-			fields: [
-				{
-					name: 'user',
-					displayname: 'User:',
-					placeholder: 'mustermx',
-					disabled: false,
-				},
-				{
-					name: 'reason',
-					displayname: 'Reason:',
-					placeholder: 'Bar Einzahlung',
-					disabled: false,
-				},
-				{
-					name: 'amount',
-					displayname: 'Amount:',
-					placeholder: '1000 [to add 10€ to a Account] / -254 [to remove 2,54€ from a account]',
-					disabled: false,
-				}
-			],
-			submit: function(data) {
-				alert(JSON.stringify(data));
-			}
-		},
-		{
-			name: 'mod',
-			icon: 'fa-cog',
-			displayname: 'Modify',
-			data: {},
-			fields: [
-				{
-					name: 'id',
-					displayname: 'ID:',
-					placeholder: '',
-					disabled: true,
-				},
-				{
-					name: 'user',
-					displayname: 'User:',
-					placeholder: 'mustermx',
-					disabled: false,
-				},
-				{
-					name: 'reason',
-					displayname: 'Reason:',
-					placeholder: 'Bar Einzahlung',
-					disabled: false,
-				},
-				{
-					name: 'amount',
-					displayname: 'Amount:',
-					placeholder: '1000 [to add 10€ to a Account] / -254 [to remove 2,54€ from a account]',
-					disabled: false,
-				}
-			],
-			submit: function(data) {
-				alert(JSON.stringify(data));
-			}
-		},
-		{
-			name: 'remove',
-			icon: 'fa-minus',
-			displayname: 'Remove',
+			name: 'revert',
+			icon: 'fa-repeat fa-flip-horizontal',
+			displayname: 'Revert',
 			data: {},
 			fields: [
 				{
@@ -98,7 +36,7 @@ app.controller('historyController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				alert(JSON.stringify(data));
+				$scope.apiDelete("/orders/" + encodeURI(data.id));
 			}
 		}
 	];
@@ -109,7 +47,7 @@ app.controller('historyController', function($scope, $http, $window) {
 			name: "id",
 			displayname: "ID:",
 			display: function(data) {
-				return data.toString().substring(1, data.toString().indexOf("-"));
+				return data.toString().substring(0, data.toString().indexOf("-"));
 			}
 		},
 		{

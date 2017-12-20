@@ -38,7 +38,6 @@ const dirname = fs.realpathSync('./');
 var db = new sqlite3.Database(dirname + '/data/history.db');
 // Arrays
 var beverages = JSON.parse(fs.readFileSync(dirname + '/data/beverages.json', 'utf8'));
-var histories = [];//JSON.parse(fs.readFileSync(dirname + '/data/histories.json', 'utf8'));
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
 var users = new HashMap(JSON.parse(fs.readFileSync(dirname + '/data/users.json', 'utf8')));
@@ -60,7 +59,7 @@ function contains(array, item) {
 
 // Actual wrong method
 function isTimePassed(date) {
-	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()))
+	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()));
 }
 
 api.post('/login', function (req, res) {
@@ -253,6 +252,8 @@ api.post('/beverages', function (req, res) {
 		beverages.push(beverage);
 		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 		res.sendStatus(200);
+	} else {
+		throw new Error('Test Error');
 	}
 });
 
@@ -280,7 +281,7 @@ api.patch('/beverages/:beverage', function (req, res) {
 					beverage.price = price;
 				}
 				if (count != undefined) {
-					beverage.count += count;
+					beverage.count += new Number(count);
 				}
 				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
 				break;
@@ -399,7 +400,7 @@ api.delete('/users/:userId', function (req, res) {
 
 api.patch('/users/:userId', function (req, res) {
 	let userId = req.params.userId;
-	let balance = req.query.amount;
+	let amount = req.query.amount;
 	let reason = req.query.reason;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
@@ -433,4 +434,10 @@ api.post('/logout', function (req, res) {
 		tokens.remove(token);
 	}
 	res.sendStatus(200);
+});
+
+// Error Handler
+api.use(function (err, req, res, next) {
+	console.error(err.stack);
+	res.status(500).send('We messed up, sry!');
 });
