@@ -23,6 +23,12 @@ var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 var users = new HashMap(JSON.parse(fs.readFileSync(dirname + '/data/users.json', 'utf8')));
 var tokens = new HashMap();
 
+/**
+ * Helper method to check if an array contains a specific value.
+ *
+ * @param {[]} array
+ * @param {any} item
+ */
 function contains(array, item) {
 	let bool = false;
 	array.forEach(function (element) {
@@ -37,21 +43,18 @@ function contains(array, item) {
 	return bool;
 }
 
-var unless = function(path, middleware) {
-	return function(req, res, next) {
-		if (path === req.path) {
-			return next();
-		} else {
-			return middleware(req, res, next);
-		}
-	};
-};
-
 // Actual wrong method
 function isTimePassed(date) {
 	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()));
 }
 
+/**
+ * This function wraps a given middleware function with a check for the user
+ * tokens in the request to reduce code clutter.
+ *
+ * @param {(req, res, next)} middleware
+ * @returns (req, res, next)
+ */
 function userAccess(middleware) {
 	return function(req, res, next) {
 		let token = req.header('X-Auth-Token');
@@ -65,6 +68,13 @@ function userAccess(middleware) {
 	};
 }
 
+/**
+ * This function wraps a given middleware function with a check for the admin
+ * tokens in the request to reduce code clutter.
+ *
+ * @param {(req, res, next)} middleware
+ * @returns (req, res, next)
+ */
 function adminAccess(middleware) {
 	return function(req, res, next) {
 		let token = req.header('X-Auth-Token');
@@ -139,7 +149,7 @@ api.get('/token', adminAccess(function (req, res) {
 	res.status(200).end(JSON.stringify(tokens.values()));
 }));
 
-api.post('/orders/', userAccess(function (req, res) {
+api.post('/orders', userAccess(function (req, res) {
 	let user = req.query.user;
 	let beverage = req.query.beverage;
 	
