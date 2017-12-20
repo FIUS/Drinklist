@@ -19,7 +19,18 @@ var authData = [
 
 db.serialize(function() {
 	db.run('DROP TABLE IF EXISTS History;');
-	db.run('CREATE TABLE History (id varchar, user varchar, reason varchar, amount integer, timestamp varchar);');
+	db.run("CREATE TABLE History (id VARCHAR(255), user VARCHAR(255) NOT NULL, reason VARCHAR(255), amount INTEGER NOT NULL DEFAULT 0, timestamp DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime')));");
+	db.run('DROP TABLE IF EXISTS Users;');
+	db.run("CREATE TABLE Users (name VARCHAR(255) PRIMARY KEY, balance INTEGER NOT NULL DEFAULT 0);");
+	db.run('DROP TABLE IF EXISTS Beverages;');
+	db.run("CREATE TABLE Beverages (name VARCHAR(255) PRIMARY KEY, stock INTEGER NOT NULL DEFAULT 0, price INTEGER NOT NULL DEFAULT 0);");
+
+
+	// init db
+	db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Sample Juice', 10, 100);");
+	db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Supreme Sample Juice', 5, 150);");
+	db.run("INSERT INTO `Users` (`name`) VALUES ('Max Mustermann');");
+	db.run("INSERT INTO `Users` (`name`) VALUES ('Maria Mustermann');");
 });
 db.close();
 
@@ -35,6 +46,8 @@ writeFile('/data/beverages.json', [
 		count: 5
 	},
 ]);
+
+
 
 let map = new HashMap();
 map.set('Max Mustermann', {
@@ -72,7 +85,7 @@ function writeFile(path, data) {
 		if(err) {
 			return console.log(err);
 		}
-	
+
 		console.log("The " + path + " file was created!");
 	});
 }
