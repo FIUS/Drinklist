@@ -172,8 +172,8 @@ api.post('/orders', userAccess(function (req, res) {
 			let stmt2 = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;");
 			stmt2.run(cost, user);
 
-			var stmt3 = db.prepare("INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);");
-			stmt3.run(uuidv4(), user, beverage, -cost);
+			var stmt3 = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
+			stmt3.run(uuidv4(), user, beverage, -cost, beverage, 1);
 		});
 
 
@@ -189,8 +189,7 @@ api.get('/orders', userAccess(function (req, res) {
 	}
 
 	let histories = [];
-	var stmt = db.prepare("SELECT id, user, reason, amount, timestamp FROM History ORDER BY timestamp DESC LIMIT ?;");
-	console.log(stmt);
+	var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History ORDER BY timestamp DESC LIMIT ?;");
 	stmt.each(limit, function(err, row) {
 		histories.push(row);
 	}, function() {
@@ -209,7 +208,7 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 			limit = 1000;
 		}
 		let userHistories = [];
-		var stmt = db.prepare("SELECT id, user, reason, amount, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
+		var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
 		stmt.each(userId, limit, function(err, row) {
 			userHistories.push(row);
 		}, function() {
@@ -219,8 +218,6 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 }));
 
 api.delete('/orders/:orderId', function (req, res) {
-	// FIXME think about using userAccess, adminAcces or keep it locally when
-	//       solving Issue#5 (https://github.com/spethso/Drinklist/issues/5)
 	let orderId = req.params.orderId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
@@ -228,22 +225,53 @@ api.delete('/orders/:orderId', function (req, res) {
 		res.status(403).end('Forbidden');
 		return;
 	}
-	//if (!tokens.get(token).root) {
-	//	res.status(401).end('Unauthorized');
-	//	return;
-	//}
 	if (orderId != undefined && orderId != '') {
 
-		let stmt = db.prepare("SELECT FROM History WHERE id = ? and timestamp > (DATETIME('now', '-30 seconds', 'localtime')) LIMIT 1;");
+		let stmt = db.prepare("SELECT timestamp > (DATETIME('now', '-30 seconds', 'localtime')) as fresh, id, user, amount, beverage, beverage_count, timestamp FROM History WHERE id = ? LIMIT 1;");
 		stmt.get(orderId, function(err, result) {
-			if (result == undefined && !tokens.get(token).root) {
+			if (result == undefined) {
+				// no order to delete!
+				return;
+			}
+
+			if (result.fresh == false && !tokens.get(token).root) {
 				// too late to delete
 				res.sendStatus(400);
 				return;
 			}
-			var stmt = db.prepare("DELETE FROM History WHERE id = ?;");
-			stmt.run(orderId);
-			stmt.finalize();
+
+			function updateUserAndBeverage(result) {
+				if (result.amount !== 0 && result.user !== '') {
+					let stmt = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;");
+					stmt.run(result.amount, result.user);
+				}
+
+				if (result.beverage !== '') {
+					let stmt = db.prepare("UPDATE Beverages SET stock = stock + ? WHERE name = ?");
+					stmt.run(result.beverage_count, result.beverage);
+				}
+			}
+
+			if (result.fresh) {
+				updateUserAndBeverage(result);
+				var stmt = db.prepare("DELETE FROM History WHERE id = ?;");
+				stmt.run(orderId);
+				stmt.finalize();
+				res.sendStatus(200);
+			} else {
+				let stmt = db.prepare("SELECT * FROM History WHERE reason = ? LIMIT 1;");
+				stmt.get(result.id, function(err, existing) {
+					if (existing == undefined) { // prevent double undo
+						updateUserAndBeverage(result);
+						let stmt = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
+						stmt.run(uuidv4(), result.user, result.id, -result.amount, result.beverage, -result.beverage_count);
+						res.sendStatus(200);
+					} else {
+						// double undo error code here...
+						res.sendStatus(500);
+					}
+				});
+			}
 		});
 	} else {
 		res.sendStatus(400);
