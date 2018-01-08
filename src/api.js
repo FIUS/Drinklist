@@ -160,10 +160,6 @@ api.post('/orders', userAccess(function (req, res) {
 				console.log('[API] [FAIL] can\'t find beverage '+beverage);
 				return;
 			}
-			if (result.stock === 0) {
-				console.log('[API] [FAIL] no more '+beverage+' in stock');
-				return;
-			}
 			let cost = result.price;
 
 			let stmt1 = db.prepare("UPDATE Beverages SET stock = stock-1 WHERE name = ?;");
@@ -384,8 +380,6 @@ api.delete('/users/:userId', adminAccess(function (req, res) {
 		let stmt = db.prepare("DELETE FROM Users WHERE name = ?;");
 		stmt.run(userId);
 		res.sendStatus(200);
-		// why return old user?
-		// res.status(200).send(JSON.stringify(user));
 	} else {
 		res.sendStatus(400);
 	}
