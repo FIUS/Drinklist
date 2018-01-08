@@ -394,11 +394,10 @@ api.patch('/users/:userId', adminAccess(function (req, res) {
 	let reason = req.query.reason;
 	if (userId != undefined && amount != undefined && reason != undefined
 		&& userId != '' && reason != '' && amount != '') {
-		amount = new Number(amount);
+		amount = parseInt(amount);
 
 		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);");
 		stmt.run(uuidv4(), userId, reason, amount);
-		stmt.finalize();
 
 		let stmt2 = db.prepare("UPDATE Users SET balance = balance + ? WHERE name = ?;");
 		stmt2.run(amount, userId);
