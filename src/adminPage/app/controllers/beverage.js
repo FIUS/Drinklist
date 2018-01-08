@@ -6,7 +6,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 
 	$scope.title = "Beverage Overview";
 	$scope.icon = "fa-beer";
-	
+
 	$scope.searchableGlobal = false;
 	$scope.searchableLocal = true;
 	$scope.enumerate = true;
@@ -142,7 +142,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 			}
 		},
 		{
-			name: "count",
+			name: "stock",
 			displayname: "Currently in Stock:",
 			display: function(data) {
 				return data;

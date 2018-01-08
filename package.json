@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --ignore 'data/*' src/server.js",
+    "start-debug": "nodemon --inspect --ignore 'data/*' src/server.js",
     "postinstall": "node src/install.js"
   },
   "repository": {

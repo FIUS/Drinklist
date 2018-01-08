@@ -4,6 +4,9 @@
 * Author: Sandro Speth
 * Author: Tobias Wältken
 */
+
+/* jslint esversion: 6 */
+
 // Imports
 const sqlite3 = require('sqlite3');
 const express = require('express');
@@ -17,10 +20,8 @@ const dirname = fs.realpathSync('./');
 // Database
 var db = new sqlite3.Database(dirname + '/data/history.db');
 // Arrays
-var beverages = JSON.parse(fs.readFileSync(dirname + '/data/beverages.json', 'utf8'));
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap
-var users = new HashMap(JSON.parse(fs.readFileSync(dirname + '/data/users.json', 'utf8')));
 var tokens = new HashMap();
 
 /**
@@ -41,11 +42,6 @@ function contains(array, item) {
 		}
 	}, this);
 	return bool;
-}
-
-// Actual wrong method
-function isTimePassed(date) {
-	return !(+(new Date(new Date(date).getTime() + 30000)) > +(new Date()));
 }
 
 /**
@@ -152,31 +148,31 @@ api.get('/token', adminAccess(function (req, res) {
 api.post('/orders', userAccess(function (req, res) {
 	let user = req.query.user;
 	let beverage = req.query.beverage;
-	
+
 	if (user == undefined || beverage == undefined ||
-		user === '' || beverage === '' || !contains(users.keys(), user) || !contains(beverages, beverage)) {
+		user === '' || beverage === '') {
 		res.status(400).end('Fail to order the beverage for the user');
 		return;
 	} else {
-		let cost = 0;
-		for (i = 0; i < beverages.length; i++) {
-			if (beverages[i].name === beverage) {
-				cost = beverages[i].price;
-				beverages[i].count--;
-				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8', function(error) {
-					console.log('[API] [FAIL] can\'t write /data/beverages.json');
-				});
-				break;
+		let stmt = db.prepare("SELECT price, stock FROM Beverages WHERE name = ?;");
+		stmt.get(beverage, function(err, result) {
+			if (result == undefined) {
+				console.log('[API] [FAIL] can\'t find beverage '+beverage);
+				return;
 			}
-		}
-		
-		users.get(user).balance -= cost;
-		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
-		
-		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount, timestamp) VALUES (?, ?, ?, ?, ?);");
-		stmt.run(uuidv4(), user, beverage, -cost, new Date().toUTCString());
-		stmt.finalize();
-		
+			let cost = result.price;
+
+			let stmt1 = db.prepare("UPDATE Beverages SET stock = stock-1 WHERE name = ?;");
+			stmt1.run(beverage);
+
+			let stmt2 = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;");
+			stmt2.run(cost, user);
+
+			var stmt3 = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
+			stmt3.run(uuidv4(), user, beverage, -cost, beverage, 1);
+		});
+
+
 		res.sendStatus(200);
 	}
 }));
@@ -189,7 +185,8 @@ api.get('/orders', userAccess(function (req, res) {
 	}
 
 	let histories = [];
-	db.each("SELECT id, user, reason, amount, timestamp FROM History LIMIT " + limit, function(err, row) {
+	var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History ORDER BY timestamp DESC LIMIT ?;");
+	stmt.each(limit, function(err, row) {
 		histories.push(row);
 	}, function() {
 		res.status(200).end(JSON.stringify(histories));
@@ -199,7 +196,7 @@ api.get('/orders', userAccess(function (req, res) {
 api.get('/orders/:userId', userAccess(function (req, res) {
 	let userId = req.params.userId;
 	let limit = req.query.limit;
-	if (userId === undefined || userId === '' || !users.has(userId)) {
+	if (userId === undefined || userId === '') {
 		res.status(404).end('User not found');
 		return;
 	} else {
@@ -207,7 +204,8 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 			limit = 1000;
 		}
 		let userHistories = [];
-		db.each("SELECT id, user, reason, amount, timestamp FROM History WHERE user = '" + userId + "' LIMIT " + limit, function(err, row) {
+		var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
+		stmt.each(userId, limit, function(err, row) {
 			userHistories.push(row);
 		}, function() {
 			res.status(200).end(JSON.stringify(userHistories));
@@ -216,8 +214,6 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 }));
 
 api.delete('/orders/:orderId', function (req, res) {
-	// FIXME think about using userAccess, adminAcces or keep it locally when
-	//       solving Issue#5 (https://github.com/spethso/Drinklist/issues/5)
 	let orderId = req.params.orderId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
@@ -225,42 +221,75 @@ api.delete('/orders/:orderId', function (req, res) {
 		res.status(403).end('Forbidden');
 		return;
 	}
-	//if (!tokens.get(token).root) {
-	//	res.status(401).end('Unauthorized');
-	//	return;
-	//}
 	if (orderId != undefined && orderId != '') {
-		let deleted = true; //TODO check for  error in sql
 
-		var stmt = db.prepare("DELETE FROM History WHERE id == ?;");
-		stmt.run(orderId);
-		stmt.finalize();
+		let stmt = db.prepare("SELECT timestamp > (DATETIME('now', '-30 seconds', 'localtime')) as fresh, id, user, amount, beverage, beverage_count, timestamp FROM History WHERE id = ? LIMIT 1;");
+		stmt.get(orderId, function(err, result) {
+			if (result == undefined) {
+				// no order to delete!
+				return;
+			}
 
-		if (deleted) {
-			res.sendStatus(200);
-		} else {
-			res.sendStatus(400);
-		}
+			if (result.fresh == false && !tokens.get(token).root) {
+				// too late to delete
+				res.sendStatus(400);
+				return;
+			}
+
+			function updateUserAndBeverage(result) {
+				if (result.amount !== 0 && result.user !== '') {
+					let stmt = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;");
+					stmt.run(result.amount, result.user);
+				}
+
+				if (result.beverage !== '') {
+					let stmt = db.prepare("UPDATE Beverages SET stock = stock + ? WHERE name = ?");
+					stmt.run(result.beverage_count, result.beverage);
+				}
+			}
+
+			if (result.fresh) {
+				updateUserAndBeverage(result);
+				var stmt = db.prepare("DELETE FROM History WHERE id = ?;");
+				stmt.run(orderId);
+				stmt.finalize();
+				res.sendStatus(200);
+			} else {
+				let stmt = db.prepare("SELECT * FROM History WHERE reason = ? LIMIT 1;");
+				stmt.get(result.id, function(err, existing) {
+					if (existing == undefined) { // prevent double undo
+						updateUserAndBeverage(result);
+						let stmt = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
+						stmt.run(uuidv4(), result.user, result.id, -result.amount, result.beverage, -result.beverage_count);
+						res.sendStatus(200);
+					} else {
+						// double undo error code here...
+						res.sendStatus(500);
+					}
+				});
+			}
+		});
 	} else {
 		res.sendStatus(400);
 	}
 });
 
 api.get('/beverages', userAccess(function (req, res) {
-	res.status(200).end(JSON.stringify(beverages));
+	let beverages = [];
+	var stmt = db.prepare("SELECT name, stock, price FROM Beverages ORDER BY name;");
+	stmt.each(function(err, row) {
+		beverages.push(row);
+	}, function() {
+		res.status(200).end(JSON.stringify(beverages));
+	});
 }));
 
 api.post('/beverages', adminAccess(function (req, res) {
 	let bev = req.query.beverage;
 	let price = req.query.price;
 	if (bev != undefined && price != undefined && bev != '') {
-		let beverage = {
-			name: bev,
-			price: price,
-			count: 0
-		};
-		beverages.push(beverage);
-		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
+		let stmt = db.prepare("INSERT INTO Beverages (name, price) VALUES (?, ?)");
+		stmt.run(bev, price);
 		res.sendStatus(200);
 	} else {
 		throw {
@@ -275,19 +304,13 @@ api.patch('/beverages/:beverage', adminAccess(function (req, res) {
 	let price = req.query.price;
 	let count = req.query.count;
 	if (bev != undefined && bev != '') {
-		for (let i = 0; i < beverages.length; i++) {
-			let beverage = beverages[i];
-			console.log(beverage);
-			if (beverage.name == bev) {
-				if (price != undefined) {
-					beverage.price = price;
-				}
-				if (count != undefined) {
-					beverage.count += new Number(count);
-				}
-				fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
-				break;
-			}
+		if (price != undefined) {
+			let stmt = db.prepere("UPDATE Beverages SET price = ?  WHERE name = ?;");
+			stmt.run(parseInt(price), bev);
+		}
+		if (count != undefined) {
+			let stmt = db.prepere("UPDATE Beverages SET stock = stock + ?  WHERE name = ?;");
+			stmt.run(parseInt(count), bev);
 		}
 		res.sendStatus(200);
 	} else {
@@ -298,16 +321,8 @@ api.patch('/beverages/:beverage', adminAccess(function (req, res) {
 api.delete('/beverages/:beverage', adminAccess(function (req, res) {
 	let bev = req.params.beverage;
 	if (bev != undefined && bev != '') {
-		let index = 0;
-		for (let i = 0; i < beverages.length; i++) {
-			let beverage = beverages[i];
-			if (beverage.name == bev) {
-				index = i;
-				break;
-			}
-		}
-		beverages.splice(index, 1);
-		fs.writeFile(dirname + '/data/beverages.json', JSON.stringify(beverages), 'utf8');
+		let stmt = db.prepare("DELETE FROM Beverages WHERE name = ?;");
+		stmt.run(bev);
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -316,31 +331,46 @@ api.delete('/beverages/:beverage', adminAccess(function (req, res) {
 
 api.get('/users', userAccess(function (req, res) {
 	let token = req.header('X-Auth-Token');
+
+	let users = [];
+	var stmt = db.prepare("SELECT name FROM Users ORDER BY name;");
+	var stmtAdmin = db.prepare("SELECT name, balance FROM Users ORDER BY name;");
 	if (!tokens.get(token).root) {
-		res.status(200).end(JSON.stringify(users.keys()));
+		stmt.each(function(err, row) {
+			users.push(row.name);
+		}, function() {
+			res.status(200).end(JSON.stringify(users));
+		});
 	} else {
-		res.status(200).end(JSON.stringify(users.values()));
+		stmtAdmin.each(function(err, row) {
+			users.push(row);
+		}, function() {
+			res.status(200).end(JSON.stringify(users));
+		});
 	}
 }));
 
 api.get('/users/:userId', userAccess(function (req, res) {
 	let userId = req.params.userId;
-	if (userId === undefined || userId === '' || !users.has(userId)) {
+	var stmt = db.prepare("SELECT name, balance FROM Users WHERE name = ?;");
+	if (userId === undefined || userId === '') {
 		res.status(404).end('User not found');
 	} else {
-		res.status(200).end(JSON.stringify(users.get(userId)));
+		stmt.get(userId, function(err, result) {
+			if (result == undefined) {
+				res.status(404).end('User not found');
+				return;
+			}
+			res.status(200).end(JSON.stringify(result));
+		});
 	}
 }));
 
 api.post('/users/:userId', adminAccess(function (req, res) {
 	let userId = req.params.userId;
 	if (userId != undefined && userId != '') {
-		let user = {
-			name: userId,
-			balance: 0
-		};
-		users.set(userId, user);
-		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
+		let stmt = db.prepare("INSERT INTO Users (name) VALUES (?);");
+		stmt.run(userId);
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
@@ -349,11 +379,10 @@ api.post('/users/:userId', adminAccess(function (req, res) {
 
 api.delete('/users/:userId', adminAccess(function (req, res) {
 	let userId = req.params.userId;
-	if (userId != undefined && userId != '' && users.has(userId)) {
-		let user = users.get(userId);
-		users.remove(userId);
-		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
-		res.status(200).send(JSON.stringify(user));
+	if (userId != undefined && userId != '') {
+		let stmt = db.prepare("DELETE FROM Users WHERE name = ?;");
+		stmt.run(userId);
+		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
 	}
@@ -364,15 +393,15 @@ api.patch('/users/:userId', adminAccess(function (req, res) {
 	let amount = req.query.amount;
 	let reason = req.query.reason;
 	if (userId != undefined && amount != undefined && reason != undefined
-		&& userId != '' && reason != '' && amount != '' && users.has(userId)) {
+		&& userId != '' && reason != '' && amount != '') {
 		amount = new Number(amount);
-		
-		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount, timestamp) VALUES (?, ?, ?, ?, ?);");
-		stmt.run(uuidv4(), userId, reason, amount, new Date().toUTCString());
+
+		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);");
+		stmt.run(uuidv4(), userId, reason, amount);
 		stmt.finalize();
 
-		users.get(userId).balance += amount;
-		fs.writeFile(dirname + '/data/users.json', JSON.stringify(users), 'utf8');
+		let stmt2 = db.prepare("UPDATE Users SET balance = balance + ? WHERE name = ?;");
+		stmt2.run(amount, userId);
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
