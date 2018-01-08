@@ -305,11 +305,11 @@ api.patch('/beverages/:beverage', adminAccess(function (req, res) {
 	let count = req.query.count;
 	if (bev != undefined && bev != '') {
 		if (price != undefined) {
-			let stmt = db.prepere("UPDATE Beverages SET price = ?  WHERE name = ?;");
+			let stmt = db.prepare("UPDATE Beverages SET price = ?  WHERE name = ?;");
 			stmt.run(parseInt(price), bev);
 		}
 		if (count != undefined) {
-			let stmt = db.prepere("UPDATE Beverages SET stock = stock + ?  WHERE name = ?;");
+			let stmt = db.prepare("UPDATE Beverages SET stock = stock + ?  WHERE name = ?;");
 			stmt.run(parseInt(count), bev);
 		}
 		res.sendStatus(200);
