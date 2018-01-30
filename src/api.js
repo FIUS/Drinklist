@@ -177,6 +177,28 @@ api.post('/orders', userAccess(function (req, res) {
 	}
 }));
 
+api.get('/lastorders', userAccess(function (req, res) {
+	let histories = [];
+	var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History ORDER BY timestamp DESC LIMIT 100;");
+	stmt.each(function(err, row) {
+		let reverted = false
+		for (let index in histories) {
+			let prev = histories[index]
+			if (prev['reason'] == row['id']) {
+				histories.splice(index, 1);
+				reverted = true;
+			}
+		}
+		if (! reverted) {
+			if (true || row.user != undefined && row.user != null && row.user !== '' &&
+				row.beverage != undefined && row.beverage != null && row.beverage !== '') {
+				histories.push(row);
+			}
+		}
+	}, function() {
+		res.status(200).end(JSON.stringify(histories));
+	});
+}));
 
 api.get('/orders', userAccess(function (req, res) {
 	let limit = req.query.limit;
@@ -206,9 +228,15 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 		let userHistories = [];
 		var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
 		stmt.each(userId, limit, function(err, row) {
-			if (userHistories.length > 0 && userHistories[userHistories.length-1]['reason'] == row['id']) {
-				userHistories.pop();
-			} else {
+			let reverted = false
+			for (let index in histories) {
+				let prev = histories[index]
+				if (prev['reason'] == row['id']) {
+					histories.splice(index, 1);
+					reverted = true;
+				}
+			}
+			if (! reverted) {
 				userHistories.push(row);
 			}
 		}, function() {

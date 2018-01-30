@@ -215,7 +215,7 @@ function updateUserHistory() {
 }
 
 function updateRecent() {
-	getJSON('./orders?limit=3', function(orders) {
+	getJSON('./lastorders?limit=3', function(orders) {
 		_('#ticker0').text(orders[0].user + ': ' + orders[0].reason + ' @ ' + orders[0].timestamp);
 		_('#ticker1').text(orders[1].user + ': ' + orders[1].reason + ' @ ' + orders[1].timestamp);
 		_('#ticker2').text(orders[2].user + ': ' + orders[2].reason + ' @ ' + orders[2].timestamp);
@@ -236,7 +236,7 @@ function updateMoney() {
 			_('#money').addClass('text-danger');
 			_('#money').removeClass('text-white');
 		} else {
-			_('#mjumbo').addClass('bg-danger');
+			_('#mjumbo').addClass('bg-danger');addHistoryEntry
 			_('#money').removeClass('text-success');
 			_('#money').removeClass('text-danger');
 			_('#money').addClass('text-white');
