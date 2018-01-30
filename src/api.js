@@ -206,7 +206,11 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 		let userHistories = [];
 		var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
 		stmt.each(userId, limit, function(err, row) {
-			userHistories.push(row);
+			if (userHistories.length > 0 && userHistories[userHistories.length-1]['reason'] == row['id']) {
+				userHistories.pop();
+			} else {
+				userHistories.push(row);
+			}
 		}, function() {
 			res.status(200).end(JSON.stringify(userHistories));
 		});
