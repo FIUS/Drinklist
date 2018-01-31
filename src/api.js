@@ -10,12 +10,14 @@
 // Imports
 const sqlite3 = require('sqlite3');
 const express = require('express');
+const compression = require('compression');
 const api = module.exports = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const HashMap = require('hashmap');
 const uuidv4 = require('uuid/v4');
 const dirname = fs.realpathSync('./');
+const exec = require('child_process').exec;
 
 // Database
 var db = new sqlite3.Database(dirname + '/data/history.db');
@@ -89,6 +91,7 @@ function adminAccess(middleware) {
 	};
 }
 
+api.use(compression());
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(function (req, res, next) {
 
@@ -229,10 +232,10 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 		var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
 		stmt.each(userId, limit, function(err, row) {
 			let reverted = false
-			for (let index in histories) {
-				let prev = histories[index]
-				if (prev['reason'] == row['id']) {
-					histories.splice(index, 1);
+			for (let index in userHistories) {
+				let prev = userHistories[index]
+				if (prev['reason'] === row['id']) {
+					userHistories.splice(index, 1);
 					reverted = true;
 				}
 			}
@@ -437,6 +440,17 @@ api.patch('/users/:userId', adminAccess(function (req, res) {
 	} else {
 		res.sendStatus(400);
 	}
+}));
+
+api.get('/backup', adminAccess(function (req, res) {
+	let result = "";
+	let dump = exec('sqlite3 data/history.db ".dump"');
+	dump.stdout.on('data', data => {
+		result += data.toString();
+	});
+	dump.on('close', code => {
+		res.status(200).send(result);
+	});
 }));
 
 api.post('/logout', function (req, res) {
