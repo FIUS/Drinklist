@@ -5,6 +5,12 @@ The Drinklist is essentially a digital tally sheet which is intended for trackin
 
 > This was designed and buid for the [FIUS](https://fius.informatik.uni-stuttgart.de) by its members.
 
+## Prerequisites:
+
+ *  npm
+ *  sqlite3
+
+
 ## Install
 
 First install all dependencies with:
