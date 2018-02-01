@@ -1,4 +1,4 @@
-app.controller('mainController', function($scope, $route, $http, authService) {
+app.controller('mainController', function($scope, $route, $http, authService, FileSaver, Blob) {
 	$scope.auth = authService;
 
 	$scope.isActive = function(tab) {
@@ -47,4 +47,13 @@ app.controller('mainController', function($scope, $route, $http, authService) {
 	$scope.apiDelete = function(path, callback) {
 		$scope.apiCall('DELETE', path, null, null, callback);
 	};
+
+	$scope.downloadDB = function() {
+		$scope.apiGet('/backup').then(function(response) {
+			console.log(response);
+			FileSaver.saveAs(new Blob([response.data], {
+				type: 'text/plain;charset=utf-8'
+			}), 'dump-' + Date.now() + '.sql');
+		});
+	}
 });

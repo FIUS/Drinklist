@@ -21,6 +21,7 @@
   "homepage": "https://github.com/spethso/Drinklist#readme",
   "dependencies": {
     "angular": "^1.6.6",
+    "angular-file-saver": "^1.1.3",
     "angular-route": "^1.6.6",
     "body-parser": "^1.17.2",
     "bootstrap": "^4.0.0-alpha.6",

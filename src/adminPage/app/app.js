@@ -1,4 +1,4 @@
-var app = angular.module('mainModule', ['ngRoute']);
+var app = angular.module('mainModule', ['ngRoute', 'ngFileSaver']);
 
 app.config(function ($routeProvider) {
 	$routeProvider

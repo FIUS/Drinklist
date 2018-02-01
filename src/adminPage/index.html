@@ -70,6 +70,14 @@
 								</a>
 							</li>
 					</ul>
+					<ul class="nav nav-pills flex-column" data-ng-hide="!auth.isAdmin">
+						<li class="nav-item">
+							<a class="nav-link text-dark" data-ng-click="downloadDB()">
+								<i class="fa fa-fw fa-download" aria-hidden="true"></i>
+								Download DB Dump
+							</a>
+						</li>
+					</ul>
 					<ul class="nav nav-pills flex-column" data-ng-hide="!auth.isLoggedIn">
 						<li class="nav-item">
 							<a href="http://localhost:8081/" class="nav-link text-dark">
@@ -88,9 +96,9 @@
 
 		<!-- JavaScript Files -->
 		<script src="./jquery"></script>
-		<!-- <script src="./popper.min.js"></script> -->
 		<script src="./angular/main"></script>
 		<script src="./angular/route"></script>
+		<script src="./angular/filesaver"></script>
 		<script src="./bootstrap/js"></script>
 		<script src="./app/main"></script>
 		<script src="./app/services/authentication.js"></script>

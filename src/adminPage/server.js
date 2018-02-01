@@ -70,6 +70,11 @@ app.get('/angular/route', function (req, res) {
 	res.status(200).sendFile(dirname + '/node_modules/angular-route/angular-route.min.js');
 });
 
+app.get('/angular/filesaver', function (req, res) {
+	console.log('[adminPage] [load] [lib] angular/filesaver');
+	res.status(200).sendFile(dirname + '/node_modules/angular-file-saver/dist/angular-file-saver.bundle.min.js');
+});
+
 app.get('/app/main', function (req, res) {
 	console.log('[adminPage] [load] [app] main');
 	res.status(200).sendFile(__dirname + '/app/app.js');
