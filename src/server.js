@@ -1,28 +1,50 @@
 /*
-* Simple Web Service for drinks
-* ------------------------
-* Author: Sandro Speth
-* Author: Tobias Wältken
-*/
+ * Simple Web Service for drinks
+ * ------------------------
+ * Author: Fabian Bühler
+ * Author: Sandro Speth
+ * Author: Tobias Wältken
+ */
 
-const api = require('./api.js');
-const userPage = require('./userPage/server.js');
+/* jslint esversion: 6 */
+
+// Imports
+const fs = require('fs');
+
+// Import all software components
+const api       = require('./api.js');
+const userPage  = require('./userPage/server.js');
 const adminPage = require('./adminPage/server.js');
 
-var apiServer = api.listen(8080, function () {
-	var host = apiServer.address().address;
-	var port = apiServer.address().port;
-	console.log("API listening at http://%s:%s", host, port);
+// Settings file
+var settings = JSON.parse(fs.readFileSync(fs.realpathSync('./') + '/data/settings.json', 'utf8'));
+
+// Setup and start the api server
+api.locals.apiPath   = settings.apiPath;
+api.locals.userPath  = settings.userPath;
+api.locals.adminPath = settings.adminPath;
+var apiServer = api.listen(settings.apiPort, function () {
+	let host = apiServer.address().address;
+	let port = apiServer.address().port;
+	console.log("[API] [Start] Listening at http://%s:%s", host, port);
 });
 
-var userPageServer = userPage.listen(8081, function () {
-	var host = userPageServer.address().address;
-	var port = userPageServer.address().port;
-	console.log("Web server for the user page listening at http://%s:%s", host, port);
+// Setup and start the user page
+userPage.locals.apiPath   = settings.apiPath;
+userPage.locals.userPath  = settings.userPath;
+userPage.locals.adminPath = settings.adminPath;
+var userPageServer = userPage.listen(settings.userPort, function () {
+	let host = userPageServer.address().address;
+	let port = userPageServer.address().port;
+	console.log("[userPage] [Start] Listening at http://%s:%s", host, port);
 });
 
-var adminPageServer = adminPage.listen(8082, function () {
-	var host = adminPageServer.address().address;
-	var port = adminPageServer.address().port;
-	console.log("Web server for the admin page listening at http://%s:%s", host, port);
+// Setup and start the admin page
+adminPage.locals.apiPath   = settings.apiPath;
+adminPage.locals.userPath  = settings.userPath;
+adminPage.locals.adminPath = settings.adminPath;
+var adminPageServer = adminPage.listen(settings.adminPort, function () {
+	let host = adminPageServer.address().address;
+	let port = adminPageServer.address().port;
+	console.log("[adminPage] [Start] Listening at http://%s:%s", host, port);
 });

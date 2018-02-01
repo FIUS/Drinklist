@@ -1,9 +1,10 @@
 /*
-* The api for the Drinklist
-* ------------------------
-* Author: Sandro Speth
-* Author: Tobias Wältken
-*/
+ * The api for the Drinklist
+ * ------------------------
+ * Author: Fabian Bühler
+ * Author: Sandro Speth
+ * Author: Tobias Wältken
+ */
 
 /* jslint esversion: 6 */
 
@@ -11,19 +12,21 @@
 const sqlite3 = require('sqlite3');
 const express = require('express');
 const compression = require('compression');
-const api = module.exports = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const HashMap = require('hashmap');
 const uuidv4 = require('uuid/v4');
-const dirname = fs.realpathSync('./');
 const exec = require('child_process').exec;
 
-// Database
+// Constants
+const dirname = fs.realpathSync('./');
+const api = module.exports = express();
+
+// Main Database
 var db = new sqlite3.Database(dirname + '/data/history.db');
-// Arrays
+// authentication Arrays
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
-// NodeJS HashMap
+// NodeJS HashMap to store login tokens
 var tokens = new HashMap();
 
 /**
@@ -91,19 +94,16 @@ function adminAccess(middleware) {
 	};
 }
 
+// Setup Global Middlewares
 api.use(compression());
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(function (req, res, next) {
-
 	// Website you wish to allow to connect
 	res.setHeader('Access-Control-Allow-Origin', '*');
-
 	// Request methods you wish to allow
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
 	// Request headers you wish to allow
 	res.setHeader('Access-Control-Allow-Headers', 'X-Auth-Token,content-type');
-
 	// Set to true if you need the website to include cookies in the requests sent
 	// to the API (e.g. in case you use sessions)
 	res.setHeader('Access-Control-Allow-Credentials', false);
@@ -461,7 +461,7 @@ api.post('/logout', function (req, res) {
 	res.sendStatus(200);
 });
 
-// Error Handler
+// Error Handling Middleware
 api.use(function (err, req, res, next) {
 	console.error(err.stack);
 	res.status(500).send('We messed up, sry!');
