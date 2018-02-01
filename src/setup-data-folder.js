@@ -43,8 +43,11 @@ function input(prompt, lineCallback, callback) {
 	let reader = readline.createInterface(process.stdin, process.stdout);
 	reader.setPrompt(prompt);
 	reader.on('line', function(line) {
-		lineCallback(line);
-		reader.close();
+		if (lineCallback(line)) {
+			reader.prompt();
+		} else {
+			reader.close();
+		}
 	});
 	reader.on('close', callback);
 	reader.prompt();
@@ -53,7 +56,7 @@ function input(prompt, lineCallback, callback) {
 function writeFile(name, path, data) {
 	fs.writeFile(path, JSON.stringify(data), function(err) {
 		if(err) {
-			console.log("Error creating the " + name + " file at <<" + path + ">>");
+			console.log("Error creating the " + name + " file at: " + path);
 			console.log(err);
 		} else {
 			console.log("The " + name + " file was created at: " + path);
@@ -96,13 +99,21 @@ function authInfo() {
 
 function setAuthUser() {
 	input('User Password> ', (input) => {
-		authData[0].password = input;
+		if (input) {
+			authData[0].password = input;
+		} else {
+			return true;
+		}
 	}, setAuthAdmin);
 }
 
 function setAuthAdmin() {
 	input('Admin Password> ', (input) => {
-		authData[1].password = input;
+		if (input) {
+			authData[1].password = input;
+		} else {
+			return true;
+		}
 	}, pathInfo);
 }
 
