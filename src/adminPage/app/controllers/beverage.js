@@ -164,7 +164,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 	};
 	$scope.cellClass = function(entry) {};
 
-	$scope.apiGet('/beverages').then(function(response) {
+	$scope.apiGet('/beverages', function(response) {
 		$scope.dataSet = response.data;
 	});
 });

@@ -88,7 +88,7 @@ app.controller('tokenController', function($scope, $route, $http, $window) {
 	$scope.rowClass = function(entry) {};
 	$scope.cellClass = function(entry) {};
 
-	$scope.apiGet('/token').then(function(response) {
+	$scope.apiGet('/token', function(response) {
 		$scope.dataSet = response.data;
 	});
 });

@@ -18,6 +18,11 @@ app.get('/', function (req, res) {
 	res.status(200).sendFile(__dirname + '/index.html');
 });
 
+app.get('/api', function (req, res) {
+	console.log('[adminPage] [get] api url');
+	res.status(200).send(app.locals.apiPath);
+});
+
 app.get('/css', function (req, res) {
 	console.log('[adminPage] [load] index.css');
 	res.status(200).sendFile(__dirname + '/index.css');

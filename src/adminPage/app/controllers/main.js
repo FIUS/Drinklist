@@ -1,20 +1,30 @@
 app.controller('mainController', function($scope, $route, $http, authService, FileSaver, Blob) {
 	$scope.auth = authService;
-
 	$scope.isActive = function(tab) {
 		if (!$route.current) {
 			return false;
 		}
 		return $route.current.activetab == tab;
 	};
-	
-	$scope.api = "http://localhost:8080";
-	$scope.apiGet = function(path) {
-		return $http.get($scope.api + path, {
+
+	$http.get('./api').then(function(response) {
+		$scope.api = response.data;
+	})
+
+	$scope.apiGet = function(path, callback) {
+		$http({
+			method: 'GET',
+			url: $scope.api + path,
 			headers: {
 				'X-Auth-Token': $scope.auth.token
-		}
-		}).then(null, function(response) {
+			}
+		}).then(function(response) {
+			if (callback) {
+				callback(response);
+			}
+			// DEBUG CODE
+			// alert(JSON.stringify(response));
+		}, function(response) {
 			$scope.auth.logout($scope.api);
 		});
 	};
@@ -31,8 +41,8 @@ app.controller('mainController', function($scope, $route, $http, authService, Fi
 			if (callback) {
 				callback(response);
 			}
-			// TODO DEBUG CODE remove this line
-			alert(JSON.stringify(response));
+			// DEBUG CODE
+			// alert(JSON.stringify(response));
 			$route.reload();
 		}, function(response) {
 			$scope.auth.logout($scope.api);
@@ -49,11 +59,10 @@ app.controller('mainController', function($scope, $route, $http, authService, Fi
 	};
 
 	$scope.downloadDB = function() {
-		$scope.apiGet('/backup').then(function(response) {
-			console.log(response);
+		$scope.apiGet('/backup', function(response) {
 			FileSaver.saveAs(new Blob([response.data], {
 				type: 'text/plain;charset=utf-8'
 			}), 'dump-' + Date.now() + '.sql');
 		});
-	}
+	};
 });

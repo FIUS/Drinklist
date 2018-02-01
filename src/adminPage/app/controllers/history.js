@@ -93,7 +93,7 @@ app.controller('historyController', function($scope, $http, $window) {
 		}
 	};
 
-	$scope.apiGet('/orders').then(function(response) {
+	$scope.apiGet('/orders', function(response) {
 		$scope.dataSet = response.data;
 	});
 });

@@ -128,7 +128,7 @@ app.controller('userController', function($scope, $http, $window) {
 		}
 	};
 
-	$scope.apiGet('/users').then(function(response) {
+	$scope.apiGet('/users', function(response) {
 		$scope.dataSet = response.data;
 	});
 });
