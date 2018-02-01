@@ -9,14 +9,14 @@
 /* jslint esversion: 6 */
 
 // Imports
-const fs = require('fs');
+const fs       = require('fs');
 const readline = require('readline');
-const sqlite3 = require('sqlite3');
+const sqlite3  = require('sqlite3');
 
 // Constants
-const dirname = fs.realpathSync('./');
+const dirname      = fs.realpathSync('./');
 const databaseFile = dirname + '/data/history.db';
-const authFile = dirname + '/data/auth.json';
+const authFile     = dirname + '/data/auth.json';
 const settingsFile = dirname + '/data/settings.json';
 
 // Data Templates
