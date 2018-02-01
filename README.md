@@ -13,14 +13,20 @@ The Drinklist is essentially a digital tally sheet which is intended for trackin
 
 ## Install
 
-First install all dependencies with:
+First install all dependencies and setup the data folder with:
 ```Bash
 npm install
+npm run setup-data-folder
 ```
 
 Then start the node js server with:
 ```Bash
 npm start
+```
+
+or run it directly with:
+```Bash
+node src/server.js
 ```
 
 Lastly navigate to the [Admin Page](http://localhost:8082) or the [User Page](http://localhost:8081) and start using the system.
