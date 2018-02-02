@@ -1,5 +1,4 @@
-// API location
-const API = 'http://localhost:8080/';
+// This file is going to be prepended with: const API = '...';
 
 /*
  * Setup Variables

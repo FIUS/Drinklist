@@ -47,7 +47,11 @@ app.get('/font-awesome/css/css', function (req, res) {
 
 app.get('/index.js', function (req, res) {
 	console.log('[userPage] [load] index.js');
-	res.status(200).sendFile(__dirname + '/index.js');
+	res.status(200).write('const API = "' + app.locals.apiPath + '";\n')
+	fs.readFile(__dirname + '/index.js', 'utf8', function(err, data) {
+		res.write(data);
+		res.end();
+	});
 });
 
 app.get('/jquery', function (req, res) {
