@@ -157,12 +157,17 @@ function setAdminPath() {
 
 function dbQuestion() {
 	console.log('');
-	input('create/recreate Database [y/N]> ', (input) => {
-		if (input === 'y') {
-			console.log('');
-			recreateDB();
-		}
-	}, saveAll);
+	if (fs.existsSync(databaseFile)) {
+		input('recreate Database [y/N]> ', (input) => {
+			if (input === 'y') {
+				console.log('');
+				recreateDB();
+			}
+		}, saveAll);
+	} else {
+		recreateDB();
+		saveAll();
+	}
 }
 
 function saveAll() {
