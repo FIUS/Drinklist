@@ -5,13 +5,17 @@
 * Author: Tobias Wältken
 */
 
-const express = require('express');
-const app = module.exports = express();
+/* jslint esversion: 6 */
+
+// Imports
 const fs = require('fs');
+const express = require('express');
 
+// Constants
+const app = module.exports = express();
 const dirname = fs.realpathSync('./');
-var localesArray = JSON.parse(fs.readFileSync(__dirname + '/locales.json', 'utf8'));
 
+var localesArray = JSON.parse(fs.readFileSync(__dirname + '/locales.json', 'utf8'));
 
 app.get('/', function (req, res) {
 	console.log('[userPage] [load] index.html');
