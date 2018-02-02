@@ -23,6 +23,11 @@ app.get('/api', function (req, res) {
 	res.status(200).send(app.locals.apiPath);
 });
 
+app.get('/user', function (req, res) {
+	console.log('[adminPage] [get] user page url');
+	res.status(200).send(app.locals.userPath);
+});
+
 app.get('/css', function (req, res) {
 	console.log('[adminPage] [load] index.css');
 	res.status(200).sendFile(__dirname + '/index.css');

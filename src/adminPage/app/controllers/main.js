@@ -9,7 +9,10 @@ app.controller('mainController', function($scope, $route, $http, authService, Fi
 
 	$http.get('./api').then(function(response) {
 		$scope.api = response.data;
-	})
+	});
+	$http.get('./user').then(function(response) {
+		$scope.userPage = response.data;
+	});
 
 	$scope.apiGet = function(path, callback) {
 		$http({
