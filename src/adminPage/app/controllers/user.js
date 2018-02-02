@@ -43,7 +43,7 @@ app.controller('userController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPost('/users/' + encodeURI(data.name));
+				$scope.apiPost('./users/' + encodeURI(data.name));
 			}
 		},
 		{
@@ -72,7 +72,7 @@ app.controller('userController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPatch('/users/' + encodeURI(data.name), {
+				$scope.apiPatch('./users/' + encodeURI(data.name), {
 					amount: data.amount,
 					reason: data.reason
 				});
@@ -92,7 +92,7 @@ app.controller('userController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiDelete('/users/' + encodeURI(data.name));
+				$scope.apiDelete('./users/' + encodeURI(data.name));
 			}
 		}
 	];
@@ -128,7 +128,7 @@ app.controller('userController', function($scope, $http, $window) {
 		}
 	};
 
-	$scope.apiGet('/users', function(response) {
+	$scope.apiGet('./users', function(response) {
 		$scope.dataSet = response.data;
 	});
 });

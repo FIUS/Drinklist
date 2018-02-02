@@ -38,7 +38,7 @@ app.controller('tokenController', function($scope, $route, $http, $window) {
 			submit: function(data) {
 				$http({
 					method: 'POST',
-					url: $scope.api + '/logout?token=' + data.token
+					url: $scope.api + './logout?token=' + data.token
 				}).then(function(response) {
 					alert('Invalidated Token: ' + data.token);
 					$route.reload();
@@ -88,7 +88,7 @@ app.controller('tokenController', function($scope, $route, $http, $window) {
 	$scope.rowClass = function(entry) {};
 	$scope.cellClass = function(entry) {};
 
-	$scope.apiGet('/token', function(response) {
+	$scope.apiGet('./token', function(response) {
 		$scope.dataSet = response.data;
 	});
 });

@@ -57,7 +57,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPost('/beverages', {
+				$scope.apiPost('./beverages', {
 					beverage: data.name,
 					price: data.price
 				});
@@ -83,7 +83,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPatch('/beverages/' + encodeURI(data.name), {
+				$scope.apiPatch('./beverages/' + encodeURI(data.name), {
 					count: data.amount
 				});
 			}
@@ -108,7 +108,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPatch('/beverages/' + encodeURI(data.name), {
+				$scope.apiPatch('./beverages/' + encodeURI(data.name), {
 					price: data.price
 				});
 			}
@@ -127,7 +127,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiDelete('/beverages/' + encodeURI(data.name));
+				$scope.apiDelete('./beverages/' + encodeURI(data.name));
 			}
 		}
 	];
@@ -164,7 +164,7 @@ app.controller('beverageController', function($scope, $http, $window) {
 	};
 	$scope.cellClass = function(entry) {};
 
-	$scope.apiGet('/beverages', function(response) {
+	$scope.apiGet('./beverages', function(response) {
 		$scope.dataSet = response.data;
 	});
 });

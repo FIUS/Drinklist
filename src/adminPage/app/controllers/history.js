@@ -36,7 +36,7 @@ app.controller('historyController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiDelete("/orders/" + encodeURI(data.id));
+				$scope.apiDelete("./orders/" + encodeURI(data.id));
 			}
 		}
 	];
@@ -93,7 +93,7 @@ app.controller('historyController', function($scope, $http, $window) {
 		}
 	};
 
-	$scope.apiGet('/orders', function(response) {
+	$scope.apiGet('./orders', function(response) {
 		$scope.dataSet = response.data;
 	});
 });

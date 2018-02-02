@@ -10,7 +10,7 @@ function authService($window, $http) {
 	this.login = function(api, password) {
 		$http({
 			method: 'POST',
-			url: api + '/login',
+			url: api + './login',
 			data: "password=" + password,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -26,7 +26,7 @@ function authService($window, $http) {
 	this.logout = function(api) {
 		$http({
 			method: 'POST',
-			url: api + '/logout?token=' + this.token
+			url: api + './logout?token=' + this.token
 		});
 		this.isLoggedIn = false;
 		$window.location.reload();
