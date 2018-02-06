@@ -4,6 +4,10 @@
 		"name": "Deutsch"
 	},
 	{
+		"id": "swb",
+		"name": "Schwäbisch"
+	},
+	{
 		"id": "en",
 		"name": "English"
 	},
