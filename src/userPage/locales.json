@@ -18,5 +18,9 @@
 	{
 		"id": "klg",
 		"name": "tlhIngan"
+	},
+	{
+		"id": "bay",
+		"name": "Bayrisch"
 	}
 ]
