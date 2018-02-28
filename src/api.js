@@ -23,7 +23,7 @@ const dirname = fs.realpathSync('./');
 const api = module.exports = express();
 
 // Main Database
-var db = new sqlite3.Database(dirname + '/data/history.db', err => { if (err) {return next(err);} });
+var db = new sqlite3.Database(dirname + '/data/history.db', err => { throw err; });
 // authentication Arrays
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap to store login tokens
