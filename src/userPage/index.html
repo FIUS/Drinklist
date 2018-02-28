@@ -56,6 +56,19 @@
 			.ticker>div:nth-child(3) {
 				animation-delay: 6s;
 			}
+			.btn-hover {
+				transition: background-color 0.3s ease-in-out, opacity 0.15s ease-in-out;
+			}
+			.btn-hover:hover {
+				opacity: 0.7;
+			}
+			.pointer:hover {
+				cursor: pointer;
+			}
+			.btn-clicked {
+				background-color: #ffc107;
+				pointer-events: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -65,14 +78,14 @@
 				<button
 					id="btnlogout"
 					type="button"
-					class="btn btn-outline-danger"
+					class="btn btn-outline-danger pointer"
 					onclick="logout();">
 					<i class="fa fa-sign-out fa-rotate-180" aria-hidden="true"></i>
 				</button>
 				<a
 					id='btnadmin'
 					role="button"
-					class="btn btn-outline-danger"
+					class="btn btn-outline-danger pointer"
 					href="http://localhost:8082/">
 					<i class="fa fa-cogs" aria-hidden="true"></i>
 				</a>
@@ -163,7 +176,7 @@
 					<button
 						id="btnfinish"
 						type="button"
-						class="btn btn-warning btn-lg btn-block"
+						class="btn btn-warning btn-lg btn-block pointer"
 						style="margin-top: .5rem; margin-bottom: .5rem;"
 						onclick="deselectUser();">
 					</button>

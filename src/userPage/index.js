@@ -248,7 +248,7 @@ function addUserButton(user) {
 		class: 'col-sm-6 col-md-4 col-lg-3 col-xl-2'
 	}).append($('<button/>', {
 		type: 'button',
-		class: 'btn btn-warning btn-lg btn-block',
+		class: 'btn btn-warning btn-lg btn-block pointer',
 		style: 'margin-top: .5rem'
 	}).text(user).click(function() {
 		selectUser(user);
@@ -258,9 +258,11 @@ function addUserButton(user) {
 function addBeverageButton(beverage) {
 	_('#beverages').append($('<button/>', {
 		type: 'button',
-		class: 'btn btn-lg btn-block',
+		class: 'btn btn-lg btn-block btn-hover pointer',
 		style: 'margin-top: .5rem'
-	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function() {
+	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function(event) {
+		event.target.classList.add('btn-clicked');
+		window.setTimeout(function () {event.target.classList.remove('btn-clicked');}, 1500);
 		$.ajax({
 			type: 'POST',
 			url: API + './orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name,
@@ -302,7 +304,7 @@ function addHistoryEntry(entry) {
 		.append($('<td></td>', {
 			style: 'text-align: right;'
 		}).append($('<i></i>', {
-			class: isTimePassed(entry.timestamp) ? 'fa fa-trash-o' : ''
+			class: isTimePassed(entry.timestamp) ? 'fa fa-trash-o pointer' : ''
 		}))));
 }
 
