@@ -23,7 +23,7 @@ const dirname = fs.realpathSync('./');
 const api = module.exports = express();
 
 // Main Database
-var db = new sqlite3.Database(dirname + '/data/history.db');
+var db = new sqlite3.Database(dirname + '/data/history.db', err => { if (err) {return next(err);} });
 // authentication Arrays
 var auth = JSON.parse(fs.readFileSync(dirname + '/data/auth.json', 'utf8'));
 // NodeJS HashMap to store login tokens
@@ -112,7 +112,7 @@ api.use(function (req, res, next) {
 	next();
 });
 
-api.post('/login', function (req, res) {
+api.post('/login', function (req, res, next) {
 	let passwd = req.body.password;
 	if (passwd == undefined || passwd === '') {
 		console.log('[FAIL] [login] no password');
@@ -144,11 +144,11 @@ api.post('/login', function (req, res) {
 	}
 });
 
-api.get('/token', adminAccess(function (req, res) {
+api.get('/token', adminAccess(function (req, res, next) {
 	res.status(200).end(JSON.stringify(tokens.values()));
 }));
 
-api.post('/orders', userAccess(function (req, res) {
+api.post('/orders', userAccess(function (req, res, next) {
 	let user = req.query.user;
 	let beverage = req.query.beverage;
 
@@ -157,22 +157,25 @@ api.post('/orders', userAccess(function (req, res) {
 		res.status(400).end('Fail to order the beverage for the user');
 		return;
 	} else {
-		let stmt = db.prepare("SELECT price, stock FROM Beverages WHERE name = ?;");
+		let stmt = db.prepare("SELECT price, stock FROM Beverages WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
 		stmt.get(beverage, function(err, result) {
+			if (err) {
+				return next(err);
+			}
 			if (result == undefined) {
 				console.log('[API] [FAIL] can\'t find beverage '+beverage);
 				return;
 			}
 			let cost = result.price;
 
-			let stmt1 = db.prepare("UPDATE Beverages SET stock = stock-1 WHERE name = ?;");
-			stmt1.run(beverage);
+			let stmt1 = db.prepare("UPDATE Beverages SET stock = stock-1 WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+			stmt1.run(beverage, (res, err) => { if (err) {return next(err);} });
 
-			let stmt2 = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;");
-			stmt2.run(cost, user);
+			let stmt2 = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+			stmt2.run(cost, user, (res, err) => { if (err) {return next(err);} });
 
-			var stmt3 = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
-			stmt3.run(uuidv4(), user, beverage, -cost, beverage, 1);
+			var stmt3 = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);", (err, res) => { if (err) {return next(err);} });
+			stmt3.run(uuidv4(), user, beverage, -cost, beverage, 1, (res, err) => { if (err) {return next(err);} });
 		});
 
 
@@ -180,10 +183,13 @@ api.post('/orders', userAccess(function (req, res) {
 	}
 }));
 
-api.get('/lastorders', userAccess(function (req, res) {
+api.get('/lastorders', userAccess(function (req, res, next) {
 	let histories = [];
-	var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History ORDER BY timestamp DESC LIMIT 100;");
+	var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History ORDER BY timestamp DESC LIMIT 100;", (err, res) => { if (err) {return next(err);} });
 	stmt.each(function(err, row) {
+		if (err) {
+			return next(err);
+		}
 		let reverted = false
 		for (let index in histories) {
 			let prev = histories[index]
@@ -203,22 +209,25 @@ api.get('/lastorders', userAccess(function (req, res) {
 	});
 }));
 
-api.get('/orders', userAccess(function (req, res) {
+api.get('/orders', userAccess(function (req, res, next) {
 	let limit = req.query.limit;
 	if (limit === undefined) {
 		limit = 1000;
 	}
 
 	let histories = [];
-	var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History ORDER BY timestamp DESC LIMIT ?;");
+	var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History ORDER BY timestamp DESC LIMIT ?;", (err, res) => { if (err) {return next(err);} });
 	stmt.each(limit, function(err, row) {
+		if (err) {
+			return next(err);
+		}
 		histories.push(row);
 	}, function() {
 		res.status(200).end(JSON.stringify(histories));
 	});
 }));
 
-api.get('/orders/:userId', userAccess(function (req, res) {
+api.get('/orders/:userId', userAccess(function (req, res, next) {
 	let userId = req.params.userId;
 	let limit = req.query.limit;
 	if (userId === undefined || userId === '') {
@@ -229,8 +238,11 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 			limit = 1000;
 		}
 		let userHistories = [];
-		var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;");
+		var stmt = db.prepare("SELECT id, user, reason, amount, beverage, beverage_count, timestamp FROM History WHERE user = ? ORDER BY timestamp DESC LIMIT ?;", (err, res) => { if (err) {return next(err);} });
 		stmt.each(userId, limit, function(err, row) {
+			if (err) {
+				return next(err);
+			}
 			let reverted = false
 			for (let index in userHistories) {
 				let prev = userHistories[index]
@@ -248,7 +260,7 @@ api.get('/orders/:userId', userAccess(function (req, res) {
 	}
 }));
 
-api.delete('/orders/:orderId', function (req, res) {
+api.delete('/orders/:orderId', function (req, res, next) {
 	let orderId = req.params.orderId;
 	let token = req.header('X-Auth-Token');
 	if (!tokens.has(token)) {
@@ -258,8 +270,11 @@ api.delete('/orders/:orderId', function (req, res) {
 	}
 	if (orderId != undefined && orderId != '') {
 
-		let stmt = db.prepare("SELECT timestamp > (DATETIME('now', '-30 seconds', 'localtime')) as fresh, id, user, amount, beverage, beverage_count, timestamp FROM History WHERE id = ? LIMIT 1;");
+		let stmt = db.prepare("SELECT timestamp > (DATETIME('now', '-30 seconds', 'localtime')) as fresh, id, user, amount, beverage, beverage_count, timestamp FROM History WHERE id = ? LIMIT 1;", (err, res) => { if (err) {return next(err);} });
 		stmt.get(orderId, function(err, result) {
+			if (err) {
+				return next(err);
+			}
 			if (result == undefined) {
 				// no order to delete!
 				return;
@@ -273,29 +288,32 @@ api.delete('/orders/:orderId', function (req, res) {
 
 			function updateUserAndBeverage(result) {
 				if (result.amount !== 0 && result.user !== '') {
-					let stmt = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;");
-					stmt.run(result.amount, result.user);
+					let stmt = db.prepare("UPDATE Users SET balance = balance - ? WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+					stmt.run(result.amount, result.user, (res, err) => { if (err) {return next(err);} });
 				}
 
 				if (result.beverage !== '') {
-					let stmt = db.prepare("UPDATE Beverages SET stock = stock + ? WHERE name = ?");
-					stmt.run(result.beverage_count, result.beverage);
+					let stmt = db.prepare("UPDATE Beverages SET stock = stock + ? WHERE name = ?", (err, res) => { if (err) {return next(err);} });
+					stmt.run(result.beverage_count, result.beverage, (res, err) => { if (err) {return next(err);} });
 				}
 			}
 
 			if (result.fresh) {
 				updateUserAndBeverage(result);
-				var stmt = db.prepare("DELETE FROM History WHERE id = ?;");
-				stmt.run(orderId);
+				var stmt = db.prepare("DELETE FROM History WHERE id = ?;", (err, res) => { if (err) {return next(err);} });
+				stmt.run(orderId, (res, err) => { if (err) {return next(err);} });
 				stmt.finalize();
 				res.sendStatus(200);
 			} else {
-				let stmt = db.prepare("SELECT * FROM History WHERE reason = ? LIMIT 1;");
+				let stmt = db.prepare("SELECT * FROM History WHERE reason = ? LIMIT 1;", (err, res) => { if (err) {return next(err);} });
 				stmt.get(result.id, function(err, existing) {
+					if (err) {
+						return next(err);
+					}
 					if (existing == undefined) { // prevent double undo
 						updateUserAndBeverage(result);
-						let stmt = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
-						stmt.run(uuidv4(), result.user, result.id, -result.amount, result.beverage, -result.beverage_count);
+						let stmt = db.prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);", (err, res) => { if (err) {return next(err);} });
+						stmt.run(uuidv4(), result.user, result.id, -result.amount, result.beverage, -result.beverage_count, (res, err) => { if (err) {return next(err);} });
 						res.sendStatus(200);
 					} else {
 						// double undo error code here...
@@ -309,22 +327,25 @@ api.delete('/orders/:orderId', function (req, res) {
 	}
 });
 
-api.get('/beverages', userAccess(function (req, res) {
+api.get('/beverages', userAccess(function (req, res, next) {
 	let beverages = [];
-	var stmt = db.prepare("SELECT name, stock, price FROM Beverages ORDER BY name;");
+	var stmt = db.prepare("SELECT name, stock, price FROM Beverages ORDER BY name;", (err, res) => { if (err) {return next(err);} });
 	stmt.each(function(err, row) {
+		if (err) {
+			return next(err);
+		}
 		beverages.push(row);
 	}, function() {
 		res.status(200).end(JSON.stringify(beverages));
 	});
 }));
 
-api.post('/beverages', adminAccess(function (req, res) {
+api.post('/beverages', adminAccess(function (req, res, next) {
 	let bev = req.query.beverage;
 	let price = req.query.price;
 	if (bev != undefined && price != undefined && bev != '') {
-		let stmt = db.prepare("INSERT INTO Beverages (name, price) VALUES (?, ?)");
-		stmt.run(bev, price);
+		let stmt = db.prepare("INSERT INTO Beverages (name, price) VALUES (?, ?)", (err, res) => { if (err) {return next(err);} });
+		stmt.run(bev, price, (res, err) => { if (err) {return next(err);} });
 		res.sendStatus(200);
 	} else {
 		throw {
@@ -334,18 +355,18 @@ api.post('/beverages', adminAccess(function (req, res) {
 	}
 }));
 
-api.patch('/beverages/:beverage', adminAccess(function (req, res) {
+api.patch('/beverages/:beverage', adminAccess(function (req, res, next) {
 	let bev = req.params.beverage;
 	let price = req.query.price;
 	let count = req.query.count;
 	if (bev != undefined && bev != '') {
 		if (price != undefined) {
-			let stmt = db.prepare("UPDATE Beverages SET price = ?  WHERE name = ?;");
-			stmt.run(parseInt(price), bev);
+			let stmt = db.prepare("UPDATE Beverages SET price = ?  WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+			stmt.run(parseInt(price), bev, (res, err) => { if (err) {return next(err);} });
 		}
 		if (count != undefined) {
-			let stmt = db.prepare("UPDATE Beverages SET stock = stock + ?  WHERE name = ?;");
-			stmt.run(parseInt(count), bev);
+			let stmt = db.prepare("UPDATE Beverages SET stock = stock + ?  WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+			stmt.run(parseInt(count), bev, (res, err) => { if (err) {return next(err);} });
 		}
 		res.sendStatus(200);
 	} else {
@@ -353,31 +374,37 @@ api.patch('/beverages/:beverage', adminAccess(function (req, res) {
 	}
 }));
 
-api.delete('/beverages/:beverage', adminAccess(function (req, res) {
+api.delete('/beverages/:beverage', adminAccess(function (req, res, next) {
 	let bev = req.params.beverage;
 	if (bev != undefined && bev != '') {
-		let stmt = db.prepare("DELETE FROM Beverages WHERE name = ?;");
-		stmt.run(bev);
+		let stmt = db.prepare("DELETE FROM Beverages WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+		stmt.run(bev, (res, err) => { if (err) {return next(err);} });
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
 	}
 }));
 
-api.get('/users', userAccess(function (req, res) {
+api.get('/users', userAccess(function (req, res, next) {
 	let token = req.header('X-Auth-Token');
 
 	let users = [];
-	var stmt = db.prepare("SELECT name FROM Users ORDER BY name;");
-	var stmtAdmin = db.prepare("SELECT name, balance FROM Users ORDER BY name;");
+	var stmt = db.prepare("SELECT name FROM Users ORDER BY name;", (err, res) => { if (err) {return next(err);} });
+	var stmtAdmin = db.prepare("SELECT name, balance FROM Users ORDER BY name;", (err, res) => { if (err) {return next(err);} });
 	if (!tokens.get(token).root) {
 		stmt.each(function(err, row) {
+			if (err) {
+				return next(err);
+			}
 			users.push(row.name);
 		}, function() {
 			res.status(200).end(JSON.stringify(users));
 		});
 	} else {
 		stmtAdmin.each(function(err, row) {
+			if (err) {
+				return next(err);
+			}
 			users.push(row);
 		}, function() {
 			res.status(200).end(JSON.stringify(users));
@@ -385,13 +412,16 @@ api.get('/users', userAccess(function (req, res) {
 	}
 }));
 
-api.get('/users/:userId', userAccess(function (req, res) {
+api.get('/users/:userId', userAccess(function (req, res, next) {
 	let userId = req.params.userId;
-	var stmt = db.prepare("SELECT name, balance FROM Users WHERE name = ?;");
+	var stmt = db.prepare("SELECT name, balance FROM Users WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
 	if (userId === undefined || userId === '') {
 		res.status(404).end('User not found');
 	} else {
 		stmt.get(userId, function(err, result) {
+			if (err) {
+				return next(err);
+			}
 			if (result == undefined) {
 				res.status(404).end('User not found');
 				return;
@@ -401,29 +431,29 @@ api.get('/users/:userId', userAccess(function (req, res) {
 	}
 }));
 
-api.post('/users/:userId', adminAccess(function (req, res) {
+api.post('/users/:userId', adminAccess(function (req, res, next) {
 	let userId = req.params.userId;
 	if (userId != undefined && userId != '') {
-		let stmt = db.prepare("INSERT INTO Users (name) VALUES (?);");
-		stmt.run(userId);
+		let stmt = db.prepare("INSERT INTO Users (name) VALUES (?);", (err, res) => { if (err) {return next(err);} });
+		stmt.run(userId, (res, err) => { if (err) {return next(err);} });
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
 	}
 }));
 
-api.delete('/users/:userId', adminAccess(function (req, res) {
+api.delete('/users/:userId', adminAccess(function (req, res, next) {
 	let userId = req.params.userId;
 	if (userId != undefined && userId != '') {
-		let stmt = db.prepare("DELETE FROM Users WHERE name = ?;");
-		stmt.run(userId);
+		let stmt = db.prepare("DELETE FROM Users WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+		stmt.run(userId, (res, err) => { if (err) {return next(err);} });
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
 	}
 }));
 
-api.patch('/users/:userId', adminAccess(function (req, res) {
+api.patch('/users/:userId', adminAccess(function (req, res, next) {
 	let userId = req.params.userId;
 	let amount = req.query.amount;
 	let reason = req.query.reason;
@@ -431,20 +461,20 @@ api.patch('/users/:userId', adminAccess(function (req, res) {
 		&& userId != '' && reason != '' && amount != '') {
 		amount = parseInt(amount);
 
-		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);");
-		stmt.run(uuidv4(), userId, reason, amount);
+		var stmt = db.prepare("INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);", (err, res) => { if (err) {return next(err);} });
+		stmt.run(uuidv4(), userId, reason, amount, (res, err) => { if (err) {return next(err);} });
 
-		let stmt2 = db.prepare("UPDATE Users SET balance = balance + ? WHERE name = ?;");
-		stmt2.run(amount, userId);
+		let stmt2 = db.prepare("UPDATE Users SET balance = balance + ? WHERE name = ?;", (err, res) => { if (err) {return next(err);} });
+		stmt2.run(amount, userId, (res, err) => { if (err) {return next(err);} });
 		res.sendStatus(200);
 	} else {
 		res.sendStatus(400);
 	}
 }));
 
-api.get('/backup', adminAccess(function (req, res) {
+api.get('/backup', adminAccess(function (req, res, next) {
 	let result = "";
-	let dump = exec('sqlite3 data/history.db ".dump"');
+	let dump = exec('sqlite3 data/history.db ".dump"', (res, err) => { if (err) {return next(err);} });
 	dump.stdout.on('data', data => {
 		result += data.toString();
 	});
@@ -453,7 +483,7 @@ api.get('/backup', adminAccess(function (req, res) {
 	});
 }));
 
-api.post('/logout', function (req, res) {
+api.post('/logout', function (req, res, next) {
 	let token = req.query.token;
 	if (token != undefined) {
 		tokens.remove(token);
