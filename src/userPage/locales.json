@@ -8,6 +8,10 @@
 		"name": "Schwäbisch"
 	},
 	{
+		"id": "bay",
+		"name": "Bayrisch"
+	},
+	{
 		"id": "en",
 		"name": "English"
 	},
@@ -18,9 +22,5 @@
 	{
 		"id": "klg",
 		"name": "tlhIngan"
-	},
-	{
-		"id": "bay",
-		"name": "Bayrisch"
 	}
 ]
