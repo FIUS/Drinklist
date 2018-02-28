@@ -131,7 +131,20 @@
 					</div>
 				</div>
 				<!-- M1 User selection -->
-				<div id="main1" class="row"></div>
+				<div id="main1">
+					<div>
+						<div class="container form-group">
+							<label id="splabel" for="search"></label>
+							<input
+								id="search"
+								type="text"
+								class="form-control"
+								placeholder="User"
+								onkeyup="searchUsers(event)"/>
+						</div>
+					</div>
+					<div id="userlist" class="row"></div>
+				</div>
 				<!-- M2 Account page -->
 				<div id="main2" class="row">
 					<div class="col-lg-6" style="padding-bottom: 79px;">

@@ -109,8 +109,27 @@ function passwordKeyUp(event) {
 				updateBeveageList();
 				deselectUser();
 			}
-		})
+		});
 	}
+}
+
+function searchUsers(event) {
+	console.log(event.target.value);
+	var users = _('#userlist').children();
+	if (users === undefined) {
+		return;
+	}
+	users.each(function (i, user) {
+		if (user.textContent.toUpperCase().includes(event.target.value.toUpperCase())) {
+			if (user.children.length > 0) {
+				user.children[0].classList.add('btn-warning');
+			}
+		} else {
+			if (user.children.length > 0) {
+				user.children[0].classList.remove('btn-warning');
+			}
+		}
+	});
 }
 
 function selectUser(newUser) {
@@ -178,12 +197,12 @@ function selectPage() {
 }
 
 function moneyFormat(money) {
-	absolut = Math.abs(money);
+	var absolut = Math.abs(money);
 	return (money < 0 ? '-' : '') + Math.floor(absolut/100) + ',' + ((absolut%100 < 10) ? '0' : '') + (absolut%100) + '€';
 }
 
 function updateUserList() {
-	_('#main1').empty();
+	_('#userlist').empty();
 	getJSON('./users', function(users) {
 		users.forEach(function(element) {
 			if (typeof element === 'object') {
@@ -244,7 +263,7 @@ function updateMoney() {
 }
 
 function addUserButton(user) {
-	_('#main1').append($('<div></div>', {
+	_('#userlist').append($('<div></div>', {
 		class: 'col-sm-6 col-md-4 col-lg-3 col-xl-2'
 	}).append($('<button/>', {
 		type: 'button',
