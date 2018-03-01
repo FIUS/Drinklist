@@ -173,6 +173,7 @@ function selectPage() {
 		_('#main2').hide();
 		_('#footer1').hide();
 		_('#footer2').hide();
+		_('#password').focus();
 	} else if (!localStorage.getItem('user')) {
 		_('#spnavbtn').show();
 		_('#header0').hide();
@@ -183,6 +184,8 @@ function selectPage() {
 		_('#main2').hide();
 		_('#footer1').show();
 		_('#footer2').hide();
+		_('#password').removeAttr("autofocus");
+		_('#search').focus();
 	} else {
 		_('#spnavbtn').show();
 		_('#header0').hide();
