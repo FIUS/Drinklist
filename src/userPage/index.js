@@ -146,6 +146,11 @@ function deselectUser() {
 	selectPage();
 }
 
+function cofirmed_logout() {
+	if (!confirm('Are you shure you want to logout ???')) return;
+	logout();
+}
+
 function logout() {
 	$.ajax({
 		type: 'POST',
