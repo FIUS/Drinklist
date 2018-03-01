@@ -58,8 +58,16 @@ function prepare(statement, next) {
 
 
 function catchDBerror(stmtContext, request, next, err) {
+	var method = request.method;
+	var body = request.body;
+	var url = request.originalUrl;
 	var errorFunction = function (err) {
 		if (err) {
+			console.log('Error while executing statement!\n' +
+						'Statement: "' + stmtContext.sql ? stmtContext.sql : stmtContext + '"\n' +
+						'Error: ' + err.message + '\n' +
+						'Method: ' + method + ' URL: ' + url + '\n' +
+						'Body: ' + body);
 			if (next) {
 				err = new Error('Error while executing statement! \n' +
 					'Statement: "' + stmtContext.sql ? stmtContext.sql : stmtContext + '"\n' +
