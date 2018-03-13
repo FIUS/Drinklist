@@ -361,7 +361,6 @@ api.delete('/orders/:orderId', function (req, res, next) {
 				updateUserAndBeverage(result);
 				var stmt = prepare("DELETE FROM History WHERE id = ?;");
 				stmt.run(orderId, catchDBerror(stmt, req, next));
-				stmt.finalize();
 				res.sendStatus(200);
 			} else {
 				let stmt = prepare("SELECT * FROM History WHERE reason = ? LIMIT 1;");
