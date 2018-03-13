@@ -38,7 +38,11 @@ var _preparedStatements = new HashMap();
 
 function prepare(statement, next) {
 	if (_preparedStatements.has(statement)) {
-		return _preparedStatements.get(statement);
+		try {
+			const sql = _preparedStatements.get(statement);
+			sql.reset(); // provoke error if statement is finalized
+			return sql;
+		} catch (error) {} // don't use finalized statements
 	}
 	var stmt = db.prepare(statement, function (err) {
 		if (err) {
