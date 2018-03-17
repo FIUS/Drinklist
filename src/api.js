@@ -530,7 +530,7 @@ api.patch(
 
 api.get('/backup', adminAccess(function (req, res, next) {
 	let result = '';
-	let dump = exec('sqlite3 data/history.db ".dump"', catchDBerror('.dump', req, next, err));
+	let dump = exec('sqlite3 data/history.db ".dump"', (err) => catchDBerror('.dump', req, next, err));
 	dump.stdout.on('data', data => {
 		result += data.toString();
 	});
