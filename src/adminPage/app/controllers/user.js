@@ -6,7 +6,7 @@ app.controller('userController', function($scope, $http, $window) {
 
 	$scope.title = "User Overview";
 	$scope.icon = "fa-users";
-	
+
 	$scope.searchableGlobal = false;
 	$scope.searchableLocal = true;
 	$scope.enumerate = true;
@@ -72,10 +72,12 @@ app.controller('userController', function($scope, $http, $window) {
 				}
 			],
 			submit: function(data) {
-				$scope.apiPatch('./users/' + encodeURI(data.name), {
-					amount: data.amount,
-					reason: data.reason
-				});
+				if (data.amount !== undefined && data.amount !== null) {
+					$scope.apiPatch('./users/' + encodeURI(data.name), {
+						amount: data.amount,
+						reason: !(!data.reason) ? data.reason : 'Bargeld Einzahlung',
+					});
+				}
 			}
 		},
 		{
