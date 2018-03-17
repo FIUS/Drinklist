@@ -62,7 +62,7 @@ app.controller('mainController', function($scope, $route, $http, authService, Fi
 	};
 
 	$scope.downloadDB = function() {
-		$scope.apiGet('/backup', function(response) {
+		$scope.apiGet('backup', function(response) {
 			FileSaver.saveAs(new Blob([response.data], {
 				type: 'text/plain;charset=utf-8'
 			}), 'dump-' + Date.now() + '.sql');
