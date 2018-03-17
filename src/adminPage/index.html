@@ -22,7 +22,7 @@
 			</a>
 			<form class="form-inline">
 				<div class="input-group" data-ng-hide="auth.isLoggedIn">
-					<input type="password" class="form-control" placeholder="Password" data-ng-model="password">
+					<input type="password" class="form-control" placeholder="Password" data-ng-model="password" ng-keypress="($event.charCode==13)? auth.login(api, password) : return">
 					<button id="btnLogin" type="button" class="btn input-group-addon" style="color: #111;background-color: #ffc107;" data-ng-click="auth.login(api, password);">
 						<i class="fa fa-sign-in" aria-hidden="true"></i>
 					</button>
