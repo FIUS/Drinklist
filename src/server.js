@@ -4,12 +4,16 @@
  * Author: Fabian Bühler
  * Author: Sandro Speth
  * Author: Tobias Wältken
+ * Author: Tim Neumann
  */
 
 /* jslint esversion: 6 */
 
 // Imports
 const fs = require('fs');
+
+//Check if all data files exist. If not create them. (This is required for docker.)
+require('./dataHelper.js').checkAndCreateFiles();
 
 // Import all software components
 const api       = require('./api.js');

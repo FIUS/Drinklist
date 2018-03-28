@@ -11,7 +11,7 @@
 // Imports
 const fs       = require('fs');
 const readline = require('readline');
-const sqlite3  = require('sqlite3');
+const dataHelper = require('./dataHelper.js');
 
 // Constants
 const dirname      = fs.realpathSync('./');
@@ -51,39 +51,6 @@ function input(prompt, lineCallback, callback) {
 	});
 	reader.on('close', callback);
 	reader.prompt();
-}
-
-function writeFile(name, path, data) {
-	fs.writeFile(path, JSON.stringify(data), function(err) {
-		if(err) {
-			console.log("Error creating the " + name + " file at: " + path);
-			console.log(err);
-		} else {
-			console.log("The " + name + " file was created at: " + path);
-		}
-	});
-}
-
-function recreateDB() {
-	let db = new sqlite3.Database(databaseFile);
-	db.serialize(function() {
-		// create DB tables
-		db.run('DROP TABLE IF EXISTS History;');
-		db.run("CREATE TABLE History (id VARCHAR(255), user VARCHAR(255) NOT NULL, reason VARCHAR(255), amount INTEGER NOT NULL DEFAULT 0, beverage VARCHAR(255) NOT NULL DEFAULT '', beverage_count INTEGER NOT NULL DEFAULT 0, timestamp DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime')));");
-		db.run('DROP TABLE IF EXISTS Users;');
-		db.run("CREATE TABLE Users (name VARCHAR(255) PRIMARY KEY, balance INTEGER NOT NULL DEFAULT 0);");
-		db.run('DROP TABLE IF EXISTS Beverages;');
-		db.run("CREATE TABLE Beverages (name VARCHAR(255) PRIMARY KEY, stock INTEGER NOT NULL DEFAULT 0, price INTEGER NOT NULL DEFAULT 0);");
-
-		// fill with standard dummy data
-		db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Sample Juice', 10, 100);");
-		db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Supreme Sample Juice', 5, 150);");
-		db.run("INSERT INTO `Users` (`name`) VALUES ('Max Mustermann');");
-		db.run("INSERT INTO `Users` (`name`) VALUES ('Maria Mustermann');");
-	});
-	db.close();
-
-	console.log("The database was created at: " + databaseFile);
 }
 
 function authInfo() {
@@ -161,19 +128,19 @@ function dbQuestion() {
 		input('recreate Database [y/N]> ', (input) => {
 			if (input === 'y') {
 				console.log('');
-				recreateDB();
+				dataHelper.recreateDB();
 			}
 		}, saveAll);
 	} else {
-		recreateDB();
+		dataHelper.recreateDB();
 		saveAll();
 	}
 }
 
 function saveAll() {
 	console.log('');
-	writeFile('auth', authFile, authData);
-	writeFile('settings', settingsFile, settingsData);
+	dataHelper.writeFile('auth', authFile, authData);
+	dataHelper.writeFile('settings', settingsFile, settingsData);
 }
 
 // Start at entry point
