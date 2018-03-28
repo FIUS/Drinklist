@@ -31,6 +31,9 @@ node src/server.js
 
 Lastly navigate to the [Admin Page](http://localhost:8082) or the [User Page](http://localhost:8081) and start using the system.
 
+## Install with Docker
+Container: neumantm/Drinklist
+
 ## Interfaces
 | Name       | Port | Description                                                                                  |
 |------------|------|----------------------------------------------------------------------------------------------|
