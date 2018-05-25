@@ -289,6 +289,7 @@ function addBeverageButton(beverage) {
 		style: 'margin-top: .5rem'
 	}).text(' (' + beverage.stock + ') ' + beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function(event) {
 		event.target.classList.add('btn-clicked');
+		$(event.target).text(' (' + (beverage.stock-1) + ') ' + beverage.name + ' [' + moneyFormat(beverage.price) + ']');
 		window.setTimeout(function () {
 			event.target.classList.remove('btn-clicked');
 			updateBeveageList();
@@ -300,8 +301,10 @@ function addBeverageButton(beverage) {
 			headers: { 'X-Auth-Token': localStorage.getItem('token') },
 			success: function(data) {
 				// TODO react to fail
-				updateMoney();
-				updateUserHistory();
+				window.setTimeout(function() {
+					updateMoney();
+					updateUserHistory();
+				}, 300);
 			}
 		});
 	}));
