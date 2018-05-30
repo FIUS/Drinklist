@@ -287,9 +287,13 @@ function addBeverageButton(beverage) {
 		type: 'button',
 		class: 'btn btn-lg btn-block btn-hover pointer',
 		style: 'margin-top: .5rem'
-	}).text(beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function(event) {
+	}).text(' (' + beverage.stock + ') ' + beverage.name + ' [' + moneyFormat(beverage.price) + ']').click( function(event) {
 		event.target.classList.add('btn-clicked');
-		window.setTimeout(function () {event.target.classList.remove('btn-clicked');}, 1500);
+		$(event.target).text(' (' + (beverage.stock-1) + ') ' + beverage.name + ' [' + moneyFormat(beverage.price) + ']');
+		window.setTimeout(function () {
+			event.target.classList.remove('btn-clicked');
+			updateBeveageList();
+		}, 1500);
 		$.ajax({
 			type: 'POST',
 			url: API + './orders/?user=' + localStorage.getItem('user') + '&beverage=' + beverage.name,
@@ -297,8 +301,10 @@ function addBeverageButton(beverage) {
 			headers: { 'X-Auth-Token': localStorage.getItem('token') },
 			success: function(data) {
 				// TODO react to fail
-				updateMoney();
-				updateUserHistory();
+				window.setTimeout(function() {
+					updateMoney();
+					updateUserHistory();
+				}, 300);
 			}
 		});
 	}));
@@ -316,6 +322,7 @@ function addHistoryEntry(entry) {
 				headers: { 'X-Auth-Token': localStorage.getItem('token') },
 				success: function(data) {
 					// TODO react to fail
+					updateBeveageList();
 					updateMoney();
 					updateUserHistory();
 				}
