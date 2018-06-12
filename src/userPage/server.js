@@ -81,5 +81,5 @@ app.get('/locales/:localeId', function (req, res) {
 
 app.get('/legal', function (req, res) {
 	console.log('[userPage] [load] legal.html');
-	res.status(200).sendFile(__dirname + '/legal.html');
+	res.status(200).sendFile(dirname + '/data/legal.html');
 });
