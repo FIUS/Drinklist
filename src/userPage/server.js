@@ -78,3 +78,8 @@ app.get('/locales/:localeId', function (req, res) {
 		res.status(200).sendFile(__dirname + '/locales/' + localeId + '.json');
 	}
 });
+
+app.get('/legal', function (req, res) {
+	console.log('[userPage] [load] legal.html');
+	res.status(200).sendFile(__dirname + '/legal.html');
+});
