@@ -18,6 +18,7 @@ const dirname      = fs.realpathSync('./');
 const databaseFile = dirname + '/data/history.db';
 const authFile     = dirname + '/data/auth.json';
 const settingsFile = dirname + '/data/settings.json';
+const legalFile    = dirname + '/data/legal.html';
 
 // Data Templates
 var authData = [
@@ -141,6 +142,10 @@ function saveAll() {
 	console.log('');
 	dataHelper.writeFile('auth', authFile, authData);
 	dataHelper.writeFile('settings', settingsFile, settingsData);
+
+	if (fs.existsSync(legalFile)) {
+		createEmptyLegalFile()
+	}
 }
 
 // Start at entry point
