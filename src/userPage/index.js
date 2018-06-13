@@ -336,8 +336,6 @@ function addHistoryEntry(entry) {
 					updateUserHistory();
 				}
 			});
-			updateMoney();
-			updateUserHistory();
 		}).append($('<td></td>')
 		.text(entry.reason))
 		.append($('<td></td>')
