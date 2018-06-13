@@ -38,6 +38,14 @@ function checkAndCreateFiles() {
 	if(!fs.existsSync(settingsFile)) {
 		writeDefaultSettingsFile();
 	}
+
+	if (fs.existsSync(legalFile)) {
+		createEmptyLegalFile()
+	}
+
+	if (fs.existsSync(imprintFile)) {
+		createEmptyImprintFile()
+	}
 }
 
 function writeDefaultAuthFile() {
