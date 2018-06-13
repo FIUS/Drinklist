@@ -74,7 +74,7 @@
 	</head>
 	<body>
 		<!-- Logout and Language Select -->
-		<nav class="navbar fixed-top justify-content-between">
+		<nav class="navbar fixed-top justify-content-between" style="background-color: #ffffff; border-bottom-style: solid; border-width: 1px; border-color: #bfbfbf;">
 			<div id="spnavbtn">
 				<button
 					id="btnlogout"
@@ -93,18 +93,27 @@
 			</div>
 			<p></p>
 			<form class="navbar-form form-inline pull-right">
-				<select id="langselect" class="form-control" style="margin-right: 1rem;"></select>
+				<select id="langselect" class="form-control"></select>
 				<a
 					role="link"
 					class="btn btn-outline-primary pointer"
+					style="margin-left: 1rem"
 					href="./legal">
 					<i class="fa fa-info" aria-hidden="true"></i>
-					<span id="legal"></span>
+					<span>Impressum</span>
+				</a>
+				<a
+					role="link"
+					class="btn btn-outline-primary pointer"
+					style="margin-left: 1rem"
+					href="./legal">
+					<i class="fa fa-info" aria-hidden="true"></i>
+					<span>Datenschutz</span>
 				</a>
 			</form>
 		</nav>
 		<!-- Main HTML DOM -->
-		<div class="container-fluid">
+		<div class="container-fluid" style="margin-top: 3.5rem">
 			<!-- Header -->
 			<div id=header class="text-center" style="margin-top: 0.5rem">
 				<!-- H0 Login Page -->
