@@ -144,11 +144,11 @@ function saveAll() {
 	dataHelper.writeFile('auth', authFile, authData);
 	dataHelper.writeFile('settings', settingsFile, settingsData);
 
-	if (fs.existsSync(legalFile)) {
+	if (!fs.existsSync(legalFile)) {
 		createEmptyLegalFile()
 	}
 
-	if (fs.existsSync(imprintFile)) {
+	if (!fs.existsSync(imprintFile)) {
 		createEmptyImprintFile()
 	}
 }

@@ -39,11 +39,11 @@ function checkAndCreateFiles() {
 		writeDefaultSettingsFile();
 	}
 
-	if (fs.existsSync(legalFile)) {
+	if (!fs.existsSync(legalFile)) {
 		createEmptyLegalFile()
 	}
 
-	if (fs.existsSync(imprintFile)) {
+	if (!fs.existsSync(imprintFile)) {
 		createEmptyImprintFile()
 	}
 }
