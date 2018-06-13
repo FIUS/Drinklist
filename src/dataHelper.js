@@ -116,7 +116,7 @@ function recreateDB() {
 }
 
 function createEmptyLegalFile() {
-	const data = ```
+	const data = `
 <html>
 	<head>
 	</head>
@@ -124,12 +124,12 @@ function createEmptyLegalFile() {
 		Example Legal Text and Dataprotection Statements
 	</body>
 </html>
-```
-	writeFile('legal', legalFile, data);
+`;
+	writeFile('legal', legalFile, data, true);
 }
 
 function createEmptyImprintFile() {
-	const data = ```
+	const data = `
 <html>
 	<head>
 	</head>
@@ -137,6 +137,6 @@ function createEmptyImprintFile() {
 		Example Imprint
 	</body>
 </html>
-```
-	writeFile('imprint', imprintFile, data);
+`;
+	writeFile('imprint', imprintFile, data, true);
 }
