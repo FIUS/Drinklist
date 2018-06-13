@@ -169,6 +169,7 @@ function logout() {
 }
 
 function selectPage() {
+	window.scrollTo(0, 0);
 	if (localStorage.getItem('root') == 'true') {
 		_('#btnadmin').show();
 		_('#spnavbtn').addClass('btn-group');
