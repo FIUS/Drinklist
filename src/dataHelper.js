@@ -20,6 +20,7 @@ const databaseFile = dirname + '/data/history.db';
 const authFile     = dirname + '/data/auth.json';
 const settingsFile = dirname + '/data/settings.json';
 const legalFile    = dirname + '/data/legal.html';
+const imprintFile    = dirname + '/data/imprint.html';
 
 exports.checkAndCreateFiles = checkAndCreateFiles;
 exports.writeFile = writeFile;
@@ -117,4 +118,17 @@ function createEmptyLegalFile() {
 </html>
 ```
 	writeFile('legal', legalFile, data);
+}
+
+function createEmptyImprintFile() {
+	const data = ```
+<html>
+	<head>
+	</head>
+	<body>
+		Example Imprint
+	</body>
+</html>
+```
+	writeFile('imprint', imprintFile, data);
 }

@@ -19,6 +19,7 @@ const databaseFile = dirname + '/data/history.db';
 const authFile     = dirname + '/data/auth.json';
 const settingsFile = dirname + '/data/settings.json';
 const legalFile    = dirname + '/data/legal.html';
+const imprintFile    = dirname + '/data/imprint.html';
 
 // Data Templates
 var authData = [
@@ -145,6 +146,10 @@ function saveAll() {
 
 	if (fs.existsSync(legalFile)) {
 		createEmptyLegalFile()
+	}
+
+	if (fs.existsSync(imprintFile)) {
+		createEmptyImprintFile()
 	}
 }
 

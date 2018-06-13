@@ -83,3 +83,8 @@ app.get('/legal', function (req, res) {
 	console.log('[userPage] [load] legal.html');
 	res.status(200).sendFile(dirname + '/data/legal.html');
 });
+
+app.get('/imprint', function (req, res) {
+	console.log('[userPage] [load] legal.html');
+	res.status(200).sendFile(dirname + '/data/imprint.html');
+});
