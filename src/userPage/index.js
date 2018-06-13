@@ -69,7 +69,7 @@ function getJSON(url, callback) {
 		data: null,
 		headers: { 'X-Auth-Token': localStorage.getItem('token') },
 		statusCode: {
-			403: logout,
+			403: error_logout,
 		},
 		success: function(data) {
 			callback(JSON.parse(data));
@@ -151,6 +151,11 @@ function deselectUser() {
 
 function cofirmed_logout() {
 	if (!confirm('Are you shure you want to logout ???')) return;
+	logout();
+}
+
+function error_logout() {
+	alert('A Error occured during your last request. Please try again!');
 	logout();
 }
 
