@@ -108,6 +108,9 @@ function passwordKeyUp(event) {
 				updateUserList();
 				updateBeveageList();
 				deselectUser();
+			} else {
+				_('#password').val('');
+				alert('Wrong Password !');
 			}
 		});
 	}
