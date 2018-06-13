@@ -35,7 +35,8 @@ Lastly navigate to the [Admin Page](http://localhost:8082) or the [User Page](ht
 Container: neumantm/drinklist
 
 Start with mapped config dir and forarded ports:  
-```docker run -p 8080:8080 -p 8081:8081 -p 8082:8082 -v ~/drinklistData:/app/data neumantm/drinklist```
+```docker run -e TZ="Europe/Berlin" -p 8080:8080 -p 8081:8081 -p 8082:8082 -v ~/drinklistData:/app/data neumantm/drinklist```
+
 
 
 ## Interfaces
