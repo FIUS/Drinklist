@@ -20,11 +20,15 @@
 		"name": "Türkçe"
 	},
 	{
-		"id": "klg",
-		"name": "tlhIngan"
+		"id": "pl",
+		"name": "Język polski"
 	},
 	{
 		"id": "eg",
 		"name": "Ägyptisch"
+	},
+	{
+		"id": "klg",
+		"name": "tlhIngan"
 	}
 ]
