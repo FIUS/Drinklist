@@ -48,3 +48,6 @@ JWT: JWTManager = JWTManager(APP)
 from . import db_models
 # pylint: disable=C0413
 from . import routes
+
+if APP.config.get('DEBUG', False):
+    from . import debug_routes
