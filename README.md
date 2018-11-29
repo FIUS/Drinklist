@@ -34,7 +34,7 @@ Lastly navigate to the [Admin Page](http://localhost:8082) or the [User Page](ht
 ## Install with Docker
 Container: neumantm/drinklist
 
-Start with mapped config dir and forarded ports:  
+Start with mapped config dir and forarded ports:
 ```docker run -e TZ="Europe/Berlin" -p 8080:8080 -p 8081:8081 -p 8082:8082 -v ~/drinklistData:/app/data neumantm/drinklist```
 
 
@@ -45,3 +45,18 @@ Start with mapped config dir and forarded ports:
 | API        | 8080 | This is the api used to store and manage all informations                                    |
 | user page  | 8081 | This is the page accessible for the users to mark there 'expenses'                           |
 | admin page | 8082 | This is the page used by the administrators to add and track beverages and view the accounts |
+
+
+## Python rewrite
+
+Run app:
+
+```bash
+FLASK_ENV=debug FLASK_APP=drinklist flask run
+```
+
+Create DB:
+
+```bash
+FLASK_ENV=debug FLASK_APP=drinklist flask create_db
+```

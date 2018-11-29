@@ -1,0 +1,9 @@
+README.md
+setup.py
+drinklist/__init__.py
+drinklist/config.py
+drinklist.egg-info/PKG-INFO
+drinklist.egg-info/SOURCES.txt
+drinklist.egg-info/dependency_links.txt
+drinklist.egg-info/requires.txt
+drinklist.egg-info/top_level.txt
