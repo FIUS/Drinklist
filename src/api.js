@@ -224,6 +224,7 @@ api.post(
 				if (err) { return catchDBerror(stmt, req, next, err); }
 				if (result == undefined) {
 					console.log('[API] [FAIL] can\'t find beverage ' + beverage);
+					res.status(400).end('Unknown beverage');
 					return;
 				}
 				let cost = result.price;
@@ -236,10 +237,9 @@ api.post(
 
 				var stmt3 = prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
 				stmt3.run(uuidv4(), user, beverage, -cost, beverage, 1, catchDBerror(stmt3, req, next));
+	
+				res.sendStatus(200);
 			});
-
-
-			res.sendStatus(200);
 		}
 	}));
 
