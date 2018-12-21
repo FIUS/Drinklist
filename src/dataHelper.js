@@ -25,6 +25,8 @@ const imprintFile    = dirname + '/data/imprint.html';
 exports.checkAndCreateFiles = checkAndCreateFiles;
 exports.writeFile = writeFile;
 exports.recreateDB = recreateDB;
+exports.createEmptyLegalFile = createEmptyLegalFile;
+exports.createEmptyImprintFile = createEmptyImprintFile;
 
 function checkAndCreateFiles() {
 	if(!fs.existsSync(databaseFile)) {

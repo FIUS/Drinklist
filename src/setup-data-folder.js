@@ -145,11 +145,11 @@ function saveAll() {
 	dataHelper.writeFile('settings', settingsFile, settingsData);
 
 	if (!fs.existsSync(legalFile)) {
-		createEmptyLegalFile()
+		dataHelper.createEmptyLegalFile()
 	}
 
 	if (!fs.existsSync(imprintFile)) {
-		createEmptyImprintFile()
+		dataHelper.createEmptyImprintFile()
 	}
 }
 
