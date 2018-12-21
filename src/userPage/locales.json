@@ -31,8 +31,12 @@
 		"id": "klg",
 		"name": "tlhIngan"
 	},
-    {
-        "id": "cn",
-        "name": "中文"
-    }
+	{
+		"id": "inf",
+		"name": "Inf0rmatik0rz"
+	},
+	{
+		"id": "cn",
+		"name": "中文"
+	}
 ]
