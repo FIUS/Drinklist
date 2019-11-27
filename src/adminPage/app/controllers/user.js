@@ -20,6 +20,16 @@ app.controller('userController', function($scope, $http, $window) {
 			}
 		},
 		{
+			icon: 'fa-low-vision',
+			click: function(data) {
+				if (data.hidden == 0) {
+					$scope.apiPost('./users/' + encodeURI(data.name) + '/hide');
+				} else {
+					$scope.apiPost('./users/' + encodeURI(data.name) + '/show');
+				}
+			}
+		},
+		{
 			icon: 'fa-trash',
 			click: function(data) {
 				$scope.ctabs[2].data.name = data.name;
@@ -115,9 +125,25 @@ app.controller('userController', function($scope, $http, $window) {
 				absolut = Math.abs(money);
 				return (money < 0 ? '-' : '') + Math.floor(absolut/100) + ',' + ((absolut%100 < 10) ? '0' : '') + (absolut%100) + '€';
 			}
+		},
+		{
+			name: "hidden",
+			displayname: "Hidden:",
+			display: function(data) {
+				if (data == 1) {
+					return "Yes"
+				}
+				if (data == 0) {
+					return "No"
+				}
+				return data
+			}
 		}
 	];
 	$scope.rowClass = function(entry) {
+		if (entry.hidden != 0) {
+			return 'table-info';
+		}
 		if (entry.balance < 0) {
 			return 'table-warning';
 		}
@@ -125,6 +151,7 @@ app.controller('userController', function($scope, $http, $window) {
 	$scope.cellClass = function(entry) {
 		if (entry < 0) {
 			return 'text-danger';
+		} else if (entry == 1) {
 		} else if (entry > 0) {
 			return 'text-success';
 		}

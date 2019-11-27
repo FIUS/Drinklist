@@ -446,8 +446,8 @@ api.get('/users', userAccess(function (req, res, next) {
 	let token = req.header('X-Auth-Token');
 
 	let users = [];
-	var stmt = prepare("SELECT name FROM Users ORDER BY name;");
-	var stmtAdmin = prepare("SELECT name, balance FROM Users ORDER BY name;");
+	var stmt = prepare("SELECT name FROM Users WHERE hidden = 0 ORDER BY name;");
+	var stmtAdmin = prepare("SELECT name, balance, hidden FROM Users ORDER BY name;");
 	if (!tokens.get(token).root) {
 		stmt.each(
 			function (err, row) {
@@ -490,6 +490,28 @@ api.post('/users/:userId', adminAccess(function (req, res, next) {
 	let userId = req.params.userId;
 	if (userId != undefined && userId != '') {
 		let stmt = prepare("INSERT INTO Users (name) VALUES (?);");
+		stmt.run(userId, catchDBerror(stmt, req, next));
+		res.sendStatus(200);
+	} else {
+		res.sendStatus(400);
+	}
+}));
+
+api.post('/users/:userId/hide', adminAccess(function (req, res, next) {
+	let userId = req.params.userId;
+	if (userId != undefined && userId != '') {
+		let stmt = prepare("UPDATE Users SET hidden = 1 WHERE name = ?;");
+		stmt.run(userId, catchDBerror(stmt, req, next));
+		res.sendStatus(200);
+	} else {
+		res.sendStatus(400);
+	}
+}));
+
+api.post('/users/:userId/show', adminAccess(function (req, res, next) {
+	let userId = req.params.userId;
+	if (userId != undefined && userId != '') {
+		let stmt = prepare("UPDATE Users SET hidden = 0 WHERE name = ?;");
 		stmt.run(userId, catchDBerror(stmt, req, next));
 		res.sendStatus(200);
 	} else {
