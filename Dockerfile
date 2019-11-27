@@ -1,7 +1,4 @@
-FROM node:8.10.0
-
-RUN apt-get update
-RUN apt-get install sqlite3
+FROM node:lts-buster-slim
 
 COPY . /app
 WORKDIR /app
