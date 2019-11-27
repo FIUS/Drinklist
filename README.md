@@ -5,6 +5,7 @@ The Drinklist is essentially a digital tally sheet which is intended for trackin
 
 > This was designed and build for the [FIUS](https://fius.informatik.uni-stuttgart.de) by its members.
 
+
 ## Prerequisites:
 
  *  npm
@@ -31,12 +32,27 @@ node src/server.js
 
 Lastly navigate to the [Admin Page](http://localhost:8082) or the [User Page](http://localhost:8081) and start using the system.
 
+
 ## Install with Docker
 Container: neumantm/drinklist
 
-Start with mapped config dir and forarded ports:  
-```docker run -e TZ="Europe/Berlin" -p 8080:8080 -p 8081:8081 -p 8082:8082 -v ~/drinklistData:/app/data neumantm/drinklist```
+Start with mapped config dir and forarded ports:
+```
+docker run -e TZ="Europe/Berlin" -p 8080:8080 -p 8081:8081 -p 8082:8082 -v ~/drinklistData:/app/data neumantm/drinklist
+```
 
+
+## Update from 1.0
+
+Since version 1.1.0 contains breaking changes you need to migrate your data. There are two paths for this. Either open the `data/history.db` file with any sqlite programm of your choosing and run:
+```SQL
+ALTER TABLE users ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;
+```
+
+Or go to the install directory with the data folder inside and run this command in a shell:
+```Bash
+sqlite3 data/history.db "ALTER TABLE users ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;"
+```
 
 
 ## Interfaces
