@@ -42,7 +42,7 @@ docker run -e TZ="Europe/Berlin" -p 8080:8080 -p 8081:8081 -p 8082:8082 -v ~/dri
 ```
 
 
-## Update from 1.0
+## Update from 1.0.0
 
 Since version 1.1.0 contains breaking changes you need to migrate your data. There are two paths for this. Either open the `data/history.db` file with any sqlite programm of your choosing and run:
 ```SQL
@@ -52,6 +52,11 @@ ALTER TABLE users ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;
 Or go to the install directory with the data folder inside and run this command in a shell:
 ```Bash
 sqlite3 data/history.db "ALTER TABLE users ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;"
+```
+
+Additionally it is necessary to create the `data/user-settings.json` file with the following content:
+```json
+{"imprint":true,"data-protection":true,"recently-purchased":true,"history":true,"money":true}
 ```
 
 
