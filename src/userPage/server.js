@@ -15,7 +15,8 @@ const express = require('express');
 const app = module.exports = express();
 const dirname = fs.realpathSync('./');
 
-var localesArray = JSON.parse(fs.readFileSync(__dirname + '/locales.json', 'utf8'));
+var locales = JSON.parse(fs.readFileSync(__dirname + '/locales.json', 'utf8'));
+var settings = JSON.parse(fs.readFileSync(dirname + '/data/user-settings.json', 'utf8'));
 
 app.get('/', function (req, res) {
 	console.log('[userPage] [load] index.html');
@@ -65,7 +66,7 @@ app.get('/jquery', function (req, res) {
 
 app.get('/locales', function (req, res) {
 	console.log('[userPage] [load] [locales] index');
-	res.status(200).end(JSON.stringify(localesArray));
+	res.status(200).end(JSON.stringify(locales));
 });
 
 app.get('/locales/:localeId', function (req, res) {
@@ -77,6 +78,11 @@ app.get('/locales/:localeId', function (req, res) {
 		console.log('[userPage] [load] [locales] ' + localeId);
 		res.status(200).sendFile(__dirname + '/locales/' + localeId + '.json');
 	}
+});
+
+app.get('/settings', function (req, res) {
+	console.log('[userPage] [load] settings');
+	res.status(200).end(JSON.stringify(settings));
 });
 
 app.get('/legal', function (req, res) {

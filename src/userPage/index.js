@@ -5,6 +5,8 @@
  */
 // contains all frontent text in the current language
 var local;
+// contains all the settings for the page
+var settings;
 // contains all cached jquery objects
 var cache = {};
 
@@ -39,19 +41,31 @@ function loadLanguage(language) {
 	});
 }
 
-// update user and beverage list if logged in
-if (localStorage.getItem('token')) {
-	updateUserList();
-	updateBeveageList();
-	updateRecent();
-	if (localStorage.getItem('user')) {
-		updateMoney();
-		updateUserHistory();
-	}
-}
+$.getJSON('./settings', function(data) {
+	settings = data;
 
-// selest the page
-selectPage();
+	// impose first settings
+	if (!settings.imprint) {
+		$('#btnimprint').hide();
+	}
+	if (!settings['data-protection']) {
+		$('#btndataprot').hide();
+	}
+
+	// update user and beverage list if logged in
+	if (localStorage.getItem('token')) {
+		updateUserList();
+		updateBeveageList();
+		updateRecent();
+		if (localStorage.getItem('user')) {
+			updateMoney();
+			updateUserHistory();
+		}
+	}
+
+	// selest the page
+	selectPage();
+});
 
 // cached jquery object loader
 function _(object) {
@@ -185,6 +199,7 @@ function selectPage() {
 		_('#main0').show();
 		_('#main1').hide();
 		_('#main2').hide();
+		_('#footer').hide();
 		_('#footer1').hide();
 		_('#footer2').hide();
 		_('#password').focus();
@@ -196,7 +211,13 @@ function selectPage() {
 		_('#main0').hide();
 		_('#main1').show();
 		_('#main2').hide();
-		_('#footer1').show();
+		if (settings['recently-purchased']) {
+			_('#footer').show();
+			_('#footer1').show();
+		} else {
+			_('#footer').hide();
+			_('#footer1').hide();
+		}
 		_('#footer2').hide();
 		_('#password').removeAttr("autofocus");
 		_('#search').focus();
@@ -208,6 +229,7 @@ function selectPage() {
 		_('#main0').hide();
 		_('#main1').hide();
 		_('#main2').show();
+		_('#footer').show();
 		_('#footer1').hide();
 		_('#footer2').show();
 	}
