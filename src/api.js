@@ -237,7 +237,7 @@ api.post(
 
 				var stmt3 = prepare("INSERT INTO History(id, user, reason, amount, beverage, beverage_count) VALUES (?, ?, ?, ?, ?, ?);");
 				stmt3.run(uuidv4(), user, beverage, -cost, beverage, 1, catchDBerror(stmt3, req, next));
-	
+
 				res.sendStatus(200);
 			});
 		}
@@ -530,7 +530,7 @@ api.patch(
 
 api.get('/backup', adminAccess(function (req, res, next) {
 	let result = '';
-	let dump = exec('sqlite3 data/history.db ".dump"', (err) => catchDBerror('.dump', req, next, err));
+	let dump = exec('sqlite3 data/history.db ".dump"', {maxBuffer: 1024 * 1024 * 5}, (err) => catchDBerror('.dump', req, next, err));
 	dump.stdout.on('data', data => {
 		result += data.toString();
 	});
