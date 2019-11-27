@@ -18,6 +18,7 @@ const dirname      = fs.realpathSync('./');
 const databaseFile = dirname + '/data/history.db';
 const authFile     = dirname + '/data/auth.json';
 const settingsFile = dirname + '/data/settings.json';
+const userSettingsFile = dirname + '/data/user-settings.json';
 const legalFile    = dirname + '/data/legal.html';
 const imprintFile    = dirname + '/data/imprint.html';
 
@@ -39,6 +40,13 @@ var settingsData = {
 	"apiPath":   "",
 	"userPath":  "",
 	"adminPath": ""
+}
+var userSettingsData = {
+	"imprint": true,
+	"data-protection": true,
+	"recently-purchased": true,
+	"history": true,
+	"money": true
 }
 
 function input(prompt, lineCallback, callback) {
@@ -143,6 +151,7 @@ function saveAll() {
 	console.log('');
 	dataHelper.writeFile('auth', authFile, authData);
 	dataHelper.writeFile('settings', settingsFile, settingsData);
+	dataHelper.writeFile('user-settings', userSettingsFile, userSettingsData);
 
 	if (!fs.existsSync(legalFile)) {
 		dataHelper.createEmptyLegalFile()
