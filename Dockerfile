@@ -1,5 +1,8 @@
 FROM node:8.10.0
 
+RUN apt-get update
+RUN apt-get install sqlite
+
 COPY . /app
 WORKDIR /app
 
