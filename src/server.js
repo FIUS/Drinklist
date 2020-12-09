@@ -16,9 +16,8 @@ const fs = require('fs');
 require('./dataHelper.js').checkAndCreateFiles();
 
 // Import all software components
-const api       = require('./api.js');
-const userPage  = require('./userPage/server.js');
-const adminPage = require('./adminPage/server.js');
+const api       = require('./api/api.js');
+const frontend  = require('./frontend-server/server.js')
 
 // Settings file
 var settings = JSON.parse(fs.readFileSync(fs.realpathSync('./') + '/data/settings.json', 'utf8'));
@@ -34,21 +33,11 @@ var apiServer = api.listen(settings.apiPort, function () {
 });
 
 // Setup and start the user page
-userPage.locals.apiPath   = settings.apiPath;
-userPage.locals.userPath  = settings.userPath;
-userPage.locals.adminPath = settings.adminPath;
-var userPageServer = userPage.listen(settings.userPort, function () {
-	let host = userPageServer.address().address;
-	let port = userPageServer.address().port;
-	console.log("[userPage] [Start] Listening at http://%s:%s", host, port);
-});
-
-// Setup and start the admin page
-adminPage.locals.apiPath   = settings.apiPath;
-adminPage.locals.userPath  = settings.userPath;
-adminPage.locals.adminPath = settings.adminPath;
-var adminPageServer = adminPage.listen(settings.adminPort, function () {
-	let host = adminPageServer.address().address;
-	let port = adminPageServer.address().port;
-	console.log("[adminPage] [Start] Listening at http://%s:%s", host, port);
+frontend.locals.apiPath   = settings.apiPath;
+frontend.locals.userPath  = settings.userPath;
+frontend.locals.adminPath = settings.adminPath;
+var frontendServer = frontend.listen(settings.userPort, function () {
+	let host = frontendServer.address().address;
+	let port = frontendServer.address().port;
+	console.log("[frontend] [Start] Listening at http://%s:%s", host, port);
 });

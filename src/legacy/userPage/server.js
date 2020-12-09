@@ -30,12 +30,12 @@ app.get('/favicon.ico', function (req, res) {
 
 app.get('/bootstrap/css', function (req, res) {
 	console.log('[userPage] [load] [lib] bootstrap/css');
-	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/css/bootstrap.min.css');
+	res.status(200).sendFile(dirname + '/node_modules/bootstrap/dist/css/bootstrap.min.css');
 });
 
 app.get('/bootstrap/js', function (req, res) {
 	console.log('[userPage] [load] [lib] bootstrap/js');
-	res.status(200).sendFile(dirname + '/node_modules/bootstrap-beta/dist/js/bootstrap.min.js');
+	res.status(200).sendFile(dirname + '/node_modules/bootstrap/dist/js/bootstrap.min.js');
 });
 
 fs.readdirSync(dirname + '/node_modules/font-awesome/fonts').forEach(file => {

@@ -1,0 +1,15 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": []
+  },
+  "files": [
+    "src/frontend/src/main.ts",
+    "src/frontend/src/polyfills.ts"
+  ],
+  "include": [
+    "src/frontend/src/**/*.d.ts"
+  ]
+}
