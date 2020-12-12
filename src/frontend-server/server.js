@@ -17,7 +17,7 @@ const app = module.exports = express();
 const dirname = fs.realpathSync('./');
 const wwwroot = __dirname + '/wwwroot';
 
-var settings = JSON.parse(fs.readFileSync(dirname + '/data/user-settings.json', 'utf8'));
+var settings = JSON.parse(fs.readFileSync(dirname + '/data/user-settings.json', 'utf-8'));
 
 app.get('/settings', (req, res) => {
   const config = {
@@ -25,7 +25,7 @@ app.get('/settings', (req, res) => {
     api: app.locals.apiPath,
   };
   console.log('[frontend] [load] settings');
-  res.status(200).end(JSON.stringify(config));
+  res.status(200).json(config);
 });
 
 app.get('/legal', (req, res) => {
