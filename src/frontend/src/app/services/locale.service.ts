@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ILocale, ILocaleData} from '../models/ilocale';
+import {ILocale, ILocaleData} from '../models/i-locale';
 import {HttpClient} from '@angular/common/http';
 
 @Injectable({

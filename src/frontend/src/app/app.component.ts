@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AuthService} from './services/auth.service';
 import {LocaleService} from './services/locale.service';
-import {ILocale} from './models/ilocale';
+import {ILocale} from './models/i-locale';
 import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons/faSignOutAlt';
 import {faCogs} from '@fortawesome/free-solid-svg-icons/faCogs';
 import {faInfo} from '@fortawesome/free-solid-svg-icons/faInfo';
