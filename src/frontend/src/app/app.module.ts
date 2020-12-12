@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -8,6 +8,11 @@ import {HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 import {LoginModule} from './login/login.module';
 import {UserModule} from './user/user.module';
+import {AppConfig} from './app.config';
+
+export function initializeApp(appConfig: AppConfig): () => Promise<void> {
+  return () => appConfig.load();
+}
 
 @NgModule({
   declarations: [
@@ -25,7 +30,15 @@ import {UserModule} from './user/user.module';
     LoginModule,
     UserModule,
   ],
-  providers: [],
+  providers: [
+    AppConfig,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfig],
+      multi: true,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

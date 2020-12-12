@@ -7,6 +7,8 @@ import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons/faSignOutAlt';
 import {faCogs} from '@fortawesome/free-solid-svg-icons/faCogs';
 import {faInfo} from '@fortawesome/free-solid-svg-icons/faInfo';
 import {faUser} from '@fortawesome/free-solid-svg-icons/faUser';
+import {AppConfig} from './app.config';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +21,7 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     public localeService: LocaleService,
     private route: ActivatedRoute,
+    private title: Title,
   ) {
   }
 
@@ -37,7 +40,7 @@ export class AppComponent implements OnInit {
     });
     this.selectedLocale = this.localeService.activeLocale;
 
-    this.isAdmin();
+    this.title.setTitle(AppConfig.config.settings.title);
   }
 
   isAdmin(): boolean {
@@ -54,5 +57,13 @@ export class AppComponent implements OnInit {
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn('any');
+  }
+
+  showImprintBtn(): boolean {
+    return AppConfig.config.settings.imprint;
+  }
+
+  showPrivacyBtn(): boolean {
+    return AppConfig.config.settings['data-protection'];
   }
 }

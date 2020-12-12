@@ -15,14 +15,15 @@
     </ng-container>
   </form>
   <form class="form-inline">
-    <select class="form-control mr-3" name="lang" [(ngModel)]="selectedLocale" (change)="setLocale()">
+    <select class="form-control" [class.mr-3]="showImprintBtn() || showPrivacyBtn()" name="lang"
+            [(ngModel)]="selectedLocale" (change)="setLocale()">
       <option *ngFor="let locale of locales" value="{{locale.id}}">{{locale.name}}</option>
     </select>
-    <a class="btn btn-outline-primary mr-3" href="./imprint">
+    <a class="btn btn-outline-primary mr-3" [class.mr-3]="showPrivacyBtn()" href="./imprint" *ngIf="showImprintBtn()">
       <fa-icon class="mr-1" [icon]="faInfo"></fa-icon>
       {{localeService.getMessage('imprint')}}
     </a>
-    <a class="btn btn-outline-primary" href="./legal">
+    <a class="btn btn-outline-primary" href="./legal" *ngIf="showPrivacyBtn()">
       <fa-icon class="mr-1" [icon]="faInfo"></fa-icon>
       {{localeService.getMessage('legal')}}
     </a>
