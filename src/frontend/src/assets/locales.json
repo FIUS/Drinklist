@@ -1,0 +1,42 @@
+[
+	{
+		"id": "de",
+		"name": "Deutsch"
+	},
+	{
+		"id": "swb",
+		"name": "Schwäbisch"
+	},
+	{
+		"id": "bay",
+		"name": "Bayrisch"
+	},
+	{
+		"id": "en",
+		"name": "English"
+	},
+	{
+		"id": "tr",
+		"name": "Türkçe"
+	},
+	{
+		"id": "pl",
+		"name": "Język polski"
+	},
+	{
+		"id": "eg",
+		"name": "Ägyptisch"
+	},
+	{
+		"id": "klg",
+		"name": "tlhIngan"
+	},
+	{
+		"id": "inf",
+		"name": "Inf0rmatik0rz"
+	},
+	{
+		"id": "cn",
+		"name": "中文"
+	}
+]
