@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {AppConfig} from '../app.config';
 
 export enum LoginError {
   NETWORK_ERROR,
@@ -11,22 +12,18 @@ export enum LoginError {
 })
 export class AuthService {
 
+  readonly api = AppConfig.config.api;
+
   constructor(
     private http: HttpClient,
   ) {
-  }
-
-  private get userToken(): string | null {
-    return localStorage.getItem('userToken');
-  }
-
-  private set userToken(value: string | null) {
-    if (value === null) {
-      localStorage.removeItem('userToken');
-      return;
+    if (this.api.endsWith('/')) {
+      this.api = this.api.substring(0, this.api.length - 1);
     }
-    localStorage.setItem('userToken', value);
+    console.log(this.api);
   }
+
+  // Admin Auth
 
   private get adminToken(): string | null {
     return localStorage.getItem('userToken');
@@ -40,18 +37,44 @@ export class AuthService {
     localStorage.setItem('adminToken', value);
   }
 
-  loginUser(password: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      // TODO: do some REST magic to get a token
-    });
+  logoutAdmin(): void {
+    this.adminToken = null;
+  }
+
+  // User Auth
+  private get userToken(): string | null {
+    return localStorage.getItem('userToken');
+  }
+
+  private set userToken(value: string | null) {
+    if (value === null) {
+      localStorage.removeItem('userToken');
+      return;
+    }
+    localStorage.setItem('userToken', value);
   }
 
   logoutUser(): void {
     this.userToken = null;
   }
 
-  logoutAdmin(): void {
-    this.adminToken = null;
+  // General Auth
+
+  login(password: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.http.post<{ token: string, root: boolean }>(`${this.api}/login`, {password}, {observe: 'response'}).subscribe(response => {
+        if (response.status === 200 && response.body) {
+          this.userToken = response.body.token;
+          if (response.body.root) {
+            this.adminToken = response.body.token;
+          }
+          return resolve();
+        }
+        if (response.status === 400 || response.status === 403) {
+          return reject(LoginError.WRONG_PASSWORD);
+        }
+      });
+    });
   }
 
   isLoggedIn(component: 'user' | 'admin' | 'any'): boolean {

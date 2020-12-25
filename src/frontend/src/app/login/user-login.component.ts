@@ -46,8 +46,8 @@ export class UserLoginComponent implements OnInit {
 
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      this.authService.loginUser(this.password.trim())
+    if (event.key === 'Enter' && this.password.length > 0) {
+      this.authService.login(this.password.trim())
         .then(() => {
           const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || '';
           this.router.navigateByUrl('/' + returnTo);
