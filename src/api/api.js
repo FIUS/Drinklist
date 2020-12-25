@@ -156,7 +156,7 @@ function adminAccess(middleware) {
 
 // Setup Global Middlewares
 api.use(compression());
-api.use(bodyParser.urlencoded({ extended: true }));
+api.use(bodyParser.json());
 api.use(function (req, res, next) {
 	// Website you wish to allow to connect
 	res.setHeader('Access-Control-Allow-Origin', '*');
