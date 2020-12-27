@@ -14,6 +14,9 @@ export class AppConfig {
   load(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.http.get<IAppConfig>('/settings').subscribe((config) => {
+        if (config.api.endsWith('/')) {
+          config.api = config.api.substring(0, config.api.length - 1);
+        }
         AppConfig.config = config;
         resolve();
       }, (response: any) => {
