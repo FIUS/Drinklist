@@ -3,6 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {UserListPageComponent} from './user/user-list-page.component';
 import {UserLoginComponent} from './login/user-login.component';
 import {AuthGuard} from './guards/auth.guard';
+import {UserDetailPageComponent} from './user/user-detail-page.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,7 @@ const routes: Routes = [
       },
       {
         path: 'user/:username',
-        component: UserListPageComponent, // TODO: implement user page
+        component: UserDetailPageComponent,
       }
     ],
   },
