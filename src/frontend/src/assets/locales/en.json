@@ -14,5 +14,8 @@
 	"hcol1": "Reason",
 	"hcol2": "Price",
 	"hcol3": "Date",
-	"btnfinish": "Back"
+	"btnfinish": "Back",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password"
 }

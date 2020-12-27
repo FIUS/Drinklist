@@ -1,6 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AppConfig} from '../app.config';
+import {Router} from '@angular/router';
+import {catchError} from 'rxjs/operators';
+import {handleError, toApiResponse} from './service.util';
 
 export enum LoginError {
   NETWORK_ERROR,
@@ -16,11 +19,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
+    private router: Router,
   ) {
-    if (this.api.endsWith('/')) {
-      this.api = this.api.substring(0, this.api.length - 1);
-    }
-    console.log(this.api);
   }
 
   // Admin Auth
@@ -37,8 +37,18 @@ export class AuthService {
     localStorage.setItem('adminToken', value);
   }
 
+  getAdminToken(): string | null {
+    return this.adminToken;
+  }
+
   logoutAdmin(): void {
-    this.adminToken = null;
+    this.http.post(`${this.api}/logout?token=${this.adminToken}`, '', {responseType: 'text'}).subscribe(() => {
+      if (this.userToken === this.adminToken) {
+        this.userToken = null;
+      }
+      this.adminToken = null;
+      this.router.navigateByUrl('/admin/login');
+    });
   }
 
   // User Auth
@@ -54,26 +64,45 @@ export class AuthService {
     localStorage.setItem('userToken', value);
   }
 
+  getUserToken(): string | null {
+    return this.userToken;
+  }
+
   logoutUser(): void {
-    this.userToken = null;
+    this.http.post(`${this.api}/logout?token=${this.userToken}`, '', {responseType: 'text'}).subscribe(() => {
+      if (this.adminToken === this.userToken) {
+        this.adminToken = null;
+      }
+      this.userToken = null;
+      this.router.navigateByUrl('/login');
+    });
   }
 
   // General Auth
 
   login(password: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.http.post<{ token: string, root: boolean }>(`${this.api}/login`, {password}, {observe: 'response'}).subscribe(response => {
-        if (response.status === 200 && response.body) {
-          this.userToken = response.body.token;
-          if (response.body.root) {
-            this.adminToken = response.body.token;
+      this.http.post<{ token: string, root: boolean }>(`${this.api}/login`, {password}, {observe: 'response'})
+        .pipe(
+          toApiResponse<{ token: string, root: boolean }>(),
+          catchError(handleError<{ token: string, root: boolean }>()),
+        )
+        .subscribe(response => {
+          console.log(response);
+          if (response.status === 200 && response.data) {
+            this.userToken = response.data.token;
+            if (response.data.root) {
+              this.adminToken = response.data.token;
+            }
+            return resolve();
           }
-          return resolve();
-        }
-        if (response.status === 400 || response.status === 403) {
-          return reject(LoginError.WRONG_PASSWORD);
-        }
-      });
+          if (response.status === 400 || response.status === 403) {
+            return reject(LoginError.WRONG_PASSWORD);
+          }
+          if (response.status === 0) {
+            return reject(LoginError.NETWORK_ERROR);
+          }
+        });
     });
   }
 

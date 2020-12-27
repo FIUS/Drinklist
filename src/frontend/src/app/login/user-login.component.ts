@@ -21,6 +21,7 @@ import {ActivatedRoute, Router} from '@angular/router';
           <label for="password">{{localeService.getMessage('plabel')}}</label>
           <input class="form-control" name="password" autocomplete="current-password" type="password" placeholder="********" autofocus
                  [(ngModel)]="password">
+          <div class="alert alert-danger mt-3" *ngIf="error">{{error}}</div>
         </form>
       </div>
     </main>
@@ -53,7 +54,7 @@ export class UserLoginComponent implements OnInit {
           this.router.navigateByUrl('/' + returnTo);
         })
         .catch((reason => {
-          this.error = `${this.localeService.getMessage('loginFail')}: ${this.localeService.getMessage(reason)}`;
+          this.error = `${this.localeService.getMessage('loginFail')}: ${this.localeService.getMessage('loginFail' + reason)}`;
         }));
     }
   }
