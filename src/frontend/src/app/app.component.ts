@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
   faSignOutAlt = faSignOutAlt;
   faCogs = faCogs;
   faInfo = faInfo;
-  faP = faUser;
+  faUser = faUser;
 
   ngOnInit(): void {
     this.localeService.getLocales().then((locales) => {
