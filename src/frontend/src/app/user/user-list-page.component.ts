@@ -11,7 +11,7 @@ import {AppConfig} from '../app.config';
     <header class="text-center">
       <h1 class="display-1">{{locale.getMessage('header1')}}</h1>
     </header>
-    <main class="mb-6vh">
+    <main class="mb-8vh">
       <div class="container">
         <input class="form-control" placeholder="User" [(ngModel)]="searchTerm">
       </div>
