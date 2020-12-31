@@ -70,4 +70,19 @@ export class OrderService {
         handleForbiddenUser(this.auth),
       );
   }
+
+  getHistory(count: number): Observable<ApiResponse<Order[]>> {
+    return this.http.get<Order[]>(`${this.api}/lastorders?limit=${count}`, {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('user')
+    }).pipe(
+      toApiResponse<Order[]>(),
+      catchError(handleError<Order[]>()),
+      handleForbiddenUser(this.auth),
+      map(value => { // TODO: fix limit in backend
+        value.data = value.data?.slice(0, count);
+        return value;
+      }),
+    );
+  }
 }
