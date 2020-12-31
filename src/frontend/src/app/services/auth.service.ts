@@ -26,7 +26,7 @@ export class AuthService {
   // Admin Auth
 
   private get adminToken(): string | null {
-    return localStorage.getItem('userToken');
+    return localStorage.getItem('adminToken');
   }
 
   private set adminToken(value: string | null) {
