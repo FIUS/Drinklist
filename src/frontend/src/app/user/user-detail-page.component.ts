@@ -21,10 +21,6 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons/faTrash';
     .btn-beverage:hover {
       background-color: #dfdfdf;
     }
-
-    .mb-6vh {
-      margin-bottom: 6vh;
-    }
   `]
 })
 export class UserDetailPageComponent implements OnInit {
