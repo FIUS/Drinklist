@@ -88,7 +88,6 @@ export class AuthService {
           catchError(handleError<{ token: string, root: boolean }>()),
         )
         .subscribe(response => {
-          console.log(response);
           if (response.status === 200 && response.data) {
             this.userToken = response.data.token;
             if (response.data.root) {
