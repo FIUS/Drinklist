@@ -6,6 +6,7 @@ export interface IAppConfig {
     history: boolean;
     money: boolean;
     title: string;
+    currencySymbol: string;
   };
   api: string;
 }

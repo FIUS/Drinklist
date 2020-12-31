@@ -1,4 +1,4 @@
-<nav class="navbar border-bottom border-gray">
+<nav class="navbar border-bottom border-gray fixed-top bg-white">
   <form class="form-inline">
     <button *ngIf="isLoggedIn()" class="btn btn-outline-danger mr-1" type="button" (click)="logout()">
       <fa-icon [rotate]="180" [icon]="faSignOutAlt"></fa-icon>
@@ -29,4 +29,6 @@
     </a>
   </form>
 </nav>
-<router-outlet></router-outlet>
+<div style="margin-top: 6vh">
+  <router-outlet></router-outlet>
+</div>

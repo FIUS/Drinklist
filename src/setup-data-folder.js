@@ -46,7 +46,9 @@ var userSettingsData = {
 	"data-protection": true,
 	"recently-purchased": true,
 	"history": true,
-	"money": true
+	"money": true,
+  "title": "daGl / TOBL",
+  "currencySymbol": "€"
 }
 
 function input(prompt, lineCallback, callback) {

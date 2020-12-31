@@ -1,0 +1,53 @@
+<header class="text-center">
+  <h1 class="display-4">
+    <span>{{locale.getMessage('header21')}} {{user?.name}}, </span>
+    <small class="text-muted">{{locale.getMessage('header22')}}</small>
+  </h1>
+</header>
+<main class="row mx-0 mb-6vh">
+  <div class="col-lg-6">
+    <h1>{{locale.getMessage('blabel')}}</h1>
+    <ng-container *ngFor="let beverage of beverages">
+      <button type="button" class="btn btn-beverage btn-lg btn-block mt-2" (click)="order(beverage)">
+        ({{beverage.stock}}) {{beverage.name}} [{{moneyFormat(beverage.price)}}]
+      </button>
+    </ng-container>
+  </div>
+  <div class="col-lg-6">
+    <div class="jumbotron"
+         [class.bg-danger]="getSafeUserBalance() <= -2000">
+      <span class="d-block h1">{{locale.getMessage('mlabel')}}</span>
+      <span class="d-block h1 display-1 text-right"
+            [class.text-success]="getSafeUserBalance() >= 0"
+            [class.text-danger]="getSafeUserBalance() < 0 && getSafeUserBalance() > -2000"
+            [class.text-white]="getSafeUserBalance() <= -2000">{{moneyFormat(getSafeUserBalance())}}</span>
+    </div>
+    <h1>{{locale.getMessage('hlabel')}}</h1>
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>{{locale.getMessage('hcol1')}}</th>
+          <th>{{locale.getMessage('hcol2')}}</th>
+          <th>{{locale.getMessage('hcol3')}}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let order of orders">
+          <tr>
+            <td>{{order.reason}}</td>
+            <td>{{moneyFormat(order.amount)}}</td>
+            <td>{{order.timestamp}}</td>
+            <td (click)="deleteFreshOrder(order)">
+              <fa-icon *ngIf="order.isFresh()" [icon]="faTrash"></fa-icon>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</main>
+<footer class="container-fluid fixed-bottom border-top bg-white">
+  <button class="btn btn-warning btn-lg btn-block my-2" type="button"
+          routerLink="/">{{locale.getMessage('btnfinish')}}</button>
+</footer>

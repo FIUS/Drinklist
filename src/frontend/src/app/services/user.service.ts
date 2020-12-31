@@ -4,9 +4,9 @@ import {AppConfig} from '../app.config';
 import {AuthService} from './auth.service';
 import {User} from '../models/user';
 import {Observable} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
+import {catchError} from 'rxjs/operators';
 import {ApiResponse} from '../models/api-response';
-import {handleError, toApiResponse} from './service.util';
+import {handleError, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
 
 
 @Injectable({
@@ -16,10 +16,13 @@ export class UserService {
 
   private readonly api = AppConfig.config.api;
 
+  private util: ServiceUtil;
+
   constructor(
     private http: HttpClient,
     private auth: AuthService,
   ) {
+    this.util = new ServiceUtil(auth);
   }
 
   getUsers(): Observable<ApiResponse<User[]>> {
@@ -28,11 +31,16 @@ export class UserService {
     return this.http.get<User[]>(`${this.api}/users`, {observe: 'response', headers}).pipe(
       toApiResponse<User[]>(),
       catchError(handleError<User[]>()),
-      tap(value => {
-        if (value.status === 403) { // Invalid Token
-          this.auth.logoutUser();
-        }
-      })
+      handleForbiddenUser(this.auth),
     );
+  }
+
+  getUser(username: string): Observable<ApiResponse<User>> {
+    return this.http.get<User>(`${this.api}/users/${username}`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
+      .pipe(
+        toApiResponse<User>(),
+        catchError(handleError<User>()),
+        handleForbiddenUser(this.auth),
+      );
   }
 }
