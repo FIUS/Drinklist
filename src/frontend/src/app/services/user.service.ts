@@ -25,12 +25,15 @@ export class UserService {
     this.util = new ServiceUtil(auth);
   }
 
-  getUsers(): Observable<ApiResponse<string[]>> {
+  /**
+   * @return Observable with ApiResponse of either User[] (if token is an admin token) or string[] (if token is an admin token)
+   */
+  getUsers(): Observable<ApiResponse<User[] | string[]>> {
     const token = this.auth.getUserToken() || '';
     const headers = new HttpHeaders({'X-Auth-Token': token});
-    return this.http.get<string[]>(`${this.api}/users`, {observe: 'response', headers}).pipe(
-      toApiResponse<string[]>(),
-      catchError(handleError<string[]>()),
+    return this.http.get<User[] | string[]>(`${this.api}/users`, {observe: 'response', headers}).pipe(
+      toApiResponse<User[] | string[]>(),
+      catchError(handleError<User[] | string[]>()),
       handleForbiddenUser(this.auth),
     );
   }

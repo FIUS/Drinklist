@@ -4,6 +4,8 @@ import {UserService} from '../services/user.service';
 import {Order} from '../models/order';
 import {OrderService} from '../services/order.service';
 import {AppConfig} from '../app.config';
+import {AuthService} from '../services/auth.service';
+import {User} from '../models/user';
 
 @Component({
   selector: 'app-user-list-page',
@@ -99,14 +101,20 @@ export class UserListPageComponent implements OnInit {
     public locale: LocaleService,
     private userService: UserService,
     private orderService: OrderService,
+    private auth: AuthService,
   ) {
   }
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe(response => {
       if (response.status === 200 && response.data) {
-        console.log('users', response.data);
-        this.usernames = response.data;
+        let usernames = response.data;
+        if (this.auth.isLoggedIn('admin')) { // Map User objects to usernames if admin
+          usernames = (usernames as User[]).map((user => {
+            return user.name;
+          }));
+        }
+        this.usernames = usernames as string[];
       }
     });
     if (this.tickerEnabled) {
