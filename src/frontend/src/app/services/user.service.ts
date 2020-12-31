@@ -25,12 +25,12 @@ export class UserService {
     this.util = new ServiceUtil(auth);
   }
 
-  getUsers(): Observable<ApiResponse<User[]>> {
+  getUsers(): Observable<ApiResponse<string[]>> {
     const token = this.auth.getUserToken() || '';
     const headers = new HttpHeaders({'X-Auth-Token': token});
-    return this.http.get<User[]>(`${this.api}/users`, {observe: 'response', headers}).pipe(
-      toApiResponse<User[]>(),
-      catchError(handleError<User[]>()),
+    return this.http.get<string[]>(`${this.api}/users`, {observe: 'response', headers}).pipe(
+      toApiResponse<string[]>(),
+      catchError(handleError<string[]>()),
       handleForbiddenUser(this.auth),
     );
   }
