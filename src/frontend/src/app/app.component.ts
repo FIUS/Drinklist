@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.route.snapshot.firstChild?.routeConfig?.path === 'admin';
+    return this.route.snapshot.firstChild?.routeConfig?.path?.split('/')[0] === 'admin';
   }
 
   logout(): void {
@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
   }
 
   isLoggedIn(): boolean {
-    return this.authService.isLoggedIn('any');
+    return this.authService.isLoggedIn(this.isAdmin() ? 'admin' : 'user');
   }
 
   showImprintBtn(): boolean {
