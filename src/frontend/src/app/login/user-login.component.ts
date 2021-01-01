@@ -1,7 +1,8 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import {AuthService} from '../services/auth.service';
+import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AuthService, LoginError} from '../services/auth.service';
 import {LocaleService} from '../services/locale.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-user-login',
@@ -14,7 +15,7 @@ import {ActivatedRoute, Router} from '@angular/router';
     </header>
     <main>
       <div class="container" style="margin-top: 10vh">
-        <form #loginForm='ngForm'>
+        <form #loginForm="ngForm">
           <!-- Hidden username field for accessibility https://goo.gl/9p2vKq -->
           <input hidden type="text" name="username" autocomplete="username">
 
@@ -29,6 +30,7 @@ import {ActivatedRoute, Router} from '@angular/router';
   styles: []
 })
 export class UserLoginComponent implements OnInit {
+  @ViewChild('loginForm', {static: true}) private loginForm: NgForm | undefined;
 
   constructor(
     public localeService: LocaleService,
@@ -54,6 +56,9 @@ export class UserLoginComponent implements OnInit {
           this.router.navigateByUrl('/' + returnTo);
         })
         .catch((reason => {
+          if (reason === LoginError.WRONG_PASSWORD) {
+            this.loginForm?.resetForm();
+          }
           this.error = `${this.localeService.getMessage('loginFail')}: ${this.localeService.getMessage('loginFail' + reason)}`;
         }));
     }
