@@ -41,12 +41,18 @@ export class AuthService {
     return this.adminToken;
   }
 
-  logoutAdmin(): void {
+  logoutAdmin(noNavigation?: boolean): void {
+    if (!this.adminToken) {
+      return;
+    }
     this.http.post(`${this.api}/logout?token=${this.adminToken}`, '', {responseType: 'text'}).subscribe(() => {
       if (this.userToken === this.adminToken) {
         this.userToken = null;
       }
       this.adminToken = null;
+      if (noNavigation) {
+        return;
+      }
       this.router.navigateByUrl('/admin/login');
     });
   }
@@ -68,19 +74,28 @@ export class AuthService {
     return this.userToken;
   }
 
-  logoutUser(): void {
+  logoutUser(noNavigation?: boolean): void {
+    if (!this.userToken) {
+      return;
+    }
     this.http.post(`${this.api}/logout?token=${this.userToken}`, '', {responseType: 'text'}).subscribe(() => {
       if (this.adminToken === this.userToken) {
         this.adminToken = null;
       }
       this.userToken = null;
+      if (noNavigation) {
+        return;
+      }
       this.router.navigateByUrl('/login');
     });
   }
 
   // General Auth
 
-  login(password: string): Promise<void> {
+  login(password: string, failOnUser?: boolean): Promise<void> {
+    // Invalidate old tokens (if any) since we're trying to log in.
+    this.logoutAdmin(true);
+    this.logoutUser(true);
     return new Promise<void>((resolve, reject) => {
       this.http.post<{ token: string, root: boolean }>(`${this.api}/login`, {password}, {observe: 'response'})
         .pipe(
@@ -88,10 +103,14 @@ export class AuthService {
           catchError(handleError<{ token: string, root: boolean }>()),
         )
         .subscribe(response => {
-          if (response.status === 200 && response.data) {
-            this.userToken = response.data.token;
-            if (response.data.root) {
+          if (response.status === 200 && response.data) { // Login with user permissions successful.
+            this.userToken = response.data.token; /* This logs the user in, even if admin login is requested.
+                                                     This behaviour is intended since the backend sends a token anyway. */
+            if (response.data.root) { // Login with admin permissions successful.
               this.adminToken = response.data.token;
+            } else if (failOnUser) {
+              // Fail here since we require the token to be admin capable.
+              return reject(LoginError.WRONG_PASSWORD);
             }
             return resolve();
           }
