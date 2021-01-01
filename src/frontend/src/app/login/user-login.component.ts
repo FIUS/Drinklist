@@ -15,7 +15,7 @@ import {ActivatedRoute, Router} from '@angular/router';
     <main>
       <div class="container" style="margin-top: 10vh">
         <form #loginForm='ngForm'>
-          <!-- Hidden username field for accesibility https://goo.gl/9p2vKq -->
+          <!-- Hidden username field for accessibility https://goo.gl/9p2vKq -->
           <input hidden type="text" name="username" autocomplete="username">
 
           <label for="password">{{localeService.getMessage('plabel')}}</label>
@@ -31,8 +31,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class UserLoginComponent implements OnInit {
 
   constructor(
-    private authService: AuthService,
     public localeService: LocaleService,
+    private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
