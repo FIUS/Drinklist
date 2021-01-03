@@ -9,8 +9,8 @@ import {NgForm} from '@angular/forms';
   template: `
     <header class="text-center">
       <h1 class="display-1">
-        {{localeService.getMessage('header01')}}
-        <small class="text-muted">{{localeService.getMessage('header02')}}</small>
+        {{locale.getMessage('header01')}}
+        <small class="text-muted">{{locale.getMessage('header02')}}</small>
       </h1>
     </header>
     <main>
@@ -19,7 +19,7 @@ import {NgForm} from '@angular/forms';
           <!-- Hidden username field for accessibility https://goo.gl/9p2vKq -->
           <input hidden type="text" name="username" autocomplete="username">
 
-          <label for="password">{{localeService.getMessage('plabel')}}</label>
+          <label for="password">{{locale.getMessage('plabel')}}</label>
           <input class="form-control" name="password" autocomplete="current-password" type="password" placeholder="********" autofocus
                  [(ngModel)]="password">
           <div class="alert alert-danger mt-3" *ngIf="error">{{error}}</div>
@@ -33,8 +33,8 @@ export class UserLoginComponent implements OnInit {
   @ViewChild('loginForm', {static: true}) private loginForm: NgForm | undefined;
 
   constructor(
-    public localeService: LocaleService,
-    private authService: AuthService,
+    public locale: LocaleService,
+    private auth: AuthService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
@@ -50,16 +50,16 @@ export class UserLoginComponent implements OnInit {
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter' && this.password.length > 0) {
-      this.authService.login(this.password.trim())
+      this.auth.login(this.password.trim())
         .then(() => {
-          const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || '';
+          const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || ''; // substring(1) removes leading slash
           this.router.navigateByUrl('/' + returnTo);
         })
         .catch((reason => {
           if (reason === LoginError.WRONG_PASSWORD) {
             this.loginForm?.resetForm();
           }
-          this.error = `${this.localeService.getMessage('loginFail')}: ${this.localeService.getMessage('loginFail' + reason)}`;
+          this.error = `${this.locale.getMessage('loginFail')}: ${this.locale.getMessage('loginFail' + reason)}`;
         }));
     }
   }
