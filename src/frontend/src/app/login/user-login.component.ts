@@ -45,6 +45,10 @@ export class UserLoginComponent implements OnInit {
   public error: string | undefined;
 
   ngOnInit(): void {
+    if (this.auth.isLoggedIn('user')) {
+      const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || ''; // substring(1) removes leading slash
+      this.router.navigateByUrl('/' + returnTo);
+    }
   }
 
   @HostListener('keydown', ['$event'])
