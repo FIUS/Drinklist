@@ -5,6 +5,7 @@ import {UserLoginComponent} from './login/user-login.component';
 import {AuthGuard} from './guards/auth.guard';
 import {UserDetailPageComponent} from './user/user-detail-page.component';
 import {AdminLoginComponent} from './login/admin-login.component';
+import {AdminPageComponent} from './admin/admin-page.component';
 
 const routes: Routes = [
   // Login pages
@@ -38,11 +39,12 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: UserListPageComponent, // TODO: implement admin interfaces
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
       },
       {
-        path: 'page',
-        component: UserListPageComponent, // TODO: testing only
+        path: ':module',
+        component: AdminPageComponent,
       }
     ],
   },
