@@ -4,8 +4,18 @@ import {UserListPageComponent} from './user/user-list-page.component';
 import {UserLoginComponent} from './login/user-login.component';
 import {AuthGuard} from './guards/auth.guard';
 import {UserDetailPageComponent} from './user/user-detail-page.component';
+import {AdminLoginComponent} from './login/admin-login.component';
 
 const routes: Routes = [
+  // Login pages
+  {
+    path: 'admin/login',
+    component: AdminLoginComponent,
+  },
+  {
+    path: 'login',
+    component: UserLoginComponent,
+  },
   {
     path: '',
     canActivate: [AuthGuard],
@@ -35,15 +45,6 @@ const routes: Routes = [
         component: UserListPageComponent, // TODO: testing only
       }
     ],
-  },
-  // Login pages
-  {
-    path: 'admin/login',
-    component: UserLoginComponent, // TODO: separate admin login page
-  },
-  {
-    path: 'login',
-    component: UserLoginComponent,
   },
 ];
 
