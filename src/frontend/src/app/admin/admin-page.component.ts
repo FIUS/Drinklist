@@ -17,7 +17,7 @@ import {faBox, faHome} from '@fortawesome/free-solid-svg-icons';
         </ul>
       </div>
       <div class="col">
-        <!-- Add module components here -->
+        <app-admin-dashboard *ngIf="activeModule==='dashboard'"></app-admin-dashboard>
       </div>
     </div>
   `,

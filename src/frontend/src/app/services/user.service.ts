@@ -6,7 +6,7 @@ import {User} from '../models/user';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ApiResponse} from '../models/api-response';
-import {handleError, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
+import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
 
 
 @Injectable({
@@ -44,6 +44,35 @@ export class UserService {
         toApiResponse<User>(),
         catchError(handleError<User>()),
         handleForbiddenUser(this.auth),
+      );
+  }
+
+  // Statistics for admin dashboard
+
+  getTopDebtors(): Observable<ApiResponse<User[]>> {
+    return this.http.get<User[]>(`${this.api}/stats/top/debtors`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+      .pipe(
+        toApiResponse<User[]>(),
+        catchError(handleError<User[]>()),
+        handleForbiddenAdmin(this.auth),
+      );
+  }
+
+  getTopSavers(): Observable<ApiResponse<User[]>> {
+    return this.http.get<User[]>(`${this.api}/stats/top/savers`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+      .pipe(
+        toApiResponse<User[]>(),
+        catchError(handleError<User[]>()),
+        handleForbiddenAdmin(this.auth),
+      );
+  }
+
+  getUserCount(): Observable<ApiResponse<number>> {
+    return this.http.get<number>(`${this.api}/stats/users`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+      .pipe(
+        toApiResponse<number>(),
+        catchError(handleError<number>()),
+        handleForbiddenAdmin(this.auth),
       );
   }
 }

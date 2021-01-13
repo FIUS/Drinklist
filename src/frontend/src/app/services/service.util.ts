@@ -22,6 +22,12 @@ export const handleForbiddenUser = (auth: AuthService) => tap((value: ApiRespons
   }
 });
 
+export const handleForbiddenAdmin = (auth: AuthService) => tap((value: ApiResponse<any>) => {
+  if (value.status === 403 || value.status === 401) {
+    auth.logoutAdmin();
+  }
+});
+
 export class ServiceUtil {
   constructor(
     private auth: AuthService,

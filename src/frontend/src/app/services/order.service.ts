@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Order} from '../models/order';
 import {AppConfig} from '../app.config';
-import {handleError, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
+import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
 import {AuthService} from './auth.service';
 import {ApiResponse} from '../models/api-response';
 import {catchError, map} from 'rxjs/operators';
@@ -84,5 +84,16 @@ export class OrderService {
         return value;
       }),
     );
+  }
+
+  // Admin dashboard statistics
+
+  getOrderCount(): Observable<ApiResponse<number>> {
+    return this.http.get<number>(`${this.api}/stats/orders`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+      .pipe(
+        toApiResponse<number>(),
+        catchError(handleError<number>()),
+        handleForbiddenAdmin(this.auth),
+      );
   }
 }
