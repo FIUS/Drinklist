@@ -14,17 +14,17 @@ import {Beverage} from '../models/beverage';
 export class BeverageService {
 
   private readonly api = AppConfig.config.api;
-  private serviceUtil: ServiceUtil;
+  private util: ServiceUtil;
 
   constructor(
     private http: HttpClient,
     private auth: AuthService,
   ) {
-    this.serviceUtil = new ServiceUtil(auth);
+    this.util = new ServiceUtil(auth);
   }
 
   getBeverages(): Observable<ApiResponse<Beverage[]>> {
-    return this.http.get<Beverage[]>(`${this.api}/beverages`, {observe: 'response', headers: this.serviceUtil.getTokenHeaders('user')})
+    return this.http.get<Beverage[]>(`${this.api}/beverages`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
       .pipe(
         toApiResponse<Beverage[]>(),
         catchError(handleError<Beverage[]>()),
@@ -37,7 +37,7 @@ export class BeverageService {
   getTopBeverages(): Observable<ApiResponse<Beverage[]>> {
     return this.http.get<Beverage[]>(`${this.api}/stats/top/beverages`, {
       observe: 'response',
-      headers: this.serviceUtil.getTokenHeaders('admin')
+      headers: this.util.getTokenHeaders('admin')
     }).pipe(
       toApiResponse<Beverage[]>(),
       catchError(handleError<Beverage[]>()),
@@ -46,7 +46,7 @@ export class BeverageService {
   }
 
   getBeverageCount(): Observable<ApiResponse<number>> {
-    return this.http.get<number>(`${this.api}/stats/beverages`, {observe: 'response', headers: this.serviceUtil.getTokenHeaders('admin')})
+    return this.http.get<number>(`${this.api}/stats/beverages`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
       .pipe(
         toApiResponse<number>(),
         catchError(handleError<number>()),
