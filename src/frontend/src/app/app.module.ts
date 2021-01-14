@@ -9,7 +9,6 @@ import {FormsModule} from '@angular/forms';
 import {LoginModule} from './login/login.module';
 import {UserModule} from './user/user.module';
 import {AppConfig} from './app.config';
-import {AdminModule} from './admin/admin.module';
 
 export function initializeApp(appConfig: AppConfig): () => Promise<void> {
   return () => appConfig.load();
@@ -30,7 +29,6 @@ export function initializeApp(appConfig: AppConfig): () => Promise<void> {
     // Internal Modules
     LoginModule,
     UserModule,
-    AdminModule,
   ],
   providers: [
     AppConfig,

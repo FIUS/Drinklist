@@ -5,7 +5,6 @@ import {UserLoginComponent} from './login/user-login.component';
 import {AuthGuard} from './guards/auth.guard';
 import {UserDetailPageComponent} from './user/user-detail-page.component';
 import {AdminLoginComponent} from './login/admin-login.component';
-import {AdminPageComponent} from './admin/admin-page.component';
 
 const routes: Routes = [
   // Login pages
@@ -36,17 +35,8 @@ const routes: Routes = [
   {
     path: 'admin',
     canActivate: [AuthGuard],
-    children: [
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
-      },
-      {
-        path: ':module',
-        component: AdminPageComponent,
-      }
-    ],
+    // Lazy loading for admin UI
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
   },
 ];
 
