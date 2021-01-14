@@ -9,11 +9,18 @@ import {faBox, faHome} from '@fortawesome/free-solid-svg-icons';
       <div class="col-md-2 px-0 bg-light text-dark admin-module-selector border-right">
         <h1 class="h4 pl-3 my-2">Admin Area</h1>
         <ul class="list-unstyled">
-          <li *ngFor="let module of modules" class="admin-module" [class.admin-module-active]="activeModule===module.id"
-              [routerLink]="'../' + module.id">
-            <fa-icon [icon]="module.icon"></fa-icon>
-            {{module.displayName}}
-          </li>
+          <ng-container *ngFor="let module of modules">
+            <li *ngIf="!module.spacer; else spacer" class="admin-module" [class.admin-module-active]="activeModule===module.id"
+                [routerLink]="'../' + module.id">
+              <fa-icon *ngIf="module.icon" [icon]="module.icon"></fa-icon>
+              {{module.displayName}}
+            </li>
+            <ng-template #spacer>
+              <li class="admin-module spacer">
+                &#8203;
+              </li>
+            </ng-template>
+          </ng-container>
         </ul>
       </div>
       <div class="col">
@@ -36,6 +43,16 @@ import {faBox, faHome} from '@fortawesome/free-solid-svg-icons';
     .admin-module:hover {
       color: black;
       background-color: rgba(0, 0, 0, .05);
+    }
+
+    .admin-module.spacer {
+      cursor: default;
+      transition: unset;
+    }
+
+    .admin-module.spacer:hover {
+      cursor: inherit;
+      background-color: inherit;
     }
 
     .admin-module-active {
@@ -66,6 +83,9 @@ export class AdminPageComponent implements OnInit {
       id: 'dashboard',
       displayName: 'Dashboard',
       icon: faHome
+    },
+    {
+      spacer: true,
     },
     {
       id: 'other',
