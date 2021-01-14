@@ -3,21 +3,19 @@
     <h1 class="h4 pl-3 my-2">Admin Area</h1>
     <ul class="list-unstyled">
       <ng-container *ngFor="let module of modules">
-        <li *ngIf="!module.spacer; else spacer" class="admin-module"
+        <li class="admin-module"
             [class.admin-module-active]="activeModule===module.id"
             [routerLink]="'../' + module.id">
           <fa-icon *ngIf="module.icon" [icon]="module.icon"></fa-icon>
           {{module.displayName}}
         </li>
-        <ng-template #spacer>
-          <li class="admin-module spacer">
-            &#8203;
-          </li>
-        </ng-template>
+        <li *ngIf="module.spacerAfter" class="admin-module spacer">
+          &#8203;
+        </li>
       </ng-container>
     </ul>
   </div>
   <div class="col">
-    <app-admin-dashboard *ngIf="activeModule==='dashboard'"></app-admin-dashboard>
+    <ng-container [ngComponentOutlet]="activeModuleComponent"></ng-container>
   </div>
 </div>
