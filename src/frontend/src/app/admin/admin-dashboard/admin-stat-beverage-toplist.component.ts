@@ -10,7 +10,7 @@ import {Beverage} from '../../models/beverage';
   styles: []
 })
 export class AdminStatBeverageToplistComponent implements OnInit {
-  text = 'These are the top 5 beverages:';
+  text = 'These are the 5 most popular beverages:';
 
   beverages: string[] | undefined;
 
