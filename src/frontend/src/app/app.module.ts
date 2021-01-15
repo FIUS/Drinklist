@@ -9,6 +9,7 @@ import {FormsModule} from '@angular/forms';
 import {LoginModule} from './login/login.module';
 import {UserModule} from './user/user.module';
 import {AppConfig} from './app.config';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 export function initializeApp(appConfig: AppConfig): () => Promise<void> {
   return () => appConfig.load();
@@ -24,6 +25,7 @@ export function initializeApp(appConfig: AppConfig): () => Promise<void> {
     HttpClientModule,
     FontAwesomeModule,
     FormsModule,
+    NgbModule,
     // Routing Module
     AppRoutingModule,
     // Internal Modules
