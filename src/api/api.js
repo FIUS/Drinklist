@@ -403,9 +403,10 @@ api.get('/beverages', userAccess(function (req, res, next) {
 api.post('/beverages', adminAccess(function (req, res, next) {
 	let bev = req.query.beverage;
 	let price = req.query.price;
+	let count = req.query.count || 0;
 	if (bev != undefined && price != undefined && bev != '') {
-		let stmt = prepare("INSERT INTO Beverages (name, price) VALUES (?, ?)");
-		stmt.run(bev, price, catchDBerror(stmt, req, next));
+		let stmt = prepare("INSERT INTO Beverages (name, price, stock) VALUES (?, ?, ?)");
+		stmt.run(bev, price, count, catchDBerror(stmt, req, next));
 		res.sendStatus(200);
 	} else {
 		throw { name: 'Generic Error', message: 'Generic Error Message' };
