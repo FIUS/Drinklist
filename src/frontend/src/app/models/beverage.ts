@@ -5,4 +5,8 @@ export class Beverage {
     public price: number
   ) {
   }
+
+  static newEmpty(): Beverage {
+    return new Beverage('', 0, 0);
+  }
 }

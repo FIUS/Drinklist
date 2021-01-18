@@ -1,8 +1,9 @@
 import {Component, OnInit, Type} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {faBox, faHome} from '@fortawesome/free-solid-svg-icons';
+import {faBeer, faBox, faHome} from '@fortawesome/free-solid-svg-icons';
 import {AdminPageModule} from './admin-page-module';
 import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.component';
+import {AdminBeveragesComponent} from './admin-beverages/admin-beverages.component';
 
 @Component({
   selector: 'app-admin-page',
@@ -12,7 +13,7 @@ import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.compone
 export class AdminPageComponent implements OnInit {
 
   public activeModule: string | undefined;
-  public activeModuleComponent: Type<any> | undefined;
+  public activeModuleComponent!: Type<any>;
 
   public modules: AdminPageModule[] = [
     {
@@ -21,6 +22,13 @@ export class AdminPageComponent implements OnInit {
       icon: faHome,
       spacerAfter: true,
       component: AdminDashboardComponent,
+    },
+    {
+      id: 'beverages',
+      displayName: 'Beverages',
+      icon: faBeer,
+      spacerAfter: false,
+      component: AdminBeveragesComponent,
     },
     {
       id: 'other',
@@ -38,10 +46,12 @@ export class AdminPageComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.activeModule = params.module;
-      this.activeModuleComponent = this.modules.find(module => {
+      const activeModule = this.modules.find(module => {
         return module.id === this.activeModule;
-      })?.component;
+      });
+      if (activeModule && activeModule.component) {
+        this.activeModuleComponent = activeModule.component;
+      }
     });
   }
-
 }
