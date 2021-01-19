@@ -9,7 +9,7 @@ import {Util} from '../../util';
     <th scope="row">{{number}}</th>
     <td>{{beverage?.name}}</td>
     <td class="text-right pr-3">{{beverage?.stock}}</td>
-    <td class="text-right pr-3">{{getFormattedPrice(beverage!.price)}}</td>
+    <td class="text-right pr-3">{{moneyFormat(beverage!.price)}}</td>
     <td>
       <app-admin-beverages-actions [beverage]="beverage!" [refresh]="refresh"></app-admin-beverages-actions>
     </td>
@@ -22,11 +22,9 @@ export class AdminBeveragesTableEntryComponent {
 
   @Input() refresh!: () => void;
 
+  // Aliases for template access
+  moneyFormat = Util.moneyFormat;
+
   constructor() {
   }
-
-  getFormattedPrice(price: number): string {
-    return Util.moneyFormat(price);
-  }
-
 }
