@@ -14,6 +14,7 @@ import {AdminBeveragesTableComponent} from './admin-beverages/admin-beverages-ta
 import {AdminBeveragesTableEntryComponent} from './admin-beverages/admin-beverages-table-entry.component';
 import {AdminBeveragesActionsComponent} from './admin-beverages/admin-beverages-actions.component';
 import {AdminModalsModule} from './admin-modals/admin-modals.module';
+import {FormsModule} from '@angular/forms';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import {AdminModalsModule} from './admin-modals/admin-modals.module';
     NgbCollapseModule,
     AdminModalsModule,
     NgbButtonsModule,
+    FormsModule,
   ]
 })
 export class AdminModule {
