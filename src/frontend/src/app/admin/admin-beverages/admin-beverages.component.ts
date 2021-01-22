@@ -11,7 +11,6 @@ import {BeverageService} from '../../services/beverage.service';
         <fa-icon [icon]="icons.beer"></fa-icon>
         Beverages
       </h1>
-      <hr>
       <app-admin-beverages-table [beverages]="beverages" [refresh]="refresh"></app-admin-beverages-table>
     </div>
   `,
