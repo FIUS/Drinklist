@@ -15,6 +15,10 @@ import {AdminBeveragesTableEntryComponent} from './admin-beverages/admin-beverag
 import {AdminBeveragesActionsComponent} from './admin-beverages/admin-beverages-actions.component';
 import {AdminModalsModule} from './admin-modals/admin-modals.module';
 import {FormsModule} from '@angular/forms';
+import {AdminHistoryComponent} from './admin-history/admin-history.component';
+import {AdminHistoryTableComponent} from './admin-history/admin-history-table.component';
+import {AdminHistoryTableEntryComponent} from './admin-history/admin-history-table-entry.component';
+import {AdminHistoryActionsComponent} from './admin-history/admin-history-actions.component';
 
 
 @NgModule({
@@ -29,6 +33,10 @@ import {FormsModule} from '@angular/forms';
     AdminBeveragesTableComponent,
     AdminBeveragesTableEntryComponent,
     AdminBeveragesActionsComponent,
+    AdminHistoryComponent,
+    AdminHistoryTableComponent,
+    AdminHistoryTableEntryComponent,
+    AdminHistoryActionsComponent,
   ],
   imports: [
     CommonModule,

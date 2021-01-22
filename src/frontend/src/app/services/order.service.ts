@@ -71,6 +71,19 @@ export class OrderService {
       );
   }
 
+  deleteOrder(order: Order): Observable<ApiResponse> {
+    return this.http.delete(`${this.api}/orders/${order.id}`, {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('admin'),
+      responseType: 'text'
+    })
+      .pipe(
+        toApiResponse(),
+        catchError(handleError()),
+        handleForbiddenAdmin(this.auth),
+      );
+  }
+
   getHistory(count: number): Observable<ApiResponse<Order[]>> {
     return this.http.get<Order[]>(`${this.api}/lastorders?limit=${count}`, {
       observe: 'response',
@@ -83,6 +96,17 @@ export class OrderService {
         value.data = value.data?.slice(0, count);
         return value;
       }),
+    );
+  }
+
+  getAdminHistory(): Observable<ApiResponse<Order[]>> {
+    return this.http.get<Order[]>(`${this.api}/orders`, {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('admin')
+    }).pipe(
+      toApiResponse<Order[]>(),
+      catchError(handleError<Order[]>()),
+      handleForbiddenAdmin(this.auth),
     );
   }
 
