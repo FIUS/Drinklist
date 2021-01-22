@@ -58,7 +58,7 @@ export class OrderService {
     );
   }
 
-  deleteOrder(order: Order): Observable<ApiResponse> {
+  deleteRecentOrder(order: Order): Observable<ApiResponse> {
     return this.http.delete(`${this.api}/orders/${order.id}`, {
       observe: 'response',
       headers: this.util.getTokenHeaders('user'),

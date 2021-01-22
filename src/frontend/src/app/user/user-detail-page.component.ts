@@ -90,7 +90,7 @@ export class UserDetailPageComponent implements OnInit {
     if (!order.isFresh()) {
       return;
     }
-    this.orderService.deleteOrder(order).subscribe(response => {
+    this.orderService.deleteRecentOrder(order).subscribe(response => {
       if (response.status === 200) {
         this.loadData(this.user?.name || '');
       }
