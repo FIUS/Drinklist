@@ -9,14 +9,14 @@ import {Util} from '../../util';
     <table class="table table-sm">
       <thead>
         <tr>
-          <th scope="col">#</th>
+          <th scope="col" class="text-right" style="width: 2.5%">#</th>
           <th scope="col" style="width: 40%">Name</th>
           <th scope="col" style="width: 10%">&#8470; in Stock</th>
           <th scope="col" style="width: 15%">Price</th>
           <th scope="col"></th>
         </tr>
         <tr>
-          <th>{{beverages.filter(matchesSearch, this).length}}</th>
+          <th class="text-right">{{beverages.filter(matchesSearch, this).length}}</th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.name"></th>
           <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.stock"></th>
           <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.price"></th>

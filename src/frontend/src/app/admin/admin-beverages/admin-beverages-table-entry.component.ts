@@ -6,7 +6,7 @@ import {Util} from '../../util';
   // tslint:disable-next-line:component-selector
   selector: '[app-admin-beverages-table-entry]',
   template: `
-    <th scope="row">{{number}}</th>
+    <th scope="row" class="text-right">{{number}}</th>
     <td>{{beverage?.name}}</td>
     <td class="text-right pr-3">{{beverage?.stock}}</td>
     <td class="text-right pr-3">{{moneyFormat(beverage!.price)}}</td>
