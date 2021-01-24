@@ -26,7 +26,7 @@ export class UserService {
   }
 
   /**
-   * @return Observable with ApiResponse of either User[] (if token is an admin token) or string[] (if token is an admin token)
+   * @return Observable with ApiResponse of either User[] (if token is an admin token) or string[] (if token is an user token)
    */
   getUsers(): Observable<ApiResponse<User[] | string[]>> {
     const token = this.auth.getUserToken() || '';
