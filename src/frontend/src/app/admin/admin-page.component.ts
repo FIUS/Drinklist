@@ -1,6 +1,6 @@
 import {Component, OnInit, Type} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {faBeer, faBox, faHistory, faHome, faUsers} from '@fortawesome/free-solid-svg-icons';
+import {faBeer, faHistory, faHome, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {AdminPageModule} from './admin-page-module';
 import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.component';
 import {AdminBeveragesComponent} from './admin-beverages/admin-beverages.component';
@@ -45,12 +45,6 @@ export class AdminPageComponent implements OnInit {
       icon: faUsers,
       spacerAfter: false,
       component: AdminUsersComponent,
-    },
-    {
-      id: 'other',
-      displayName: 'Other',
-      icon: faBox,
-      spacerAfter: false,
     },
   ];
 
