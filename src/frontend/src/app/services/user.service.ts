@@ -38,6 +38,15 @@ export class UserService {
     );
   }
 
+  getUsersAdmin(): Observable<ApiResponse<User[]>> {
+    return this.http.get<User[]>(`${this.api}/users`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+      .pipe(
+        toApiResponse<User[]>(),
+        catchError(handleError<User[]>()),
+        handleForbiddenAdmin(this.auth),
+      );
+  }
+
   getUser(username: string): Observable<ApiResponse<User>> {
     return this.http.get<User>(`${this.api}/users/${username}`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
       .pipe(
@@ -45,6 +54,54 @@ export class UserService {
         catchError(handleError<User>()),
         handleForbiddenUser(this.auth),
       );
+  }
+
+  addUser(name: string): Observable<ApiResponse> {
+    return this.http.post(`${this.api}/users/${name}`, '', {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('admin'),
+      responseType: 'text'
+    }).pipe(
+      toApiResponse(),
+      catchError(handleError()),
+      handleForbiddenAdmin(this.auth),
+    );
+  }
+
+  deleteUser(user: User): Observable<ApiResponse> {
+    return this.http.delete(`${this.api}/users/${user.name}`, {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('admin'),
+      responseType: 'text'
+    }).pipe(
+      toApiResponse(),
+      catchError(handleError()),
+      handleForbiddenAdmin(this.auth),
+    );
+  }
+
+  updateBalance(user: User, moneyToAdd: number, reason: string): Observable<ApiResponse> {
+    return this.http.patch(`${this.api}/users/${user.name}?amount=${moneyToAdd}&reason=${reason}`, '', {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('admin'),
+      responseType: 'text'
+    }).pipe(
+      toApiResponse(),
+      catchError(handleError()),
+      handleForbiddenAdmin(this.auth),
+    );
+  }
+
+  toggleVisibility(user: User): Observable<ApiResponse> {
+    return this.http.post(`${this.api}/users/${user.name}/${user.hidden ? 'show' : 'hide'}`, '', {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('admin'),
+      responseType: 'text',
+    }).pipe(
+      toApiResponse(),
+      catchError(handleError()),
+      handleForbiddenAdmin(this.auth),
+    );
   }
 
   // Statistics for admin dashboard

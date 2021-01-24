@@ -19,6 +19,10 @@ import {AdminHistoryComponent} from './admin-history/admin-history.component';
 import {AdminHistoryTableComponent} from './admin-history/admin-history-table.component';
 import {AdminHistoryTableEntryComponent} from './admin-history/admin-history-table-entry.component';
 import {AdminHistoryActionsComponent} from './admin-history/admin-history-actions.component';
+import {AdminUsersComponent} from './admin-users/admin-users.component';
+import {AdminUsersTableComponent} from './admin-users/admin-users-table.component';
+import {AdminUsersTableEntryComponent} from './admin-users/admin-users-table-entry.component';
+import {AdminUsersActionsComponent} from './admin-users/admin-users-actions.component';
 
 
 @NgModule({
@@ -37,6 +41,10 @@ import {AdminHistoryActionsComponent} from './admin-history/admin-history-action
     AdminHistoryTableComponent,
     AdminHistoryTableEntryComponent,
     AdminHistoryActionsComponent,
+    AdminUsersComponent,
+    AdminUsersTableComponent,
+    AdminUsersTableEntryComponent,
+    AdminUsersActionsComponent,
   ],
   imports: [
     CommonModule,

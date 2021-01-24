@@ -6,6 +6,8 @@ import {AdminNewBeverageModalComponent} from './admin-beverage-modals/admin-new-
 import {FormsModule} from '@angular/forms';
 import {AdminBeverageAddStockModalComponent} from './admin-beverage-modals/admin-beverage-add-stock-modal.component';
 import {AdminBeverageEditPriceModalComponent} from './admin-beverage-modals/admin-beverage-edit-price-modal.component';
+import {AdminUserAddComponent} from './admin-user-modals/admin-user-add.component';
+import {AdminUserAddMoneyComponent} from './admin-user-modals/admin-user-add-money.component';
 
 
 @NgModule({
@@ -14,12 +16,16 @@ import {AdminBeverageEditPriceModalComponent} from './admin-beverage-modals/admi
     AdminNewBeverageModalComponent,
     AdminBeverageAddStockModalComponent,
     AdminBeverageEditPriceModalComponent,
+    AdminUserAddComponent,
+    AdminUserAddMoneyComponent,
   ],
   exports: [
     AdminConfirmationModalComponent,
     AdminNewBeverageModalComponent,
     AdminBeverageAddStockModalComponent,
     AdminBeverageEditPriceModalComponent,
+    AdminUserAddComponent,
+    AdminUserAddMoneyComponent,
   ],
   imports: [
     CommonModule,
