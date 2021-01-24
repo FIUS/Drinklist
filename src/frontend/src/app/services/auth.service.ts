@@ -3,7 +3,10 @@ import {HttpClient} from '@angular/common/http';
 import {AppConfig} from '../app.config';
 import {Router} from '@angular/router';
 import {catchError} from 'rxjs/operators';
-import {handleError, toApiResponse} from './service.util';
+import {handleError, handleForbiddenAdmin, ServiceUtil, toApiResponse} from './service.util';
+import {Observable} from 'rxjs';
+import {ApiResponse} from '../models/api-response';
+import {Token} from '../models/token';
 
 export enum LoginError {
   NETWORK_ERROR,
@@ -17,10 +20,13 @@ export class AuthService {
 
   readonly api = AppConfig.config.api;
 
+  private util: ServiceUtil;
+
   constructor(
     private http: HttpClient,
     private router: Router,
   ) {
+    this.util = new ServiceUtil(this);
   }
 
   // Admin Auth
@@ -133,5 +139,22 @@ export class AuthService {
       case 'any':
         return this.userToken !== null || this.adminToken !== null;
     }
+  }
+
+  getTokens(): Observable<ApiResponse<Token[]>> {
+    return this.http.get<Token[]>(`${this.api}/token`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+      .pipe(
+        toApiResponse<Token[]>(),
+        catchError(handleError<Token[]>()),
+        handleForbiddenAdmin(this),
+      );
+  }
+
+  revokeToken(token: Token): Observable<ApiResponse> {
+    return this.http.post(`${this.api}/logout?token=${token.token}`, '', {observe: 'response', responseType: 'text'})
+      .pipe(
+        toApiResponse<any>(),
+        catchError(handleError()),
+      );
   }
 }

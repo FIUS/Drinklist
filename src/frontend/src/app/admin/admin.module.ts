@@ -23,6 +23,9 @@ import {AdminUsersComponent} from './admin-users/admin-users.component';
 import {AdminUsersTableComponent} from './admin-users/admin-users-table.component';
 import {AdminUsersTableEntryComponent} from './admin-users/admin-users-table-entry.component';
 import {AdminUsersActionsComponent} from './admin-users/admin-users-actions.component';
+import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
+import {AdminTokensTableComponent} from './admin-tokens/admin-tokens-table.component';
+import {AdminTokensTableEntryComponent} from './admin-tokens/admin-tokens-table-entry.component';
 
 
 @NgModule({
@@ -45,6 +48,9 @@ import {AdminUsersActionsComponent} from './admin-users/admin-users-actions.comp
     AdminUsersTableComponent,
     AdminUsersTableEntryComponent,
     AdminUsersActionsComponent,
+    AdminTokensComponent,
+    AdminTokensTableComponent,
+    AdminTokensTableEntryComponent,
   ],
   imports: [
     CommonModule,
