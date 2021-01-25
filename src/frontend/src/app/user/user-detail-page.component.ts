@@ -81,7 +81,10 @@ export class UserDetailPageComponent implements OnInit {
 
     this.orderService.createOrder(this.user, beverage).subscribe(response => {
       if (response.status === 200) {
-        this.loadData(this.user?.name || '');
+        // Give the DB some time to process the order.
+        setTimeout(() => {
+          this.loadData(this.user?.name || '');
+        }, 100);
       }
     });
   }
@@ -92,7 +95,10 @@ export class UserDetailPageComponent implements OnInit {
     }
     this.orderService.deleteRecentOrder(order).subscribe(response => {
       if (response.status === 200) {
-        this.loadData(this.user?.name || '');
+        // Give the DB some time to process the deletion.
+        setTimeout(() => {
+          this.loadData(this.user?.name || '');
+        }, 100);
       }
     });
   }
