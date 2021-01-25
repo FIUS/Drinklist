@@ -18,10 +18,10 @@ import {BeverageService} from '../../services/beverage.service';
 })
 export class AdminBeveragesComponent implements OnInit {
 
-  public beverages: Beverage[] = [];
+  beverages: Beverage[] = [];
 
   // FontAwesome icons
-  public icons = {
+  icons = {
     beer: faBeer,
   };
 

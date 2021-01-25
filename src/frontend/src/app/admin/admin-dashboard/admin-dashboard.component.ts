@@ -38,12 +38,12 @@ export class AdminDashboardComponent implements OnInit {
    * This could be cleaned up by wrapping each stat in its own component
    */
 
-  public userCount: number | undefined;
-  public beverageCount: number | undefined;
-  public orderCount: number | undefined;
+  userCount: number | undefined;
+  beverageCount: number | undefined;
+  orderCount: number | undefined;
 
   // FontAwesome icons
-  public icons = {
+  icons = {
     users: faUsers,
     beer: faBeer,
     moneyBill: faMoneyBill,

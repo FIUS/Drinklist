@@ -17,10 +17,10 @@ import {saveAs} from 'file-saver';
 })
 export class AdminPageComponent implements OnInit {
 
-  public activeModule: string | undefined;
-  public activeModuleComponent!: Type<any>;
+  activeModule: string | undefined;
+  activeModuleComponent!: Type<any>;
 
-  public modules: AdminPageModule[] = [
+  modules: AdminPageModule[] = [
     {
       id: 'dashboard',
       displayName: 'Dashboard',

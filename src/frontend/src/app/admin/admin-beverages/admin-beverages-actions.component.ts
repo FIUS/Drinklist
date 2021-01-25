@@ -40,7 +40,7 @@ export class AdminBeveragesActionsComponent {
 
   @Input() refresh!: () => void;
 
-  public icons = {
+  icons = {
     cog: faCog,
     minus: faTrashAlt,
     plus: faPlus,

@@ -40,9 +40,9 @@ export class UserLoginComponent implements OnInit {
   ) {
   }
 
-  public password = '';
+  password = '';
 
-  public error: string | undefined;
+  error: string | undefined;
 
   ngOnInit(): void {
     if (this.auth.isLoggedIn('user')) {

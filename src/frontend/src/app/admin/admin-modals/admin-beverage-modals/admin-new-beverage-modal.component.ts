@@ -43,9 +43,9 @@ export class AdminNewBeverageModalComponent {
 
   @ViewChild('content', {static: true}) content: any;
 
-  public beverage: Beverage = Beverage.newEmpty();
+  beverage: Beverage = Beverage.newEmpty();
 
-  public busy = false;
+  busy = false;
   private modal: NgbModalRef | undefined;
 
   constructor(

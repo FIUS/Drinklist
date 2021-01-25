@@ -37,8 +37,8 @@ import {faInfo} from '@fortawesome/free-solid-svg-icons/faInfo';
 export class AdminLoginComponent implements OnInit {
   @ViewChild('loginForm', {static: true}) private loginForm: NgForm | undefined;
 
-  public password = '';
-  public error: string | undefined;
+  password = '';
+  error: string | undefined;
 
   // FontAwesome icons
   faInfo = faInfo;

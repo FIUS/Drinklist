@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class AppConfig {
-  public static config: IAppConfig;
+  static config: IAppConfig;
 
   constructor(
     private http: HttpClient,
