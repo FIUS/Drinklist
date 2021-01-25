@@ -15,7 +15,7 @@ const compression = require('compression');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const HashMap = require('hashmap');
-const uuidv4 = require('uuid/v4');
+const {v4: uuidv4} = require('uuid');
 const exec = require('child_process').exec;
 
 // Constants
