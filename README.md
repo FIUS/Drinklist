@@ -22,6 +22,7 @@ First install all dependencies and setup the data folder with:
 npm install
 npm run setup-data-folder
 ```
+This will also compile and deploy the frontend, which might take a moment depending on your machine. 
 
 Then start the node js server with:
 ```Bash
@@ -62,10 +63,29 @@ Additionally it is necessary to create the `data/user-settings.json` file with t
 {"imprint":true,"data-protection":true,"recently-purchased":true,"history":true,"money":true}
 ```
 
+## Update from 1.1
+
+Update 1.2 brings two new configuration settings that must be added to your `data/user-settings.json`.
+These two new settings are:
+* title - Set the title displayed in the browser's tab when accessing the frontend.
+* curencySymbol - Set the currency symbol Drinklist uses to display money values.
+
+Your `data/user-settings.json` file should look like this:
+```json
+{
+  "imprint": true,
+  "data-protection": true,
+  "recently-purchased": true,
+  "history": true,
+  "money": true,
+  "title": "daGl / TOBL",
+  "currencySymbol": "€"
+}
+```
+
 
 ## Interfaces
 | Name       | Port | Description                                                                                  |
 |------------|------|----------------------------------------------------------------------------------------------|
-| API        | 8080 | This is the api used to store and manage all informations                                    |
-| user page  | 8081 | This is the page accessible for the users to mark there 'expenses'                           |
-| admin page | 8082 | This is the page used by the administrators to add and track beverages and view the accounts |
+| API        | 8080 | This is the api used to store and manage all information                                     |
+| Frontend   | 8081 | Frontend for user interaction and administration                                             |
