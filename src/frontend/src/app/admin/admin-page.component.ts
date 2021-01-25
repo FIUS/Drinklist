@@ -1,12 +1,14 @@
 import {Component, OnInit, Type} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {faBeer, faHistory, faHome, faKey, faUsers} from '@fortawesome/free-solid-svg-icons';
+import {faBeer, faDownload, faHistory, faHome, faKey, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {AdminPageModule} from './admin-page-module';
 import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.component';
 import {AdminBeveragesComponent} from './admin-beverages/admin-beverages.component';
 import {AdminHistoryComponent} from './admin-history/admin-history.component';
 import {AdminUsersComponent} from './admin-users/admin-users.component';
 import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
+import {BackupService} from '../services/backup.service';
+import {saveAs} from 'file-saver';
 
 @Component({
   selector: 'app-admin-page',
@@ -51,13 +53,19 @@ export class AdminPageComponent implements OnInit {
       id: 'tokens',
       displayName: 'Active Tokens',
       icon: faKey,
-      spacerAfter: false,
+      spacerAfter: true,
       component: AdminTokensComponent,
     },
   ];
 
+  // FontAwesome icons
+  icons = {
+    download: faDownload,
+  };
+
   constructor(
     private route: ActivatedRoute,
+    private backupService: BackupService,
   ) {
   }
 
@@ -69,6 +77,14 @@ export class AdminPageComponent implements OnInit {
       });
       if (activeModule && activeModule.component) {
         this.activeModuleComponent = activeModule.component;
+      }
+    });
+  }
+
+  downloadDB(): void {
+    this.backupService.getDatabaseBackup().subscribe(response => {
+      if (response.status === 200 && response.data) {
+        saveAs(response.data, `dump-${Date.now()}.sql`);
       }
     });
   }
