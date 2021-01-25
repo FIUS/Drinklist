@@ -14,5 +14,10 @@
 	"hcol1": "Grund",
 	"hcol2": "Preis",
 	"hcol3": "Datum",
-	"btnfinish": "Fertig"
+	"btnfinish": "Fertig",
+  "loginFail": "Login fehlgeschlagen",
+  "loginFail0": "Verbindungsfehler",
+  "loginFail1": "Das Passwort ist falsch",
+  "adminPasswordLabel": "Admin Passwort:",
+  "adminLoginInfo": "Dies ist der Admin-Login. Wenn du nur etwas zu trinken möchtest, klicke hier."
 }

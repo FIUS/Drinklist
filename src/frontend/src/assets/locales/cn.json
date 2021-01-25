@@ -14,5 +14,10 @@
 	"hcol1": "购买物品",
 	"hcol2": "价格",
 	"hcol3": "日期",
-	"btnfinish": "返回"
+	"btnfinish": "返回",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
 }

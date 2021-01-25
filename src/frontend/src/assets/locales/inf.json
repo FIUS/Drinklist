@@ -14,5 +14,10 @@
 	"hcol1": "tx.reason",
 	"hcol2": "tx.price",
 	"hcol3": "tx.timestamp",
-	"btnfinish": "goto auth;"
+	"btnfinish": "goto auth;",
+  "loginFail": "Login failed",
+  "loginFail0": "LoginError.NETWORK_ERROR",
+  "loginFail1": "LoginError.WRONG_PASSWORD",
+  "adminPasswordLabel": "[sudo] password for root:",
+  "adminLoginInfo": "This is the root login. If you are not on the sudoers file, click here."
 }

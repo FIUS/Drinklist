@@ -14,5 +14,10 @@
 	"hcol1": "El-Sabab",
 	"hcol2": "El-S3r",
 	"hcol3": "El-Tari5",
-	"btnfinish": "5alast!"
+	"btnfinish": "5alast!",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
 }

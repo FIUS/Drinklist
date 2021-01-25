@@ -14,5 +14,10 @@
 	"hcol1": "Wo fia",
 	"hcol2": "Kostn",
 	"hcol3": "Sunnastand",
-	"btnfinish": "Macha!"
+	"btnfinish": "Macha!",
+  "loginFail": "Login fehlgeschlagen",
+  "loginFail0": "Verbindungsfehler",
+  "loginFail1": "Das Passwort ist falsch",
+  "adminPasswordLabel": "Admin Passwort:",
+  "adminLoginInfo": "Dies ist der Admin-Login. Wenn du nur etwas zu trinken möchtest, klicke hier."
 }
