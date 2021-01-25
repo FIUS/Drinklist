@@ -16,13 +16,13 @@ import {UserService} from '../../../services/user.service';
         <form #form="ngForm">
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control" ngbAutofocus [(ngModel)]="username" name="name">
+            <input type="text" class="form-control" ngbAutofocus [(ngModel)]="username" [required]="true" name="name">
           </div>
         </form>
       </div>
       <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-        <button type="button" class="btn btn-success" [disabled]="busy"
+        <button type="button" class="btn btn-success" [disabled]="busy || form.invalid"
                 (click)="addUser()">{{busy ? 'Adding...' : 'Add'}}</button>
       </div>
     </ng-template>

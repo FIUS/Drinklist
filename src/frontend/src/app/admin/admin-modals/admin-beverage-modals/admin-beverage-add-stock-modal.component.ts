@@ -16,14 +16,14 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
       <div class="modal-body">
         <div class="form-group">
           <label for="stock">Stock to add:</label>
-          <input class="form-control" type="number" [(ngModel)]="stockToAdd">
+          <input class="form-control" type="number" ngbAutofocus [(ngModel)]="stockToAdd">
         </div>
         {{beverage.name}} currently has {{beverage.stock}} units in stock.<br/>
         The new stock will be <strong>{{beverage.stock + stockToAdd}}</strong>.
       </div>
       <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-        <button type="button" ngbAutofocus class="btn btn-success" [disabled]="busy"
+        <button type="button" class="btn btn-success" [disabled]="busy || stockToAdd === 0"
                 (click)="addStock()">{{ busy ? 'Saving...' : 'Save' }}</button>
       </div>
     </ng-template>

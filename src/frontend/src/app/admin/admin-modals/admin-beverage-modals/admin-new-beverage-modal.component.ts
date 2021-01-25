@@ -17,7 +17,7 @@ import {Beverage} from '../../../models/beverage';
         <form #form="ngForm">
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control" [(ngModel)]="beverage.name" name="name">
+            <input type="text" class="form-control" ngbAutofocus [required]="true" [(ngModel)]="beverage.name" name="name">
           </div>
           <div class="form-group">
             <label for="price">Price (cents)</label>
@@ -31,7 +31,7 @@ import {Beverage} from '../../../models/beverage';
       </div>
       <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-        <button type="button" ngbAutofocus class="btn btn-success" [disabled]="busy"
+        <button type="button" class="btn btn-success" [disabled]="busy || form.invalid"
                 (click)="addBeverage()">{{busy ? 'Adding...' : 'Add'}}</button>
       </div>
     </ng-template>

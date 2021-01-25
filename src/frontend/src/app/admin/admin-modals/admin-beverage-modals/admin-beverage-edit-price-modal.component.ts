@@ -17,13 +17,13 @@ import {Util} from '../../../util';
       <div class="modal-body">
         <div class="form-group">
           <label for="stock">New price (in cents):</label>
-          <input class="form-control" type="number" [(ngModel)]="newPrice">
+          <input #input="ngModel" class="form-control" type="number" ngbAutofocus [(ngModel)]="newPrice">
         </div>
         {{beverage.name}}'s new price will be <strong>{{moneyFormat(newPrice)}}</strong>.
       </div>
       <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-        <button type="button" ngbAutofocus class="btn btn-success" [disabled]="busy"
+        <button type="button" class="btn btn-success" [disabled]="busy || input.pristine"
                 (click)="updatePrice()">{{ busy ? 'Saving...' : 'Save' }}</button>
       </div>
     </ng-template>
