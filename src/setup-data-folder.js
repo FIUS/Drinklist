@@ -36,10 +36,8 @@ var authData = [
 var settingsData = {
 	"apiPort":   8080,
 	"userPort":  8081,
-	"adminPort": 8082,
 	"apiPath":   "",
-	"userPath":  "",
-	"adminPath": ""
+	"userPath":  ""
 }
 var userSettingsData = {
 	"imprint": true,
@@ -111,25 +109,15 @@ function setApiPath() {
 		} else {
 			settingsData.apiPath = "http://localhost:8080/";
 		}
-	}, setUserPath);
+	}, setFrontendPath);
 }
 
-function setUserPath() {
-	input('User Path [http://localhost:8081/]> ', (input) => {
+function setFrontendPath() {
+	input('Frontend Path [http://localhost:8081/]> ', (input) => {
 		if (input) {
 			settingsData.userPath = input;
 		} else {
 			settingsData.userPath = "http://localhost:8081/";
-		}
-	}, setAdminPath);
-}
-
-function setAdminPath() {
-	input('Admin Path [http://localhost:8082/]> ', (input) => {
-		if (input) {
-			settingsData.adminPath = input;
-		} else {
-			settingsData.adminPath = "http://localhost:8082/";
 		}
 	}, dbQuestion);
 }

@@ -25,17 +25,15 @@ var settings = JSON.parse(fs.readFileSync(fs.realpathSync('./') + '/data/setting
 // Setup and start the api server
 api.locals.apiPath   = settings.apiPath;
 api.locals.userPath  = settings.userPath;
-api.locals.adminPath = settings.adminPath;
 var apiServer = api.listen(settings.apiPort, function () {
 	let host = apiServer.address().address;
 	let port = apiServer.address().port;
 	console.log("[API] [Start] Listening at http://%s:%s", host, port);
 });
 
-// Setup and start the user page
+// Setup and start the frontend page
 frontend.locals.apiPath   = settings.apiPath;
 frontend.locals.userPath  = settings.userPath;
-frontend.locals.adminPath = settings.adminPath;
 var frontendServer = frontend.listen(settings.userPort, function () {
 	let host = frontendServer.address().address;
 	let port = frontendServer.address().port;
