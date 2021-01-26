@@ -34,9 +34,6 @@ import {OrderService} from '../../services/order.service';
   styles: []
 })
 export class AdminDashboardComponent implements OnInit {
-  /**
-   * This could be cleaned up by wrapping each stat in its own component
-   */
 
   userCount: number | undefined;
   beverageCount: number | undefined;
