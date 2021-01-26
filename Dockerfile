@@ -1,14 +1,14 @@
-FROM node:8.16-buster
+FROM node:14.15-alpine3.11
 
-RUN apt-get -y update
-#RUN apt-get -y upgrade
-RUN apt-get install -y sqlite3 libsqlite3-dev
+RUN apk update
+RUN apk add sqlite
 
-COPY . /app
 WORKDIR /app
+COPY . .
 
 RUN npm install
+RUN npm run build-angular
 
-EXPOSE 8080 8081 8082
+EXPOSE 8080 8081
 
 CMD ["npm", "run", "start-prod"]
