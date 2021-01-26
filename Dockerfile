@@ -1,7 +1,6 @@
 FROM node:14.15-alpine3.11
 
-RUN apk update
-RUN apk add sqlite
+RUN apk add --no-cache sqlite tzdata
 
 WORKDIR /app
 COPY . .
