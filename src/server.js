@@ -16,7 +16,7 @@ const fs = require('fs');
 require('./dataHelper.js').checkAndCreateFiles();
 
 // Import all software components
-const api       = require('./api/api.js');
+const api       = require('./legacy/api/api.js');
 const frontend  = require('./frontend-server/server.js')
 
 // Settings file
