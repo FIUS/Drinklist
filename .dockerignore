@@ -3,3 +3,4 @@ npm-debug.log
 
 # Ignore already built frontend
 src/frontend-server/wwwroot
+data
