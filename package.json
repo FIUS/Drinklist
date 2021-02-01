@@ -5,11 +5,11 @@
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore 'data/*' src/server.js",
+    "start": "nodemon --ignore 'data/*' src/express/server.js",
     "prestart-angular": "npm run build-angular",
     "start-angular": "node .",
     "start-debug": "nodemon --inspect --ignore 'data/*' src/server.js",
-    "start-prod": "forever src/server.js",
+    "start-prod": "forever src/express/server.js",
     "setup-data-folder": "node src/setup-data-folder.js",
     "postsetup-data-folder": "npm run build-angular",
     "build-angular": "ng b --prod",
