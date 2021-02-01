@@ -598,7 +598,7 @@ api.get('/stats/beverages', adminAccess(function (req, res, next) {
 }))
 
 api.get('/stats/top/beverages', adminAccess(function (req, res, next) {
-  const stmt = prepare('SELECT b.name, b.stock, b.price FROM (SELECT beverage, COUNT(beverage) AS count FROM History WHERE beverage != "" GROUP BY beverage ORDER BY count DESC LIMIT 5) t INNER JOIN Beverages b ON t.beverage = b.name;')
+  const stmt = prepare('SELECT b.name, b.stock, b.price FROM (SELECT beverage, COUNT(beverage) AS count FROM History WHERE beverage != "" GROUP BY beverage ORDER BY count DESC) t INNER JOIN Beverages b ON t.beverage = b.name LIMIT 5;')
   stmt.all(
     function (err, result) {
       if (err) { return catchDBerror(stmt, req, next, err); }
