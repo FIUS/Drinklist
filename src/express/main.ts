@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import AppSettings from './models/app-settings';
 import * as bodyParser from 'body-parser';
 import DbService from './services/api/db.service';
+import ApiModule from './api/api.module';
 
 // TODO: Ensure all config files exist
 
@@ -25,6 +26,7 @@ const server = new Server({
     bodyParser.json(),
   ],
   modules: [
+    new ApiModule(dbService),
   ],
   services: [
     dbService,
