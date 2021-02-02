@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --ignore 'data/*' src/express/server.js",
+    "build": "npm run build-express && npm run build-angular",
     "prestart-angular": "npm run build-angular",
     "start-angular": "node .",
     "start-debug": "nodemon --inspect --ignore 'data/*' src/server.js",
@@ -13,7 +14,8 @@
     "setup-data-folder": "node src/setup-data-folder.js",
     "postsetup-data-folder": "npm run build-angular",
     "build-angular": "ng b --prod",
-    "postbuild-angular": "node deploy-angular.js"
+    "postbuild-angular": "node deploy-angular.js",
+    "build-express": "tsc -b tsconfig.express.json"
   },
   "repository": {
     "type": "git",

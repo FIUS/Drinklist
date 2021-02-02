@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build/",
+    "types": [
+      "express"
+    ],
+    "sourceMap": false,
+    "module": "CommonJS",
+    "esModuleInterop": true
+  },
+  "files": [
+    "src/express/main.ts"
+  ]
+}

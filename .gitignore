@@ -7,6 +7,7 @@ data/*
 /dist
 /tmp
 /out-tsc
+/build
 
 # IDEs and editors
 /.idea
