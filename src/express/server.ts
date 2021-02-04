@@ -22,6 +22,7 @@ class Server {
   constructor(serverConfig: ServerConfig) {
     this.app = express();
     this.port = serverConfig.port;
+    this.app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
 
     this.services = serverConfig.services;
 
