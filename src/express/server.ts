@@ -80,6 +80,7 @@ class Server {
     });
 
     this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+      console.log(`[API] [FAIL] Error on request to ${req.path}: ${err.toString()}`);
       res.sendStatus(err.status || 500);
     });
   }
