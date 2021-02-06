@@ -13,7 +13,7 @@ class UserController implements IController {
     this.initRoutes();
   }
 
-  initRoutes(): void {
+  private initRoutes(): void {
     this.router.get('/', requireUser, this.users);
     this.router.get('/:name', requireUser, this.getUser);
     this.router.post('/:name', requireAdmin, this.postUser);
@@ -24,12 +24,12 @@ class UserController implements IController {
   }
 
   // Route Handlers
-  users = (req: Request, res: Response) => {
+  private users = (req: Request, res: Response) => {
     const users = this.userService.getUsers(req.header('x-auth-state') === 'admin');
     res.status(200).json(users);
   };
 
-  getUser = (req: Request, res: Response) => {
+  private getUser = (req: Request, res: Response) => {
     const name = req.params.name;
     if (name === undefined || name === '') {
       res.status(404).end();
@@ -43,7 +43,7 @@ class UserController implements IController {
     res.status(200).json(user);
   };
 
-  postUser = (req: Request, res: Response) => {
+  private postUser = (req: Request, res: Response) => {
     const name = req.params.name;
     if (name === undefined || name === '') {
       res.status(400).end();
@@ -53,7 +53,7 @@ class UserController implements IController {
     res.status(200).end();
   };
 
-  hideUser = (req: Request, res: Response) => {
+  private hideUser = (req: Request, res: Response) => {
     const name = req.params.name;
     if (name === undefined || name === '') {
       res.status(400).end();
@@ -63,7 +63,7 @@ class UserController implements IController {
     res.status(200).end();
   };
 
-  showUser = (req: Request, res: Response) => {
+  private showUser = (req: Request, res: Response) => {
     const name = req.params.name;
     if (name === undefined || name === '') {
       res.status(400).end();
@@ -73,7 +73,7 @@ class UserController implements IController {
     res.status(200).end();
   };
 
-  patchUser = (req: Request, res: Response) => {
+  private patchUser = (req: Request, res: Response) => {
     const name = req.params.name;
     const reason = req.body.reason as string;
     const amount = +req.body.amount;
@@ -85,7 +85,7 @@ class UserController implements IController {
     res.status(200).end();
   };
 
-  deleteUser = (req: Request, res: Response) => {
+  private deleteUser = (req: Request, res: Response) => {
     const name = req.params.name;
     if (name === undefined || name === '') {
       res.status(400).end();
