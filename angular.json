@@ -17,11 +17,11 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/frontend",
+            "outputPath": "dist/angular",
             "index": "src/angular/src/index.html",
             "main": "src/angular/src/main.ts",
             "polyfills": "src/angular/src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "tsconfig.angular.json",
             "aot": true,
             "assets": [
               "src/angular/src/favicon.ico",
@@ -104,7 +104,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "tsconfig.app.json",
+              "tsconfig.angular.json",
               "tsconfig.spec.json",
               "src/angular/e2e/tsconfig.json"
             ],
