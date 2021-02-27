@@ -8,6 +8,8 @@ import UserController from './controllers/user.controller';
 import UserService from './services/user.service';
 import OrdersController from './controllers/orders.controller';
 import OrdersService from './services/orders.service';
+import BeveragesController from './controllers/beverages.controller';
+import BeveragesService from './services/beverages.service';
 
 class ApiModule implements IController {
   path = '/api';
@@ -28,12 +30,14 @@ class ApiModule implements IController {
     // Create Module Services
     const userService = new UserService(this.dbService);
     const ordersService = new OrdersService(this.dbService);
+    const beveragesService = new BeveragesService(this.dbService);
 
     this.controllers = [
       // API Controllers
       new AuthController(this.auth),
       new UserController(userService),
-      new OrdersController(ordersService)
+      new OrdersController(ordersService),
+      new BeveragesController(beveragesService),
     ];
   }
 
