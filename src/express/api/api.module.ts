@@ -6,6 +6,8 @@ import AuthService from '../services/api/auth.service';
 import AuthController from './controllers/auth.controller';
 import UserController from './controllers/user.controller';
 import UserService from './services/user.service';
+import OrdersController from './controllers/orders.controller';
+import OrdersService from './services/orders.service';
 
 class ApiModule implements IController {
   path = '/api';
@@ -25,11 +27,13 @@ class ApiModule implements IController {
   private initControllers(): void {
     // Create Module Services
     const userService = new UserService(this.dbService);
+    const ordersService = new OrdersService(this.dbService);
 
     this.controllers = [
       // API Controllers
       new AuthController(this.auth),
       new UserController(userService),
+      new OrdersController(ordersService)
     ];
   }
 

@@ -23,3 +23,12 @@ export const requireAdmin = (req: Request, res: Response, next: NextFunction) =>
   }
   next();
 };
+
+export class RequestError extends Error {
+  constructor(
+    public status: number,
+    message?: string,
+  ) {
+    super(message);
+  }
+}
