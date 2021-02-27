@@ -1,5 +1,5 @@
 import IController from '../interfaces/controller.interface';
-import {Router} from 'express';
+import {NextFunction, Request, Response, Router} from 'express';
 import DbService from '../services/api/db.service';
 import AuthMiddleware from './middlewares/auth.middleware';
 import AuthService from '../services/api/auth.service';
@@ -10,6 +10,8 @@ import OrdersController from './controllers/orders.controller';
 import OrdersService from './services/orders.service';
 import BeveragesController from './controllers/beverages.controller';
 import BeveragesService from './services/beverages.service';
+import {requireAdmin} from './api.util';
+import {exec} from 'child_process';
 
 class ApiModule implements IController {
   path = '/api';
@@ -24,6 +26,7 @@ class ApiModule implements IController {
     this.registerMiddlewares();
     this.initControllers();
     this.registerControllers();
+    this.registerBackupEndpoint();
   }
 
   private initControllers(): void {
@@ -49,6 +52,27 @@ class ApiModule implements IController {
 
   private registerMiddlewares(): void {
     this.router.use(AuthMiddleware.token(this.auth));
+  }
+
+  private registerBackupEndpoint(): void {
+    this.router.get('/backup', requireAdmin, (req: Request, res: Response, next: NextFunction) => {
+      let result = '';
+
+      const dump = exec('sqlite3 data/history.db ".dump"', {maxBuffer: 1024 * 1024 * 5}, error => {
+        if (!error) {
+          return;
+        }
+        next(error);
+      });
+      dump.stdout?.on('data', data => {
+        result += data.toString();
+      });
+      dump.on('close', code => {
+        if (code === 0) {
+          res.status(200).contentType('text/plain').send(result);
+        }
+      });
+    });
   }
 }
 
