@@ -11,16 +11,17 @@
 
 // Imports
 const fs       = require('fs');
-const sqlite3  = require('sqlite3');
+const Database = require('better-sqlite3');
 const os       = require('os');
 
 // Constants
-const dirname      = fs.realpathSync('./');
-const databaseFile = dirname + '/data/history.db';
-const authFile     = dirname + '/data/auth.json';
-const settingsFile = dirname + '/data/settings.json';
-const legalFile    = dirname + '/data/legal.html';
-const imprintFile    = dirname + '/data/imprint.html';
+const dirname          = fs.realpathSync('./');
+const databaseFile     = dirname + '/data/history.db';
+const authFile         = dirname + '/data/auth.json';
+const settingsFile     = dirname + '/data/settings.json';
+const userSettingsFile = dirname + '/data/user-settings.json';
+const legalFile        = dirname + '/data/legal.html';
+const imprintFile      = dirname + '/data/imprint.html';
 
 exports.checkAndCreateFiles = checkAndCreateFiles;
 exports.writeFile = writeFile;
@@ -40,6 +41,10 @@ function checkAndCreateFiles() {
 	if(!fs.existsSync(settingsFile)) {
 		writeDefaultSettingsFile();
 	}
+
+	if (!fs.existsSync(userSettingsFile)) {
+	  writeDefaultUserSettingsFile()
+  }
 
 	if (!fs.existsSync(legalFile)) {
 		createEmptyLegalFile()
@@ -69,15 +74,26 @@ function writeDefaultAuthFile() {
 function writeDefaultSettingsFile() {
 	//Default data
 	let settingsData = {
-		"apiPort":   8080,
-		"userPort":  8081,
-		"adminPort": 8082,
-		"apiPath":   "http://localhost:8080/",
-		"userPath":  "http://localhost:8081/",
-		"adminPath": "http://localhost:8082/"
-	}
+    "host": "http://localhost:8080",
+    "port": 8080,
+	};
 
 	writeFile('settings', settingsFile, settingsData);
+}
+
+function writeDefaultUserSettingsFile() {
+	//Default data
+  let userSettingsData = {
+    "imprint": true,
+    "data-protection": true,
+    "recently-purchased": true,
+    "history": true,
+    "money": true,
+    "title": "daGl / TOBL",
+    "currencySymbol": "€"
+  };
+
+	writeFile('settings', userSettingsFile, userSettingsData);
 }
 
 function writeFile(name, path, data, raw=false) {
@@ -96,22 +112,22 @@ function writeFile(name, path, data, raw=false) {
 }
 
 function recreateDB() {
-	let db = new sqlite3.Database(databaseFile);
-	db.serialize(function() {
+	let db = new Database(databaseFile);
+	db.exec(
 		// create DB tables
-		db.run('DROP TABLE IF EXISTS History;');
-		db.run("CREATE TABLE History (id VARCHAR(255), user VARCHAR(255) NOT NULL, reason VARCHAR(255), amount INTEGER NOT NULL DEFAULT 0, beverage VARCHAR(255) NOT NULL DEFAULT '', beverage_count INTEGER NOT NULL DEFAULT 0, timestamp DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime')));");
-		db.run('DROP TABLE IF EXISTS Users;');
-		db.run("CREATE TABLE Users (name VARCHAR(255) PRIMARY KEY, balance INTEGER NOT NULL DEFAULT 0, hidden INTEGER NOT NULL DEFAULT 0);");
-		db.run('DROP TABLE IF EXISTS Beverages;');
-		db.run("CREATE TABLE Beverages (name VARCHAR(255) PRIMARY KEY, stock INTEGER NOT NULL DEFAULT 0, price INTEGER NOT NULL DEFAULT 0);");
+    "DROP TABLE IF EXISTS History;" +
+    "CREATE TABLE History (id VARCHAR(255), user VARCHAR(255) NOT NULL, reason VARCHAR(255), amount INTEGER NOT NULL DEFAULT 0, beverage VARCHAR(255) NOT NULL DEFAULT '', beverage_count INTEGER NOT NULL DEFAULT 0, timestamp DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime')));" +
+    "DROP TABLE IF EXISTS Users;" +
+    "CREATE TABLE Users (name VARCHAR(255) PRIMARY KEY, balance INTEGER NOT NULL DEFAULT 0, hidden INTEGER NOT NULL DEFAULT 0);" +
+    "DROP TABLE IF EXISTS Beverages;" +
+    "CREATE TABLE Beverages (name VARCHAR(255) PRIMARY KEY, stock INTEGER NOT NULL DEFAULT 0, price INTEGER NOT NULL DEFAULT 0);" +
 
-		// fill with standard dummy data
-		db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Sample Juice', 10, 100);");
-		db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Supreme Sample Juice', 5, 150);");
-		db.run("INSERT INTO `Users` (`name`) VALUES ('Max Mustermann');");
-		db.run("INSERT INTO `Users` (`name`) VALUES ('Maria Mustermann');");
-	});
+    // fill with standard dummy data
+    "INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Sample Juice', 10, 100);" +
+    "INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Supreme Sample Juice', 5, 150);" +
+    "INSERT INTO `Users` (`name`) VALUES ('Max Mustermann');" +
+    "INSERT INTO `Users` (`name`) VALUES ('Maria Mustermann');"
+	);
 	db.close();
 
 	console.log("The database was created at: " + databaseFile);

@@ -9,18 +9,18 @@
 /* jslint esversion: 6 */
 
 // Imports
-const fs       = require('fs');
-const readline = require('readline');
+const fs         = require('fs');
+const readline   = require('readline');
 const dataHelper = require('./dataHelper.js');
 
 // Constants
-const dirname      = fs.realpathSync('./');
-const databaseFile = dirname + '/data/history.db';
-const authFile     = dirname + '/data/auth.json';
-const settingsFile = dirname + '/data/settings.json';
+const dirname          = fs.realpathSync('./');
+const databaseFile     = dirname + '/data/history.db';
+const authFile         = dirname + '/data/auth.json';
+const settingsFile     = dirname + '/data/settings.json';
 const userSettingsFile = dirname + '/data/user-settings.json';
-const legalFile    = dirname + '/data/legal.html';
-const imprintFile    = dirname + '/data/imprint.html';
+const legalFile        = dirname + '/data/legal.html';
+const imprintFile      = dirname + '/data/imprint.html';
 
 // Data Templates
 var authData = [
@@ -34,11 +34,9 @@ var authData = [
 	}
 ];
 var settingsData = {
-	"apiPort":   8080,
-	"userPort":  8081,
-	"apiPath":   "",
-	"userPath":  ""
-}
+  "host": "http://localhost:8080",
+	"port": 8080,
+};
 var userSettingsData = {
 	"imprint": true,
 	"data-protection": true,
@@ -47,7 +45,7 @@ var userSettingsData = {
 	"money": true,
   "title": "daGl / TOBL",
   "currencySymbol": "€"
-}
+};
 
 function input(prompt, lineCallback, callback) {
 	let reader = readline.createInterface(process.stdin, process.stdout);
@@ -91,35 +89,7 @@ function setAuthAdmin() {
 		} else {
 			return true;
 		}
-	}, pathInfo);
-}
-
-function pathInfo() {
-	console.log('');
-	console.log(' !!! Only change if you know what you are doing !!!');
-	console.log('These are the cross reference Links of the pages. NOT the access URLs!');
-	console.log('');
-	setApiPath();
-}
-
-function setApiPath() {
-	input('API Path [http://localhost:8080/]> ', (input) => {
-		if (input) {
-			settingsData.apiPath = input;
-		} else {
-			settingsData.apiPath = "http://localhost:8080/";
-		}
-	}, setFrontendPath);
-}
-
-function setFrontendPath() {
-	input('Frontend Path [http://localhost:8081/]> ', (input) => {
-		if (input) {
-			settingsData.userPath = input;
-		} else {
-			settingsData.userPath = "http://localhost:8081/";
-		}
-	}, dbQuestion);
+	}, dbQuestion());
 }
 
 function dbQuestion() {
