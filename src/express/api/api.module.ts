@@ -12,6 +12,8 @@ import BeveragesController from './controllers/beverages.controller';
 import BeveragesService from './services/beverages.service';
 import {requireAdmin} from './api.util';
 import {exec} from 'child_process';
+import StatsController from './controllers/stats.controller';
+import StatsService from './services/stats.service';
 
 class ApiModule implements IController {
   path = '/api';
@@ -34,6 +36,7 @@ class ApiModule implements IController {
     const userService = new UserService(this.dbService);
     const ordersService = new OrdersService(this.dbService);
     const beveragesService = new BeveragesService(this.dbService);
+    const statsService = new StatsService(this.dbService);
 
     this.controllers = [
       // API Controllers
@@ -41,6 +44,7 @@ class ApiModule implements IController {
       new UserController(userService),
       new OrdersController(ordersService),
       new BeveragesController(beveragesService),
+      new StatsController(statsService),
     ];
   }
 
