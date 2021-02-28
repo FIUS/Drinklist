@@ -42,6 +42,7 @@ class OrdersController implements IController {
     } else {
       if (req.header('x-auth-state') !== 'admin') {
         res.status(403).end();
+        return;
       }
       const transactions = this.ordersService.getHistory(limit);
       res.status(200).json(transactions);
@@ -53,6 +54,7 @@ class OrdersController implements IController {
     const user = req.params.user;
     if (user === undefined || user === '') {
       res.status(400).end();
+      return;
     }
     const userHistory = this.ordersService.getUserHistory(user);
     res.status(200).json(userHistory);
@@ -63,12 +65,14 @@ class OrdersController implements IController {
 
     if (orderId === undefined || orderId === '') {
       res.status(400).end();
+      return;
     }
 
     const order = this.ordersService.getOrder(orderId, true);
 
     if (order === undefined) {
       res.status(404).end();
+      return;
     }
 
     if (req.header('x-auth-state') === 'user' && !order.fresh) {

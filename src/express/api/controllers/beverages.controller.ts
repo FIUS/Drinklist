@@ -31,6 +31,7 @@ class BeveragesController implements IController {
 
     if (!beverage || !beverage.name || isNaN(beverage.price)) {
       res.status(400).end();
+      return;
     }
 
     this.beveragesService.addBeverage(beverage);
@@ -45,6 +46,7 @@ class BeveragesController implements IController {
     // Invalid request if beverage is falsy or price AND stock are undefined
     if (!beverage || price === undefined && stockToAdd === undefined) {
       res.status(400).end();
+      return;
     }
 
     this.beveragesService.updateBeverage(beverage, price, stockToAdd);
@@ -56,6 +58,7 @@ class BeveragesController implements IController {
 
     if (!beverage) { // true if beverage is undefined or empty string
       res.status(400).end();
+      return;
     }
 
     this.beveragesService.deleteBeverage(beverage);
