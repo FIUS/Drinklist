@@ -14,7 +14,6 @@
     "setup-data-folder": "node src/setup-data-folder.js",
     "postsetup-data-folder": "npm run build-angular",
     "build-angular": "ng b --prod",
-    "postbuild-angular": "node deploy-angular.js",
     "build-express": "tsc -b tsconfig.express.json"
   },
   "repository": {

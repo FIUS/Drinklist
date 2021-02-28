@@ -10,6 +10,7 @@ import * as bodyParser from 'body-parser';
 import DbService from './services/api/db.service';
 import ApiModule from './api/api.module';
 import AuthService from './services/api/auth.service';
+import FrontendModule from './frontend/frontend.module';
 
 // TODO: Ensure all config files exist
 
@@ -29,6 +30,7 @@ const server = new Server({
   ],
   modules: [
     new ApiModule(dbService, auth),
+    new FrontendModule(),
   ],
   services: [
     dbService,
