@@ -135,8 +135,9 @@ function recreateDB() {
 
 function createEmptyLegalFile() {
 	const data = `
-<html>
+<html lang="en">
 	<head>
+	  <title>Legal</title>
 	</head>
 	<body>
 		Example Legal Text and Dataprotection Statements
@@ -148,8 +149,9 @@ function createEmptyLegalFile() {
 
 function createEmptyImprintFile() {
 	const data = `
-<html>
+<html lang="en">
 	<head>
+	  <title>Imprint</title>
 	</head>
 	<body>
 		Example Imprint
