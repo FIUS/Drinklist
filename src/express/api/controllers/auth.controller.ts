@@ -21,7 +21,7 @@ class AuthController implements IController {
   }
 
   tokens = (req: Request, res: Response) => {
-    res.status(200).send(this.auth.getSessions());
+    res.status(200).json(this.auth.getSessions());
   };
 
   login = (req: Request, res: Response) => {
@@ -45,6 +45,12 @@ class AuthController implements IController {
 
   logout = (req: Request, res: Response) => {
     const token = req.body.token as string;
+
+    if (token === undefined || token === '') {
+      res.status(400).end();
+      return;
+    }
+
     this.auth.logout(token);
     res.status(200).end();
   };
