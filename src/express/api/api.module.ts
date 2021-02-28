@@ -29,6 +29,9 @@ class ApiModule implements IController {
     this.initControllers();
     this.registerControllers();
     this.registerBackupEndpoint();
+    this.router.use('/*', (req, res) => {
+      res.status(404).end();
+    });
   }
 
   private initControllers(): void {
