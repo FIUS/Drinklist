@@ -118,7 +118,7 @@ export class UserListPageComponent implements OnInit {
       }
     });
     if (this.tickerEnabled) {
-      this.orderService.getHistory(3).subscribe(response => {
+      this.orderService.getLatestOrders().subscribe(response => {
         if (response.status === 200 && response.data) {
           this.tickerItems = response.data;
         }

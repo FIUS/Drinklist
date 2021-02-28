@@ -60,7 +60,6 @@ export class UserService {
     return this.http.post(`${this.api}/users/${name}`, '', {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text'
     }).pipe(
       toApiResponse(),
       catchError(handleError()),
@@ -72,7 +71,6 @@ export class UserService {
     return this.http.delete(`${this.api}/users/${user.name}`, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text'
     }).pipe(
       toApiResponse(),
       catchError(handleError()),
@@ -81,10 +79,9 @@ export class UserService {
   }
 
   updateBalance(user: User, moneyToAdd: number, reason: string): Observable<ApiResponse> {
-    return this.http.patch(`${this.api}/users/${user.name}?amount=${moneyToAdd}&reason=${reason}`, '', {
+    return this.http.patch(`${this.api}/users/${user.name}`, {amount: moneyToAdd, reason}, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text'
     }).pipe(
       toApiResponse(),
       catchError(handleError()),
@@ -96,7 +93,6 @@ export class UserService {
     return this.http.post(`${this.api}/users/${user.name}/${user.hidden ? 'show' : 'hide'}`, '', {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text',
     }).pipe(
       toApiResponse(),
       catchError(handleError()),

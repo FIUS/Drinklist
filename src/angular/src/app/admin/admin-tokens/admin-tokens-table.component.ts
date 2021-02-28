@@ -76,9 +76,9 @@ export class AdminTokensTableComponent implements OnInit {
 
     const matchesToken = token.token.includes(this.search.token);
     const matchesPermissions = permissions === this.search.permissions || this.search.permissions === 'any';
-    const matchesUserAgent = token.useragent.toLowerCase().includes(this.search.userAgent.toLowerCase());
+    const matchesUserAgent = token.userAgent.toLowerCase().includes(this.search.userAgent.toLowerCase());
     const matchesReferrer = token.referrer.toLowerCase().includes(this.search.referrer.toLowerCase());
-    const matchesClientIP = token.userip.includes(this.search.clientIP);
+    const matchesClientIP = token.clientIp.includes(this.search.clientIP);
 
     return matchesToken && matchesPermissions && matchesUserAgent && matchesReferrer && matchesClientIP;
   }

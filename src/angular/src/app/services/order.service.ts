@@ -47,10 +47,9 @@ export class OrderService {
   }
 
   createOrder(user: User, beverage: Beverage): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/orders?user=${user.name}&beverage=${beverage.name}`, '', {
+    return this.http.post(`${this.api}/orders`, {user: user.name, beverage: beverage.name}, {
       observe: 'response',
       headers: this.util.getTokenHeaders('user'),
-      responseType: 'text',
     }).pipe(
       toApiResponse(),
       catchError(handleError()),
@@ -62,7 +61,6 @@ export class OrderService {
     return this.http.delete(`${this.api}/orders/${order.id}`, {
       observe: 'response',
       headers: this.util.getTokenHeaders('user'),
-      responseType: 'text'
     })
       .pipe(
         toApiResponse(),
@@ -75,7 +73,6 @@ export class OrderService {
     return this.http.delete(`${this.api}/orders/${order.id}`, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text'
     })
       .pipe(
         toApiResponse(),
@@ -84,16 +81,16 @@ export class OrderService {
       );
   }
 
-  getHistory(count: number): Observable<ApiResponse<Order[]>> {
-    return this.http.get<Order[]>(`${this.api}/lastorders?limit=${count}`, {
+  getLatestOrders(): Observable<ApiResponse<Order[]>> {
+    return this.http.get<Order[]>(`${this.api}/orders/?latest=true`, {
       observe: 'response',
       headers: this.util.getTokenHeaders('user')
     }).pipe(
       toApiResponse<Order[]>(),
       catchError(handleError<Order[]>()),
       handleForbiddenUser(this.auth),
-      map(value => { // TODO: fix limit in backend
-        value.data = value.data?.slice(0, count);
+      map(value => { // TODO: implement limit in backend
+        value.data = value.data?.slice(0, 3);
         return value;
       }),
     );

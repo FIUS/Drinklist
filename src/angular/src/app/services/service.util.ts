@@ -17,13 +17,13 @@ export const handleError = <T = null>() => {
 };
 
 export const handleForbiddenUser = (auth: AuthService) => tap((value: ApiResponse<any>) => {
-  if (value.status === 403) {
+  if (value.status === 401) {
     auth.logoutUser();
   }
 });
 
 export const handleForbiddenAdmin = (auth: AuthService) => tap((value: ApiResponse<any>) => {
-  if (value.status === 403 || value.status === 401) {
+  if (value.status === 401 || value.status === 403) {
     auth.logoutAdmin();
   }
 });

@@ -51,7 +51,7 @@ export class AuthService {
     if (!this.adminToken) {
       return;
     }
-    this.http.post(`${this.api}/logout?token=${this.adminToken}`, '', {responseType: 'text'}).subscribe(() => {
+    this.http.post(`${this.api}/auth/logout`, {token: this.adminToken}).subscribe(() => {
       if (this.userToken === this.adminToken) {
         this.userToken = null;
       }
@@ -84,7 +84,7 @@ export class AuthService {
     if (!this.userToken) {
       return;
     }
-    this.http.post(`${this.api}/logout?token=${this.userToken}`, '', {responseType: 'text'}).subscribe(() => {
+    this.http.post(`${this.api}/auth/logout`, {token: this.userToken}).subscribe(() => {
       if (this.adminToken === this.userToken) {
         this.adminToken = null;
       }
@@ -103,7 +103,7 @@ export class AuthService {
     this.logoutAdmin(true);
     this.logoutUser(true);
     return new Promise<void>((resolve, reject) => {
-      this.http.post<{ token: string, root: boolean }>(`${this.api}/login`, {password}, {observe: 'response'})
+      this.http.post<{ token: string, root: boolean }>(`${this.api}/auth/login`, {password}, {observe: 'response'})
         .pipe(
           toApiResponse<{ token: string, root: boolean }>(),
           catchError(handleError<{ token: string, root: boolean }>()),
@@ -142,7 +142,7 @@ export class AuthService {
   }
 
   getTokens(): Observable<ApiResponse<Token[]>> {
-    return this.http.get<Token[]>(`${this.api}/token`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+    return this.http.get<Token[]>(`${this.api}/auth/tokens`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
       .pipe(
         toApiResponse<Token[]>(),
         catchError(handleError<Token[]>()),
@@ -151,7 +151,7 @@ export class AuthService {
   }
 
   revokeToken(token: Token): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/logout?token=${token.token}`, '', {observe: 'response', responseType: 'text'})
+    return this.http.post(`${this.api}/auth/logout`, {token: token.token}, {observe: 'response'})
       .pipe(
         toApiResponse<any>(),
         catchError(handleError()),

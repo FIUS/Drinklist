@@ -10,9 +10,9 @@ import {AuthService} from '../../services/auth.service';
     <th scope="row" class="text-right">{{number}}</th>
     <td>{{token.token}}</td>
     <td>{{token.root ? 'Admin' : 'User'}}</td>
-    <td>{{token.useragent}}</td>
+    <td>{{token.userAgent}}</td>
     <td>{{token.referrer}}</td>
-    <td class="text-right pr-3">{{token.userip}}</td>
+    <td class="text-right pr-3">{{token.clientIp}}</td>
     <td>
       <button class="btn btn-sm btn-warning w-100" (click)="revokeConfirmation.open()">
         <fa-icon [icon]="icons.ban"></fa-icon>

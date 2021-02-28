@@ -42,7 +42,7 @@ export class BeverageService {
   }
 
   addBeverage(beverage: Beverage): Observable<ApiResponse> {
-    return this.http.post<null>(`${this.api}/beverages?beverage=${beverage.name}&price=${beverage.price}&count=${beverage.stock}`, '', {
+    return this.http.post<null>(`${this.api}/beverages`, beverage, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
     }).pipe(
@@ -53,10 +53,9 @@ export class BeverageService {
   }
 
   addStock(beverage: Beverage, stockToAdd: number): Observable<ApiResponse> {
-    return this.http.patch(`${this.api}/beverages/${beverage.name}?count=${stockToAdd}`, '', {
+    return this.http.patch(`${this.api}/beverages/${beverage.name}`, {stockToAdd}, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text',
     }).pipe(
       toApiResponse(),
       catchError(handleError()),
@@ -64,11 +63,10 @@ export class BeverageService {
     );
   }
 
-  updatePrice(beverage: Beverage, newPrice: number): Observable<ApiResponse> {
-    return this.http.patch(`${this.api}/beverages/${beverage.name}?price=${newPrice}`, '', {
+  updatePrice(beverage: Beverage, price: number): Observable<ApiResponse> {
+    return this.http.patch(`${this.api}/beverages/${beverage.name}`, {price}, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text',
     }).pipe(
       toApiResponse(),
       catchError(handleError()),
@@ -80,7 +78,6 @@ export class BeverageService {
     return this.http.delete(`${this.api}/beverages/${beverage.name}`, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin'),
-      responseType: 'text',
     }).pipe(
       toApiResponse(),
       catchError(handleError()),
