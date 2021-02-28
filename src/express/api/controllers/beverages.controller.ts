@@ -5,7 +5,7 @@ import {requireAdmin, requireUser} from '../api.util';
 import Beverage from '../../models/api/beverage';
 
 class BeveragesController implements IController {
-  path = 'beverages';
+  path = '/beverages';
   router = Router();
 
   constructor(
