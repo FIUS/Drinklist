@@ -22,9 +22,9 @@ class OrdersService {
       throw new RequestError(404, 'Beverage not found');
     }
 
-    updateStock.run(beverage.name);
+    updateStock.run(beverageName);
     updateBalance.run(beverage.price, user);
-    addHistory.run(v4(), user, beverage.name, beverage.price, beverage.name, 1);
+    addHistory.run(v4(), user, beverageName, -beverage.price, beverageName, 1);
   }
 
   getLatestOrders(): Order[] {
