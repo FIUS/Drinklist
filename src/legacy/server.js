@@ -14,11 +14,11 @@
 const fs = require('fs');
 
 //Check if all data files exist. If not create them. (This is required for docker.)
-require('./dataHelper.js').checkAndCreateFiles();
+require('../dataHelper.js').checkAndCreateFiles();
 
 // Import all software components
-const api = require('./legacy/api/api.js');
-const frontend = require('./frontend-server/server.js')
+const api = require('./api/api.js');
+const frontend = require('./userPage/server.js')
 
 // Settings file
 var settings = JSON.parse(fs.readFileSync(fs.realpathSync('./') + '/data/settings.json', 'utf8'));
