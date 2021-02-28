@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {AppConfig} from '../app.config';
 import {AuthService} from './auth.service';
 import {User} from '../models/user';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ApiResponse} from '../models/api-response';
 import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
+import {environment} from '../../environments/environment';
 
 
 @Injectable({
@@ -14,7 +14,7 @@ import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toA
 })
 export class UserService {
 
-  private readonly api = AppConfig.config.api;
+  private readonly api = environment.apiRoot;
 
   private util: ServiceUtil;
 

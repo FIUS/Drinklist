@@ -1,6 +1,7 @@
 import {IAppConfig} from './models/i-app-config';
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
+import {environment} from '../environments/environment';
 
 @Injectable()
 export class AppConfig {
@@ -13,10 +14,7 @@ export class AppConfig {
 
   load(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.http.get<IAppConfig>('/settings').subscribe((config) => {
-        if (config.api.endsWith('/')) {
-          config.api = config.api.substring(0, config.api.length - 1);
-        }
+      this.http.get<IAppConfig>(`${environment.host}/settings`).subscribe((config) => {
         AppConfig.config = config;
         resolve();
       }, (response: any) => {

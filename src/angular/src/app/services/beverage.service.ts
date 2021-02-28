@@ -1,19 +1,19 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AppConfig} from '../app.config';
 import {AuthService} from './auth.service';
 import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
 import {catchError} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {ApiResponse} from '../models/api-response';
 import {Beverage} from '../models/beverage';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BeverageService {
 
-  private readonly api = AppConfig.config.api;
+  private readonly api = environment.apiRoot;
   private util: ServiceUtil;
 
   constructor(

@@ -4,15 +4,15 @@ import {AuthService} from './auth.service';
 import {handleError, handleForbiddenAdmin, ServiceUtil, toApiResponse} from './service.util';
 import {Observable} from 'rxjs';
 import {ApiResponse} from '../models/api-response';
-import {AppConfig} from '../app.config';
 import {catchError} from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackupService {
 
-  private readonly api = AppConfig.config.api;
+  private readonly api = environment.apiRoot;
   private util: ServiceUtil;
 
   constructor(

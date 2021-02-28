@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AppConfig} from '../app.config';
 import {Router} from '@angular/router';
 import {catchError} from 'rxjs/operators';
 import {handleError, handleForbiddenAdmin, ServiceUtil, toApiResponse} from './service.util';
 import {Observable} from 'rxjs';
 import {ApiResponse} from '../models/api-response';
 import {Token} from '../models/token';
+import {environment} from '../../environments/environment';
 
 export enum LoginError {
   NETWORK_ERROR,
@@ -18,7 +18,7 @@ export enum LoginError {
 })
 export class AuthService {
 
-  readonly api = AppConfig.config.api;
+  readonly api = environment.apiRoot;
 
   private util: ServiceUtil;
 

@@ -2,20 +2,20 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Order} from '../models/order';
-import {AppConfig} from '../app.config';
 import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
 import {AuthService} from './auth.service';
 import {ApiResponse} from '../models/api-response';
 import {catchError, map} from 'rxjs/operators';
 import {User} from '../models/user';
 import {Beverage} from '../models/beverage';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
 
-  private readonly api = AppConfig.config.api;
+  private readonly api = environment.apiRoot;
 
   private util: ServiceUtil;
 

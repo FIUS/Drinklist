@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
     });
     this.selectedLocale = this.localeService.activeLocale;
 
-    this.title.setTitle(AppConfig.config.settings.title);
+    this.title.setTitle(AppConfig.config.title);
   }
 
   isAdmin(): boolean {
@@ -60,10 +60,10 @@ export class AppComponent implements OnInit {
   }
 
   showImprintBtn(): boolean {
-    return AppConfig.config.settings.imprint;
+    return AppConfig.config.imprint;
   }
 
   showPrivacyBtn(): boolean {
-    return AppConfig.config.settings['data-protection'];
+    return AppConfig.config['data-protection'];
   }
 }

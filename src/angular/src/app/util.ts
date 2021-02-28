@@ -8,6 +8,6 @@ export class Util {
     const wholes = Math.floor(abs / 100);
     const cents = abs % 100;
 
-    return sign + wholes + ',' + (cents < 10 ? '0' : '') + cents + AppConfig.config.settings.currencySymbol;
+    return sign + wholes + ',' + (cents < 10 ? '0' : '') + cents + AppConfig.config.currencySymbol;
   }
 }
