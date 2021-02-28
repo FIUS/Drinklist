@@ -116,7 +116,7 @@ class OrdersService {
   revertOrder(order: Order): void {
     const checkReversion = this.dbService.prepare('SELECT * FROM History WHERE reason = ? LIMIT 1;');
 
-    if (checkReversion.run(order.id) !== undefined) { // A reversion transaction already exists
+    if (checkReversion.get(order.id) !== undefined) { // A reversion transaction already exists
       throw new RequestError(409, 'Order already reverted'); // 409 Conflict
     }
 
