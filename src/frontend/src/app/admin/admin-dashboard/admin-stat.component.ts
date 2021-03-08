@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'app-admin-stat',
@@ -19,6 +19,9 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
                 <li *ngFor="let item of list" [innerHTML]="item">{{item}}</li>
               </ul>
             </ng-template>
+            <ng-container *ngIf="list.length === 0">
+              {{listEmptyText}}
+            </ng-container>
           </ng-container>
         </div>
       </div>
@@ -34,6 +37,7 @@ export class AdminStatComponent implements OnInit {
   @Input() center = false;
 
   @Input() list: string[] | undefined;
+  @Input() listEmptyText = 'The list is empty.';
   @Input() ordered = false;
 
   constructor() {

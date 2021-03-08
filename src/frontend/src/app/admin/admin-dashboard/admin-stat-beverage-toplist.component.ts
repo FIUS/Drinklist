@@ -5,7 +5,8 @@ import {Beverage} from '../../models/beverage';
 @Component({
   selector: 'app-admin-stat-beverage-toplist',
   template: `
-    <app-admin-stat [text]="text" title="Top Beverages" [list]="beverages" [ordered]="true"></app-admin-stat>
+    <app-admin-stat [text]="text" title="Top Beverages" [list]="beverages" [ordered]="true"
+                    listEmptyText="No beverages have been ordered yet."></app-admin-stat>
   `,
   styles: []
 })
