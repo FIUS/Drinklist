@@ -4,6 +4,7 @@ import {Request, Response, Router} from 'express';
 import UserSettings from '../models/user-settings';
 import * as fs from 'fs';
 
+
 class FrontendModule implements IController {
   path = '/';
   router = Router();
@@ -22,6 +23,7 @@ class FrontendModule implements IController {
 
   private initRoutes(): void {
     this.router.get('/settings', this.getSettings);
+    this.router.post('/settings', this.saveSettings);
     this.router.get('/legal', this.getLegal);
     this.router.get('/imprint', this.getImprint);
     this.router.use(express.static(`${this.rootDir}/dist/angular`));
@@ -52,6 +54,25 @@ class FrontendModule implements IController {
   private getIndex = (req: Request, res: Response) => {
     console.log(`[frontend] [load] index.html${req.path !== '/' ? ` ${req.path}` : ''}`);
     res.status(200).sendFile(`${this.rootDir}/dist/angular/index.html`);
+  };
+
+  private saveSettings = (req: Request, res: Response) => {
+    const settings = req.body;
+    if (!this.settings) {
+      res.setHeader('Retry-After', '5');
+      return res.status(503).end();
+    }
+    for (const key of Object.keys(this.settings)) {
+      if (settings[key] === undefined) {
+        return res.status(400).end();
+      }
+    }
+
+    // If we reach this, the sent config is valid
+    console.log('[settings] new user settings submitted');
+    fs.writeFileSync(`${this.rootDir}/data/user-settings.json`, JSON.stringify(settings));
+    this.initData();
+    res.status(200).end();
   };
 }
 
