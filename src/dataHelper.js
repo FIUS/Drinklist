@@ -87,8 +87,6 @@ function writeDefaultUserSettingsFile() {
     "imprint": true,
     "data-protection": true,
     "recently-purchased": true,
-    "history": true,
-    "money": true,
     "title": "daGl / TOBL",
     "currencySymbol": "€"
   };
