@@ -4,4 +4,5 @@ export interface IAppConfig {
   recentlyPurchased: boolean;
   title: string;
   currencySymbol: string;
+  stock: boolean;
 }

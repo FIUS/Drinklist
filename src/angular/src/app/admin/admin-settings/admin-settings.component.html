@@ -38,6 +38,14 @@
     </div>
     <small>Toggles the ticker in the footer of the user selection page</small>
   </div>
+  <div class="form-group">
+    <div class="custom-control custom-switch">
+      <input type="checkbox" class="custom-control-input" id="stock" style="width: auto"
+             [(ngModel)]="settings.stock">
+      <label class="custom-control-label" for="stock">Stock display</label>
+    </div>
+    <small>Toggles stock amount display in user detail view</small>
+  </div>
 
   <button class="btn btn-success" (click)="save()">Save</button>
 </div>

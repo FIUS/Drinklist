@@ -5,6 +5,7 @@ class UserSettings {
     public recentlyPurchased: boolean,
     public title: string,
     public currencySymbol: string,
+    public stock: boolean,
   ) {
   }
 
@@ -16,6 +17,7 @@ class UserSettings {
       'recentlyPurchased',
       'title',
       'currencySymbol',
+      'stock',
     ];
 
     for (const key of props) {

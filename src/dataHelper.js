@@ -71,6 +71,11 @@ function migrateSettings() {
     delete userSettings['recently-purchased'];
   }
 
+  // Add new settings
+  if (!('stock' in userSettings)) {
+    userSettings.stock = true;
+  }
+
   // Save migrated settings
   fs.writeFileSync(`${dirname}/data/user-settings.json`, JSON.stringify(userSettings));
 }
@@ -109,6 +114,7 @@ function writeDefaultUserSettingsFile() {
     recentlyPurchased: true,
     title: "daGl / TOBL",
     currencySymbol: "€",
+    stock: true,
   };
 
   writeFile('settings', userSettingsFile, userSettingsData);

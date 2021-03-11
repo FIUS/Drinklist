@@ -43,6 +43,7 @@ var userSettingsData = {
   recentlyPurchased: true,
   title: "daGl / TOBL",
   currencySymbol: "€",
+  stock: true,
 };
 
 function input(prompt, lineCallback, callback) {
