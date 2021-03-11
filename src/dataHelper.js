@@ -30,89 +30,89 @@ exports.createEmptyLegalFile = createEmptyLegalFile;
 exports.createEmptyImprintFile = createEmptyImprintFile;
 
 function checkAndCreateFiles() {
-	if(!fs.existsSync(databaseFile)) {
-		recreateDB();
-	}
-
-	if(!fs.existsSync(authFile)) {
-		writeDefaultAuthFile();
-	}
-
-	if(!fs.existsSync(settingsFile)) {
-		writeDefaultSettingsFile();
-	}
-
-	if (!fs.existsSync(userSettingsFile)) {
-	  writeDefaultUserSettingsFile()
+  if (!fs.existsSync(databaseFile)) {
+    recreateDB();
   }
 
-	if (!fs.existsSync(legalFile)) {
-		createEmptyLegalFile()
-	}
+  if (!fs.existsSync(authFile)) {
+    writeDefaultAuthFile();
+  }
 
-	if (!fs.existsSync(imprintFile)) {
-		createEmptyImprintFile()
-	}
+  if (!fs.existsSync(settingsFile)) {
+    writeDefaultSettingsFile();
+  }
+
+  if (!fs.existsSync(userSettingsFile)) {
+    writeDefaultUserSettingsFile()
+  }
+
+  if (!fs.existsSync(legalFile)) {
+    createEmptyLegalFile()
+  }
+
+  if (!fs.existsSync(imprintFile)) {
+    createEmptyImprintFile()
+  }
 }
 
 function writeDefaultAuthFile() {
-	//Default data
-	let authData = [
-		{
-			"password": "secret",
-			"root": false
-		},
-		{
-			"password": "superSecret",
-			"root": true
-		}
-	];
+  //Default data
+  let authData = [
+    {
+      password: "secret",
+      root: false
+    },
+    {
+      password: "superSecret",
+      root: true
+    }
+  ];
 
-	writeFile('auth', authFile, authData);
+  writeFile('auth', authFile, authData);
 }
 
 function writeDefaultSettingsFile() {
-	//Default data
-	let settingsData = {
-    "host": "http://localhost:8080",
-    "port": 8080,
-	};
+  //Default data
+  let settingsData = {
+    host: "http://localhost:8080",
+    port: 8080,
+  };
 
-	writeFile('settings', settingsFile, settingsData);
+  writeFile('settings', settingsFile, settingsData);
 }
 
 function writeDefaultUserSettingsFile() {
-	//Default data
+  //Default data
   let userSettingsData = {
-    "imprint": true,
-    "data-protection": true,
-    "recently-purchased": true,
-    "title": "daGl / TOBL",
-    "currencySymbol": "€"
+    imprint: true,
+    dataProtection: true,
+    recentlyPurchased: true,
+    title: "daGl / TOBL",
+    currencySymbol: "€",
   };
 
-	writeFile('settings', userSettingsFile, userSettingsData);
+  writeFile('settings', userSettingsFile, userSettingsData);
 }
 
-function writeFile(name, path, data, raw=false) {
-	try {
-		if (raw) {
-			fs.writeFileSync(path, data);
-		} else {
-			fs.writeFileSync(path, JSON.stringify(data));
-		}
-	} catch(e) {
-		console.log("Error creating the " + name + " file at: " + path);
-		console.log(err);
-	}
+function writeFile(name, path, data, raw = false) {
+  try {
+    if (raw) {
+      fs.writeFileSync(path, data);
+    } else {
+      fs.writeFileSync(path, JSON.stringify(data));
+    }
+  } catch (e) {
+    console.log("Error creating the " + name + " file at: " + path);
+    console.log(err);
+  }
 
-	console.log("The " + name + " file was created at: " + path);
+  console.log("The " + name + " file was created at: " + path);
 }
 
 function recreateDB() {
-	let db = new Database(databaseFile);
-	db.exec(
-		// create DB tables
+  let db = new Database(databaseFile);
+  db.exec(
+    // create DB tables
     "DROP TABLE IF EXISTS History;" +
     "CREATE TABLE History (id VARCHAR(255), user VARCHAR(255) NOT NULL, reason VARCHAR(255), amount INTEGER NOT NULL DEFAULT 0, beverage VARCHAR(255) NOT NULL DEFAULT '', beverage_count INTEGER NOT NULL DEFAULT 0, timestamp DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime')));" +
     "DROP TABLE IF EXISTS Users;" +
@@ -125,14 +125,14 @@ function recreateDB() {
     "INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Supreme Sample Juice', 5, 150);" +
     "INSERT INTO `Users` (`name`) VALUES ('Max Mustermann');" +
     "INSERT INTO `Users` (`name`) VALUES ('Maria Mustermann');"
-	);
-	db.close();
+  );
+  db.close();
 
-	console.log("The database was created at: " + databaseFile);
+  console.log("The database was created at: " + databaseFile);
 }
 
 function createEmptyLegalFile() {
-	const data = `
+  const data = `
 <html lang="en">
 	<head>
 	  <title>Legal</title>
@@ -142,11 +142,11 @@ function createEmptyLegalFile() {
 	</body>
 </html>
 `;
-	writeFile('legal', legalFile, data, true);
+  writeFile('legal', legalFile, data, true);
 }
 
 function createEmptyImprintFile() {
-	const data = `
+  const data = `
 <html lang="en">
 	<head>
 	  <title>Imprint</title>
@@ -156,5 +156,5 @@ function createEmptyImprintFile() {
 	</body>
 </html>
 `;
-	writeFile('imprint', imprintFile, data, true);
+  writeFile('imprint', imprintFile, data, true);
 }
