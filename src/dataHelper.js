@@ -24,6 +24,7 @@ const legalFile        = dirname + '/data/legal.html';
 const imprintFile      = dirname + '/data/imprint.html';
 
 exports.checkAndCreateFiles = checkAndCreateFiles;
+exports.migrateSettings = migrateSettings;
 exports.writeFile = writeFile;
 exports.recreateDB = recreateDB;
 exports.createEmptyLegalFile = createEmptyLegalFile;
@@ -53,6 +54,25 @@ function checkAndCreateFiles() {
   if (!fs.existsSync(imprintFile)) {
     createEmptyImprintFile()
   }
+}
+
+function migrateSettings() {
+
+  // Load settings
+  const userSettings = JSON.parse(fs.readFileSync(`${dirname}/data/user-settings.json`, 'utf-8'));
+
+  // Migrate old settings
+  if ('data-protection' in userSettings) {
+    userSettings.dataProtection = userSettings['data-protection'];
+    delete userSettings['data-protection'];
+  }
+  if ('recently-purchased' in userSettings) {
+    userSettings.recentlyPurchased = userSettings['recently-purchased'];
+    delete userSettings['recently-purchased'];
+  }
+
+  // Save migrated settings
+  fs.writeFileSync(`${dirname}/data/user-settings.json`, JSON.stringify(userSettings));
 }
 
 function writeDefaultAuthFile() {

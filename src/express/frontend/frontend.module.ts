@@ -19,19 +19,6 @@ class FrontendModule implements IController {
 
   private initData(): void {
     this.settings = JSON.parse(fs.readFileSync(`${this.rootDir}/data/user-settings.json`, 'utf-8')) as UserSettings;
-    // Migrate old setting values
-    if (Object.prototype.hasOwnProperty.call(this.settings, 'data-protection')) {
-      // @ts-ignore
-      this.settings.dataProtection = this.settings['data-protection'];
-      // @ts-ignore
-      delete this.settings['data-protection'];
-    }
-    if (Object.prototype.hasOwnProperty.call(this.settings, 'recently-purchased')) {
-      // @ts-ignore
-      this.settings.recentlyPurchased = this.settings['recently-purchased'];
-      // @ts-ignore
-      delete this.settings['recently-purchased'];
-    }
   }
 
   private initRoutes(): void {

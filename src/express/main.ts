@@ -12,13 +12,17 @@ import ApiModule from './api/api.module';
 import AuthService from './services/api/auth.service';
 import FrontendModule from './frontend/frontend.module';
 
-// TODO: Ensure all config files exist
+const rootDir = fs.realpathSync('./');
+
+// Check config files
+require(`${rootDir}/src/dataHelper`).checkAndCreateFiles();
+require(`${rootDir}/src/dataHelper`).migrateSettings();
 
 // Read config values
-const settings: AppSettings = JSON.parse(fs.readFileSync(fs.realpathSync('./') + '/data/settings.json', 'utf8'));
+const settings: AppSettings = JSON.parse(fs.readFileSync(`${rootDir}/data/settings.json`, 'utf8'));
 
 // Initialize services
-const dbService = new DbService(fs.realpathSync('./') + '/data/history.db');
+const dbService = new DbService(`${rootDir}/data/history.db`);
 const auth = new AuthService();
 
 // Initialize server
