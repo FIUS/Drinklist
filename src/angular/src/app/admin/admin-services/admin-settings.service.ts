@@ -25,7 +25,7 @@ export class AdminSettingsService {
   }
 
   save(settings: IAppConfig): Observable<ApiResponse> {
-    return this.http.post<null>(`${environment.host}/settings`, settings, {
+    return this.http.post<null>(`${environment.apiRoot}/settings`, settings, {
       observe: 'response',
       headers: this.util.getTokenHeaders('admin')
     }).pipe(

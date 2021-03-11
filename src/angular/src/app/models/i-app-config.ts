@@ -1,7 +1,7 @@
 export interface IAppConfig {
   imprint: boolean;
-  'data-protection': boolean;
-  'recently-purchased': boolean;
+  dataProtection: boolean;
+  recentlyPurchased: boolean;
   title: string;
   currencySymbol: string;
 }

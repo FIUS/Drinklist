@@ -18,12 +18,24 @@ class FrontendModule implements IController {
   }
 
   private initData(): void {
-    this.settings = JSON.parse(fs.readFileSync(`${this.rootDir}/data/user-settings.json`, 'utf-8'));
+    this.settings = JSON.parse(fs.readFileSync(`${this.rootDir}/data/user-settings.json`, 'utf-8')) as UserSettings;
+    // Migrate old setting values
+    if (Object.prototype.hasOwnProperty.call(this.settings, 'data-protection')) {
+      // @ts-ignore
+      this.settings.dataProtection = this.settings['data-protection'];
+      // @ts-ignore
+      delete this.settings['data-protection'];
+    }
+    if (Object.prototype.hasOwnProperty.call(this.settings, 'recently-purchased')) {
+      // @ts-ignore
+      this.settings.recentlyPurchased = this.settings['recently-purchased'];
+      // @ts-ignore
+      delete this.settings['recently-purchased'];
+    }
   }
 
   private initRoutes(): void {
     this.router.get('/settings', this.getSettings);
-    this.router.post('/settings', this.saveSettings);
     this.router.get('/legal', this.getLegal);
     this.router.get('/imprint', this.getImprint);
     this.router.use(express.static(`${this.rootDir}/dist/angular`));
@@ -34,6 +46,10 @@ class FrontendModule implements IController {
 
   private getSettings = (req: Request, res: Response) => {
     console.log('[frontend] [load] settings');
+    if (process.env.hasOwnProperty('settingsUpdated')) {
+      this.initData();
+      delete process.env.settingsUpdated;
+    }
     if (!this.settings) {
       res.setHeader('Retry-After', '5');
       return res.status(503).end();
@@ -54,25 +70,6 @@ class FrontendModule implements IController {
   private getIndex = (req: Request, res: Response) => {
     console.log(`[frontend] [load] index.html${req.path !== '/' ? ` ${req.path}` : ''}`);
     res.status(200).sendFile(`${this.rootDir}/dist/angular/index.html`);
-  };
-
-  private saveSettings = (req: Request, res: Response) => {
-    const settings = req.body;
-    if (!this.settings) {
-      res.setHeader('Retry-After', '5');
-      return res.status(503).end();
-    }
-    for (const key of Object.keys(this.settings)) {
-      if (settings[key] === undefined) {
-        return res.status(400).end();
-      }
-    }
-
-    // If we reach this, the sent config is valid
-    console.log('[settings] new user settings submitted');
-    fs.writeFileSync(`${this.rootDir}/data/user-settings.json`, JSON.stringify(settings));
-    this.initData();
-    res.status(200).end();
   };
 }
 

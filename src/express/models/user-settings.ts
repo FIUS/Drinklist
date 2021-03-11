@@ -1,9 +1,30 @@
-interface UserSettings {
-  imprint: boolean;
-  'data-protection': boolean;
-  'recently-purchased': boolean;
-  title: string;
-  currencySymbol: string;
+class UserSettings {
+  constructor(
+    public imprint: boolean,
+    public dataProtection: boolean,
+    public recentlyPurchased: boolean,
+    public title: string,
+    public currencySymbol: string,
+  ) {
+  }
+
+  static isValid(obj: any): boolean {
+    // List of all properties
+    const props = [
+      'imprint',
+      'dataProtection',
+      'recentlyPurchased',
+      'title',
+      'currencySymbol',
+    ];
+
+    for (const key of props) {
+      if (obj[key] === undefined) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 export default UserSettings;

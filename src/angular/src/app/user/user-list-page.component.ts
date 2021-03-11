@@ -92,7 +92,7 @@ export class UserListPageComponent implements OnInit {
   usernames: string[] = [];
 
   get tickerEnabled(): boolean {
-    return AppConfig.config['recently-purchased'];
+    return AppConfig.config.recentlyPurchased;
   }
 
   tickerItems: Order[] = [];
