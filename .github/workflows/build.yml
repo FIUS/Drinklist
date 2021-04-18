@@ -53,3 +53,4 @@ jobs:
             build/
             package.json
             package-lock.json
+            src/*.js
