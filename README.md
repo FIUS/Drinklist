@@ -42,7 +42,7 @@ Container: kienhoefr/drinklist
 
 Start with mapped config dir and forwarded ports:
 ```shell
-docker run -e TZ="Europe/Berlin" -p 8080:8080 -p 8081:8081 -v ~/drinklistData:/app/data fius/drinklist
+docker run -e TZ="Europe/Berlin" -p 8080:8080 -v ~/drinklistData:/app/data kienhoefr/drinklist
 ```
 
 
