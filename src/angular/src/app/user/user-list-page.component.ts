@@ -26,7 +26,7 @@ import {User} from '../models/user';
         </ng-container>
       </div>
     </main>
-    <footer class="container-fluid fixed-bottom border-top bg-white">
+    <footer *ngIf="tickerEnabled" class="container-fluid fixed-bottom border-top bg-white">
       <div class="h5 mt-2">
         <span class="font-weight-bold mb-0">{{locale.getMessage('rlabel')}}</span>
         <div class="ticker">
@@ -92,7 +92,7 @@ export class UserListPageComponent implements OnInit {
   usernames: string[] = [];
 
   get tickerEnabled(): boolean {
-    return AppConfig.config.history;
+    return AppConfig.config.recentlyPurchased;
   }
 
   tickerItems: Order[] = [];

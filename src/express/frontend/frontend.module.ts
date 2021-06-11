@@ -4,6 +4,7 @@ import {Request, Response, Router} from 'express';
 import UserSettings from '../models/user-settings';
 import * as fs from 'fs';
 
+
 class FrontendModule implements IController {
   path = '/';
   router = Router();
@@ -17,7 +18,7 @@ class FrontendModule implements IController {
   }
 
   private initData(): void {
-    this.settings = JSON.parse(fs.readFileSync(`${this.rootDir}/data/user-settings.json`, 'utf-8'));
+    this.settings = JSON.parse(fs.readFileSync(`${this.rootDir}/data/user-settings.json`, 'utf-8')) as UserSettings;
   }
 
   private initRoutes(): void {
@@ -32,6 +33,10 @@ class FrontendModule implements IController {
 
   private getSettings = (req: Request, res: Response) => {
     console.log('[frontend] [load] settings');
+    if (process.env.hasOwnProperty('settingsUpdated')) {
+      this.initData();
+      delete process.env.settingsUpdated;
+    }
     if (!this.settings) {
       res.setHeader('Retry-After', '5');
       return res.status(503).end();

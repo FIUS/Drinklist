@@ -9,6 +9,7 @@ import {Util} from '../util';
 import {OrderService} from '../services/order.service';
 import {Order} from '../models/order';
 import {faTrash} from '@fortawesome/free-solid-svg-icons/faTrash';
+import {AppConfig} from '../app.config';
 
 @Component({
   selector: 'app-user-detail-page',
@@ -28,6 +29,10 @@ export class UserDetailPageComponent implements OnInit {
   user: User | null = null;
   beverages: Beverage[] = [];
   orders: Order[] = [];
+
+  get showStock(): boolean {
+    return AppConfig.config.stock;
+  }
 
   // Wrap util method in local field
   moneyFormat = Util.moneyFormat;

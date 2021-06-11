@@ -1,6 +1,6 @@
 import {Component, OnInit, Type} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {faBeer, faDownload, faHistory, faHome, faKey, faUsers} from '@fortawesome/free-solid-svg-icons';
+import {faBeer, faCog, faDownload, faHistory, faHome, faKey, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {AdminPageModule} from './admin-page-module';
 import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.component';
 import {AdminBeveragesComponent} from './admin-beverages/admin-beverages.component';
@@ -9,6 +9,7 @@ import {AdminUsersComponent} from './admin-users/admin-users.component';
 import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
 import {BackupService} from '../services/backup.service';
 import {saveAs} from 'file-saver';
+import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
 
 @Component({
   selector: 'app-admin-page',
@@ -56,6 +57,13 @@ export class AdminPageComponent implements OnInit {
       spacerAfter: true,
       component: AdminTokensComponent,
     },
+    {
+      id: 'settings',
+      displayName: 'Settings',
+      icon: faCog,
+      spacerAfter: true,
+      component: AdminSettingsComponent,
+    }
   ];
 
   // FontAwesome icons

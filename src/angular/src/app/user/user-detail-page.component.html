@@ -9,7 +9,7 @@
     <h1>{{locale.getMessage('blabel')}}</h1>
     <ng-container *ngFor="let beverage of beverages">
       <button type="button" class="btn btn-beverage btn-lg btn-block mt-2" (click)="order(beverage)">
-        ({{beverage.stock}}) {{beverage.name}} [{{moneyFormat(beverage.price)}}]
+        <span *ngIf="showStock">({{beverage.stock}}) </span>{{beverage.name}} [{{moneyFormat(beverage.price)}}]
       </button>
     </ng-container>
   </div>

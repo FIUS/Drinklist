@@ -64,6 +64,6 @@ export class AppComponent implements OnInit {
   }
 
   showPrivacyBtn(): boolean {
-    return AppConfig.config['data-protection'];
+    return AppConfig.config.dataProtection;
   }
 }

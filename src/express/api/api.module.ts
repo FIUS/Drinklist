@@ -14,6 +14,7 @@ import {requireAdmin} from './api.util';
 import {exec} from 'child_process';
 import StatsController from './controllers/stats.controller';
 import StatsService from './services/stats.service';
+import SettingsController from './controllers/settings.controller';
 
 class ApiModule implements IController {
   path = '/api';
@@ -48,6 +49,7 @@ class ApiModule implements IController {
       new OrdersController(ordersService),
       new BeveragesController(beveragesService),
       new StatsController(statsService),
+      new SettingsController(),
     ];
   }
 
