@@ -3,6 +3,7 @@ import {Request, Response, Router} from 'express';
 import {requireAdmin} from '../api.util';
 import * as fs from 'fs';
 import UserSettings from '../../models/user-settings';
+import {userSettingsPath} from '../../main';
 
 class SettingsController implements IController {
   path = '/settings';
@@ -28,7 +29,7 @@ class SettingsController implements IController {
 
     // If we reach this, the sent config is valid
     console.log('[settings] new user settings submitted');
-    fs.writeFileSync(`${this.rootDir}/data/user-settings.json`, JSON.stringify(settings));
+    fs.writeFileSync(userSettingsPath, JSON.stringify(settings));
     process.env.settingsUpdated = 'true';
     res.status(200).end();
   };

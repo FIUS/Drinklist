@@ -2,6 +2,11 @@ import Session from '../../models/api/session';
 import * as fs from 'fs';
 import IService from '../service.interface';
 
+interface AuthConfig {
+  kiosk: string;
+  admin: string;
+}
+
 class AuthService implements IService {
 
   private auth: Map<string, boolean> = new Map<string, boolean>();
@@ -13,10 +18,10 @@ class AuthService implements IService {
 
   private initAuth(): void {
     const root = fs.realpathSync('./');
-    const passwords = JSON.parse(fs.readFileSync(`${root}/data/auth.json`, 'utf-8')) as { password: string, root: boolean }[];
-    for (const password of passwords) {
-      this.auth.set(password.password, password.root);
-    }
+    const config = JSON.parse(fs.readFileSync(`${root}/data/auth.json`, 'utf-8')) as AuthConfig;
+
+    this.auth.set(config.kiosk, false);
+    this.auth.set(config.admin, true);
   }
 
   shutdown(): Promise<void> {

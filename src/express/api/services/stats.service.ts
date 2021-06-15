@@ -1,10 +1,10 @@
-import DbService from '../../services/api/db.service';
+import LegacyDbService from '../../services/api/db.service';
 import Beverage from '../../models/api/beverage';
 import User from '../../models/api/user';
 
 class StatsService {
   constructor(
-    private dbService: DbService,
+    private dbService: LegacyDbService,
   ) {
   }
 

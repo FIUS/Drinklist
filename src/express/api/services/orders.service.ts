@@ -1,4 +1,4 @@
-import DbService from '../../services/api/db.service';
+import LegacyDbService from '../../services/api/db.service';
 import {RequestError} from '../api.util';
 import Beverage from '../../models/api/beverage';
 import {v4} from 'uuid';
@@ -7,7 +7,7 @@ import {Statement} from 'better-sqlite3';
 
 class OrdersService {
   constructor(
-    private dbService: DbService,
+    private dbService: LegacyDbService,
   ) {
   }
 

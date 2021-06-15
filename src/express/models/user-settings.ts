@@ -1,5 +1,6 @@
 class UserSettings {
   constructor(
+    public version: number,
     public imprint: boolean,
     public dataProtection: boolean,
     public recentlyPurchased: boolean,
@@ -12,6 +13,7 @@ class UserSettings {
   static isValid(obj: any): boolean {
     // List of all properties
     const props = [
+      'version',
       'imprint',
       'dataProtection',
       'recentlyPurchased',

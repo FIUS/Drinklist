@@ -1,6 +1,6 @@
 import IController from '../interfaces/controller.interface';
 import {NextFunction, Request, Response, Router} from 'express';
-import DbService from '../services/api/db.service';
+import LegacyDbService from '../services/api/db.service';
 import AuthMiddleware from './middlewares/auth.middleware';
 import AuthService from '../services/api/auth.service';
 import AuthController from './controllers/auth.controller';
@@ -23,7 +23,7 @@ class ApiModule implements IController {
   private controllers: IController[] = [];
 
   constructor(
-    private dbService: DbService,
+    private dbService: LegacyDbService,
     private auth: AuthService,
   ) {
     this.registerMiddlewares();
@@ -67,6 +67,7 @@ class ApiModule implements IController {
     this.router.get('/backup', requireAdmin, (req: Request, res: Response, next: NextFunction) => {
       let result = '';
 
+      // TODO: fix filename
       const dump = exec('sqlite3 data/history.db ".dump"', {maxBuffer: 1024 * 1024 * 5}, error => {
         if (!error) {
           return;
