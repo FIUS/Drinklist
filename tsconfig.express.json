@@ -3,11 +3,16 @@
   "compilerOptions": {
     "outDir": "build/",
     "types": [
+      "node",
       "express"
     ],
     "sourceMap": false,
     "module": "CommonJS",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "target": "es2020",
+    "lib": [
+      "es2020"
+    ]
   },
   "files": [
     "src/express/main.ts"
