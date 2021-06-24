@@ -1,10 +1,10 @@
-import IController from '../../interfaces/controller.interface';
+import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
-import AuthService from '../../services/api/auth.service';
+import {AuthService} from '../../services/api/auth.service';
 import {requireAdmin} from '../api.util';
-import Session from '../../models/api/session';
+import {Session} from '../../models/api/session';
 
-class AuthController implements IController {
+export class AuthController implements IController {
   path = '/auth';
   router = Router();
 
@@ -55,5 +55,3 @@ class AuthController implements IController {
     res.status(200).end();
   };
 }
-
-export default AuthController;

@@ -1,11 +1,11 @@
-import IController from '../../interfaces/controller.interface';
+import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
 import {requireAdmin} from '../api.util';
 import * as fs from 'fs';
-import UserSettings from '../../models/user-settings';
+import {UserSettings} from '../../models/user-settings';
 import {userSettingsPath} from '../../main';
 
-class SettingsController implements IController {
+export class SettingsController implements IController {
   path = '/settings';
   router = Router();
 
@@ -34,5 +34,3 @@ class SettingsController implements IController {
     res.status(200).end();
   };
 }
-
-export default SettingsController;

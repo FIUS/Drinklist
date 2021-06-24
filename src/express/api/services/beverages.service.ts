@@ -1,7 +1,7 @@
-import LegacyDbService from '../../services/api/db.service';
-import Beverage from '../../models/api/beverage';
+import {LegacyDbService} from '../../services/api/db.service';
+import {Beverage} from '../../models/api/beverage';
 
-class BeveragesService {
+export class BeveragesService {
   constructor(
     private dbService: LegacyDbService,
   ) {
@@ -38,5 +38,3 @@ class BeveragesService {
     sql.run(beverage);
   }
 }
-
-export default BeveragesService;

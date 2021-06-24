@@ -1,10 +1,10 @@
 import {promises as fs} from 'fs';
 import * as path from 'path';
-import AppConfig from './models/app-config';
+import {AppConfig} from './models/app-config';
 import {open} from 'sqlite';
 import * as sqlite3 from 'sqlite3';
-import DbService from './services/api/db.service';
-import UserSettings from './models/user-settings';
+import {DbService} from './services/api/db.service';
+import {UserSettings} from './models/user-settings';
 import {configPath, dbPath, userSettingsPath} from './main';
 
 const cwd = process.cwd();

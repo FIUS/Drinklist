@@ -1,11 +1,11 @@
-import LegacyDbService from '../../services/api/db.service';
+import {LegacyDbService} from '../../services/api/db.service';
 import {RequestError} from '../api.util';
-import Beverage from '../../models/api/beverage';
+import {Beverage} from '../../models/api/beverage';
 import {v4} from 'uuid';
-import Order from '../../models/api/order';
+import {Order} from '../../models/api/order';
 import {Statement} from 'better-sqlite3';
 
-class OrdersService {
+export class OrdersService {
   constructor(
     private dbService: LegacyDbService,
   ) {
@@ -133,5 +133,3 @@ class OrdersService {
     createReversion.run(v4(), order.user, order.id, -order.amount, order.beverage, order.beverage_count);
   }
 }
-
-export default OrdersService;

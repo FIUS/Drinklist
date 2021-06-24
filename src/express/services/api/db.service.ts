@@ -1,4 +1,4 @@
-import IService from '../service.interface';
+import {IService} from '../service.interface';
 import {Database as OldDatabase, Statement as OldStatement} from 'better-sqlite3';
 import {Database as DatabaseDriver} from 'sqlite3';
 import {Database, ISqlite, open, Statement} from 'sqlite';
@@ -6,7 +6,7 @@ import * as path from 'path';
 
 const DatabaseConstructor = require('better-sqlite3');
 
-class DbService implements IService {
+export class DbService implements IService {
   private readonly db: Database;
   private readonly statements: Map<string, Statement> = new Map<string, Statement>();
 
@@ -67,5 +67,3 @@ export class LegacyDbService implements IService {
     return statement;
   }
 }
-
-export default DbService;

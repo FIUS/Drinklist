@@ -1,4 +1,4 @@
-interface Order {
+export interface Order {
   id: string;
   user: string;
   reason: string;
@@ -9,5 +9,3 @@ interface Order {
 
   fresh?: boolean;
 }
-
-export default Order;

@@ -1,9 +1,9 @@
-import IController from '../../interfaces/controller.interface';
+import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
 import {requireAdmin} from '../api.util';
-import StatsService from '../services/stats.service';
+import {StatsService} from '../services/stats.service';
 
-class StatsController implements IController {
+export class StatsController implements IController {
   path = '/stats';
   router = Router();
 
@@ -52,5 +52,3 @@ class StatsController implements IController {
     res.status(200).json(topDebtors);
   };
 }
-
-export default StatsController;

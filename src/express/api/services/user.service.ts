@@ -1,9 +1,9 @@
-import LegacyDbService from '../../services/api/db.service';
-import User from '../../models/api/user';
+import {LegacyDbService} from '../../services/api/db.service';
+import {User} from '../../models/api/user';
 import {Statement} from 'better-sqlite3';
 import {v4} from 'uuid';
 
-class UserService {
+export class UserService {
   constructor(
     private dbService: LegacyDbService
   ) {
@@ -50,5 +50,3 @@ class UserService {
     sql.run(name);
   }
 }
-
-export default UserService;

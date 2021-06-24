@@ -1,13 +1,13 @@
-import Session from '../../models/api/session';
+import {Session} from '../../models/api/session';
 import * as fs from 'fs';
-import IService from '../service.interface';
+import {IService} from '../service.interface';
 
 interface AuthConfig {
   kiosk: string;
   admin: string;
 }
 
-class AuthService implements IService {
+export class AuthService implements IService {
 
   private auth: Map<string, boolean> = new Map<string, boolean>();
   private sessions: Map<string, Session> = new Map<string, Session>();
@@ -61,5 +61,3 @@ class AuthService implements IService {
   }
 
 }
-
-export default AuthService;

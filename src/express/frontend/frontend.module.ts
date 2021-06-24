@@ -1,11 +1,11 @@
-import IController from '../interfaces/controller.interface';
+import {IController} from '../interfaces/controller.interface';
 import * as express from 'express';
 import {Request, Response, Router} from 'express';
-import UserSettings from '../models/user-settings';
+import {UserSettings} from '../models/user-settings';
 import * as fs from 'fs';
 
 
-class FrontendModule implements IController {
+export class FrontendModule implements IController {
   path = '/';
   router = Router();
 
@@ -59,5 +59,3 @@ class FrontendModule implements IController {
     res.status(200).sendFile(`${this.rootDir}/dist/angular/index.html`);
   };
 }
-
-export default FrontendModule;

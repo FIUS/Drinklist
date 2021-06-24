@@ -1,6 +1,6 @@
 import {v4 as uuidV4} from 'uuid';
 
-class Session {
+export class Session {
 
   token: string;
   root = false;
@@ -13,5 +13,3 @@ class Session {
     this.token = uuidV4();
   }
 }
-
-export default Session;

@@ -1,7 +1,7 @@
 import {NextHandleFunction} from '../api.util';
-import AuthService from '../../services/api/auth.service';
+import {AuthService} from '../../services/api/auth.service';
 
-class AuthMiddleware {
+export class AuthMiddleware {
   static token(auth: AuthService): NextHandleFunction {
     return (req, res, next) => {
       const token = req.header('x-auth-token');
@@ -13,5 +13,3 @@ class AuthMiddleware {
     };
   }
 }
-
-export default AuthMiddleware;

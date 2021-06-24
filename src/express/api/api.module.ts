@@ -1,22 +1,22 @@
-import IController from '../interfaces/controller.interface';
+import {IController} from '../interfaces/controller.interface';
 import {NextFunction, Request, Response, Router} from 'express';
-import LegacyDbService from '../services/api/db.service';
-import AuthMiddleware from './middlewares/auth.middleware';
-import AuthService from '../services/api/auth.service';
-import AuthController from './controllers/auth.controller';
-import UserController from './controllers/user.controller';
-import UserService from './services/user.service';
-import OrdersController from './controllers/orders.controller';
-import OrdersService from './services/orders.service';
-import BeveragesController from './controllers/beverages.controller';
-import BeveragesService from './services/beverages.service';
+import {LegacyDbService} from '../services/api/db.service';
+import {AuthMiddleware} from './middlewares/auth.middleware';
+import {AuthService} from '../services/api/auth.service';
+import {AuthController} from './controllers/auth.controller';
+import {UserController} from './controllers/user.controller';
+import {UserService} from './services/user.service';
+import {OrdersController} from './controllers/orders.controller';
+import {OrdersService} from './services/orders.service';
+import {BeveragesController} from './controllers/beverages.controller';
+import {BeveragesService} from './services/beverages.service';
 import {requireAdmin} from './api.util';
 import {exec} from 'child_process';
-import StatsController from './controllers/stats.controller';
-import StatsService from './services/stats.service';
-import SettingsController from './controllers/settings.controller';
+import {StatsController} from './controllers/stats.controller';
+import {StatsService} from './services/stats.service';
+import {SettingsController} from './controllers/settings.controller';
 
-class ApiModule implements IController {
+export class ApiModule implements IController {
   path = '/api';
   router = Router();
 
@@ -85,5 +85,3 @@ class ApiModule implements IController {
     });
   }
 }
-
-export default ApiModule;

@@ -1,12 +1,12 @@
 // @ts-ignore -- Required feature enabled in tsconfig.express.json
 import express, {Application, NextFunction, Request, Response} from 'express';
-import IService from './services/service.interface';
+import {IService} from './services/service.interface';
 import * as http from 'http';
 import {AddressInfo} from 'net';
-import ServerConfig from './models/server-config';
-import IController from './interfaces/controller.interface';
+import {ServerConfig} from './models/server-config';
+import {IController} from './interfaces/controller.interface';
 
-class Server {
+export class Server {
 
   private readonly app: Application;
   private readonly port: number;
@@ -85,5 +85,3 @@ class Server {
     });
   }
 }
-
-export default Server;

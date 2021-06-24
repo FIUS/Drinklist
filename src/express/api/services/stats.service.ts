@@ -1,8 +1,8 @@
-import LegacyDbService from '../../services/api/db.service';
-import Beverage from '../../models/api/beverage';
-import User from '../../models/api/user';
+import {LegacyDbService} from '../../services/api/db.service';
+import {Beverage} from '../../models/api/beverage';
+import {User} from '../../models/api/user';
 
-class StatsService {
+export class StatsService {
   constructor(
     private dbService: LegacyDbService,
   ) {
@@ -38,5 +38,3 @@ class StatsService {
     return sql.all();
   }
 }
-
-export default StatsService;

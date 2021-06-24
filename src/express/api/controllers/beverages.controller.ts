@@ -1,10 +1,10 @@
-import BeveragesService from '../services/beverages.service';
-import IController from '../../interfaces/controller.interface';
+import {BeveragesService} from '../services/beverages.service';
+import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
 import {requireAdmin, requireUser} from '../api.util';
-import Beverage from '../../models/api/beverage';
+import {Beverage} from '../../models/api/beverage';
 
-class BeveragesController implements IController {
+export class BeveragesController implements IController {
   path = '/beverages';
   router = Router();
 
@@ -65,5 +65,3 @@ class BeveragesController implements IController {
     res.status(200).end();
   };
 }
-
-export default BeveragesController;

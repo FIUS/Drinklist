@@ -1,7 +1,5 @@
-interface User {
+export interface User {
   name: string;
   balance: number;
   hidden: boolean;
 }
-
-export default User;

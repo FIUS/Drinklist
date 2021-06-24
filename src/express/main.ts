@@ -3,14 +3,14 @@
  * --------------------------------
  * Author: Raphael Kienhöfer
  */
-import Server from './server';
+import {Server} from './server';
 import {promises as fs} from 'fs';
-import AppConfig from './models/app-config';
+import {AppConfig} from './models/app-config';
 import * as bodyParser from 'body-parser';
-import DbService from './services/api/db.service';
-import ApiModule from './api/api.module';
-import AuthService from './services/api/auth.service';
-import FrontendModule from './frontend/frontend.module';
+import {DbService} from './services/api/db.service';
+import {ApiModule} from './api/api.module';
+import {AuthService} from './services/api/auth.service';
+import {FrontendModule} from './frontend/frontend.module';
 import * as path from 'path';
 import {migrate} from './migrations';
 

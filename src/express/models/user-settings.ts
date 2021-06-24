@@ -1,4 +1,4 @@
-class UserSettings {
+export class UserSettings {
   constructor(
     public version: number,
     public imprint: boolean,
@@ -30,5 +30,3 @@ class UserSettings {
     return true;
   }
 }
-
-export default UserSettings;

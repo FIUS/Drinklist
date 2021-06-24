@@ -1,9 +1,9 @@
-import IController from '../../interfaces/controller.interface';
+import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
-import OrdersService from '../services/orders.service';
+import {OrdersService} from '../services/orders.service';
 import {requireUser} from '../api.util';
 
-class OrdersController implements IController {
+export class OrdersController implements IController {
   path = '/orders';
   router = Router();
 
@@ -89,5 +89,3 @@ class OrdersController implements IController {
     res.status(200).end();
   };
 }
-
-export default OrdersController;
