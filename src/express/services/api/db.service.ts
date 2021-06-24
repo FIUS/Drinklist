@@ -1,14 +1,14 @@
 import IService from '../service.interface';
-import {Database, Statement} from 'better-sqlite3';
+import {Database as OldDatabase, Statement as OldStatement} from 'better-sqlite3';
 import {Database as DatabaseDriver} from 'sqlite3';
-import {Database as Database2, ISqlite, open, Statement as Statement2} from 'sqlite';
+import {Database, ISqlite, open, Statement} from 'sqlite';
 import * as path from 'path';
 
 const DatabaseConstructor = require('better-sqlite3');
 
-export class DbService implements IService {
-  private readonly db: Database2;
-  private readonly statements: Map<string, Statement2> = new Map<string, Statement2>();
+class DbService implements IService {
+  private readonly db: Database;
+  private readonly statements: Map<string, Statement> = new Map<string, Statement>();
 
   static async create(filename: string): Promise<DbService> {
     const db = await open({
@@ -21,7 +21,7 @@ export class DbService implements IService {
     return new DbService(db);
   }
 
-  private constructor(db: Database2) {
+  private constructor(db: Database) {
     this.db = db;
   }
 
@@ -31,9 +31,9 @@ export class DbService implements IService {
     return;
   }
 
-  async prepare(sql: string): Promise<Statement2> {
+  async prepare(sql: string): Promise<Statement> {
     if (this.statements.has(sql)) {
-      return this.statements.get(sql) as Statement2;
+      return this.statements.get(sql) as Statement;
     }
     const statement = await this.db.prepare(sql);
     this.statements.set(sql, statement);
@@ -45,9 +45,9 @@ export class DbService implements IService {
   }
 }
 
-class LegacyDbService implements IService {
-  private readonly db: Database;
-  private readonly statements: Map<string, Statement> = new Map<string, Statement>();
+export class LegacyDbService implements IService {
+  private readonly db: OldDatabase;
+  private readonly statements: Map<string, OldStatement> = new Map<string, OldStatement>();
 
   constructor(fileName: string) {
     this.db = DatabaseConstructor(fileName, {fileMustExist: true});
@@ -58,9 +58,9 @@ class LegacyDbService implements IService {
     return;
   }
 
-  prepare(sql: string): Statement {
+  prepare(sql: string): OldStatement {
     if (this.statements.has(sql)) {
-      return this.statements.get(sql) as Statement;
+      return this.statements.get(sql) as OldStatement;
     }
     const statement = this.db.prepare(sql);
     this.statements.set(sql, statement);
@@ -68,4 +68,4 @@ class LegacyDbService implements IService {
   }
 }
 
-export default LegacyDbService;
+export default DbService;
