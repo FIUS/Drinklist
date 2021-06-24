@@ -29,7 +29,7 @@ CREATE TABLE transactions
 (
     id        INTEGER NOT NULL,
     userFrom  INTEGER NOT NULL,
-    amount    TEXT    NOT NULL,
+    amount    INTEGER NOT NULL,
     userTo    INTEGER NOT NULL,
     reason    TEXT    NOT NULL,
     timestamp INTEGER NOT NULL,
