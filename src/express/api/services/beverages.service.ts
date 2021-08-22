@@ -1,40 +1,42 @@
-import {LegacyDbService} from '../../services/api/db.service';
+import {DbService} from '../../services/api/db.service';
 import {Beverage} from '../../models/api/beverage';
 
 export class BeveragesService {
   constructor(
-    private dbService: LegacyDbService,
+    private dbService: DbService,
   ) {
   }
 
-  getBeverages(): Beverage[] {
-    const sql = this.dbService.prepare('SELECT name, stock, price FROM Beverages ORDER BY name;');
-    return sql.all();
+  async getBeverages(includeDeleted = false): Promise<Beverage[]> {
+    const sql = await this.dbService.prepare('SELECT * FROM beverages WHERE deleted = ?;');
+    const result = await sql.all<Beverage[]>(+includeDeleted);
+    result.forEach(bev => bev.deleted = Boolean(bev.deleted)); // Convert integer value
+    return result;
   }
 
-  addBeverage(beverage: Beverage): void {
-    const sql = this.dbService.prepare('INSERT INTO Beverages (name, price, stock) VALUES (?, ?, ?);');
+  async addBeverage(beverage: Beverage): Promise<void> {
+    const sql = await this.dbService.prepare('INSERT INTO beverages (name, price, stock) VALUES (?, ?, ?);');
 
     // Check whether stock is NaN and default to 0 if this is the case.
-    beverage.stock = isNaN(beverage.stock) ? 0 : beverage.stock;
-    sql.run(beverage.name, beverage.price, beverage.stock);
+    beverage.stock = isNaN(+beverage.stock) ? 0 : +beverage.stock;
+    await sql.run(beverage.name, beverage.price, beverage.stock);
   }
 
-  updateBeverage(beverage: string, price: number, stockToAdd: number): void {
-    const updatePrice = this.dbService.prepare('UPDATE Beverages SET price = ? WHERE name = ?;');
-    const updateStock = this.dbService.prepare('UPDATE Beverages SET stock = stock + ? WHERE name = ?;');
+  async updateBeverage(beverage: number, price: number, stockToAdd: number): Promise<void> {
+    const updatePrice = await this.dbService.prepare('UPDATE beverages SET price = ? WHERE id = ?;');
+    const updateStock = await this.dbService.prepare('UPDATE beverages SET stock = stock + ? WHERE id = ?;');
 
     if (!isNaN(price)) {
-      updatePrice.run(price, beverage);
+      await updatePrice.run(price, beverage);
     }
 
     if (!isNaN(stockToAdd)) {
-      updateStock.run(stockToAdd, beverage);
+      await updateStock.run(stockToAdd, beverage);
     }
   }
 
-  deleteBeverage(beverage: string): void {
-    const sql = this.dbService.prepare('DELETE FROM Beverages WHERE name = ?;');
-    sql.run(beverage);
+  async deleteBeverage(beverage: number): Promise<void> {
+    const sql = await this.dbService.prepare('UPDATE beverages SET deleted = 1 WHERE id = ?;');
+    await sql.run(beverage);
   }
 }

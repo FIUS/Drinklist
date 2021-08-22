@@ -2,6 +2,7 @@ import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
 import {requireAdmin} from '../api.util';
 import {StatsService} from '../services/stats.service';
+import * as asyncHandler from 'express-async-handler';
 
 export class StatsController implements IController {
   path = '/stats';
@@ -14,41 +15,41 @@ export class StatsController implements IController {
   }
 
   private initRoutes(): void {
-    this.router.get('/orders', requireAdmin, this.getOrderCount);
-    this.router.get('/users', requireAdmin, this.getUserCount);
-    this.router.get('/beverages', requireAdmin, this.getBeverageCount);
-    this.router.get('/top/beverages', requireAdmin, this.getTopBeverages);
-    this.router.get('/top/savers', requireAdmin, this.getTopSavers);
-    this.router.get('/top/debtors', requireAdmin, this.getTopDebtors);
+    this.router.get('/orders', requireAdmin, asyncHandler(this.getOrderCount));
+    this.router.get('/users', requireAdmin, asyncHandler(this.getUserCount));
+    this.router.get('/beverages', requireAdmin, asyncHandler(this.getBeverageCount));
+    this.router.get('/top/beverages', requireAdmin, asyncHandler(this.getTopBeverages));
+    this.router.get('/top/savers', requireAdmin, asyncHandler(this.getTopSavers));
+    this.router.get('/top/debtors', requireAdmin, asyncHandler(this.getTopDebtors));
   }
 
-  private getOrderCount = (req: Request, res: Response) => {
-    const orderCount = this.statsService.getOrderCount();
+  private getOrderCount = async (req: Request, res: Response) => {
+    const orderCount = await this.statsService.getOrderCount();
     res.status(200).json(orderCount);
   };
 
-  private getUserCount = (req: Request, res: Response) => {
-    const userCount = this.statsService.getUserCount();
+  private getUserCount = async (req: Request, res: Response) => {
+    const userCount = await this.statsService.getUserCount();
     res.status(200).json(userCount);
   };
 
-  private getBeverageCount = (req: Request, res: Response) => {
-    const beverageCount = this.statsService.getBeverageCount();
+  private getBeverageCount = async (req: Request, res: Response) => {
+    const beverageCount = await this.statsService.getBeverageCount();
     res.status(200).json(beverageCount);
   };
 
-  private getTopBeverages = (req: Request, res: Response) => {
-    const topBeverages = this.statsService.getTopBeverages();
+  private getTopBeverages = async (req: Request, res: Response) => {
+    const topBeverages = await this.statsService.getTopBeverages();
     res.status(200).json(topBeverages);
   };
 
-  private getTopSavers = (req: Request, res: Response) => {
-    const topSavers = this.statsService.getTopSavers();
+  private getTopSavers = async (req: Request, res: Response) => {
+    const topSavers = await this.statsService.getTopSavers();
     res.status(200).json(topSavers);
   };
 
-  private getTopDebtors = (req: Request, res: Response) => {
-    const topDebtors = this.statsService.getTopDebtors();
+  private getTopDebtors = async (req: Request, res: Response) => {
+    const topDebtors = await this.statsService.getTopDebtors();
     res.status(200).json(topDebtors);
   };
 }

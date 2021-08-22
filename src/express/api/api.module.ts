@@ -1,6 +1,6 @@
 import {IController} from '../interfaces/controller.interface';
 import {NextFunction, Request, Response, Router} from 'express';
-import {LegacyDbService} from '../services/api/db.service';
+import {DbService} from '../services/api/db.service';
 import {AuthMiddleware} from './middlewares/auth.middleware';
 import {AuthService} from '../services/api/auth.service';
 import {AuthController} from './controllers/auth.controller';
@@ -15,6 +15,7 @@ import {exec} from 'child_process';
 import {StatsController} from './controllers/stats.controller';
 import {StatsService} from './services/stats.service';
 import {SettingsController} from './controllers/settings.controller';
+import {dbPath} from '../main';
 
 export class ApiModule implements IController {
   path = '/api';
@@ -23,7 +24,7 @@ export class ApiModule implements IController {
   private controllers: IController[] = [];
 
   constructor(
-    private dbService: LegacyDbService,
+    private dbService: DbService,
     private auth: AuthService,
   ) {
     this.registerMiddlewares();
@@ -67,8 +68,7 @@ export class ApiModule implements IController {
     this.router.get('/backup', requireAdmin, (req: Request, res: Response, next: NextFunction) => {
       let result = '';
 
-      // TODO: fix filename
-      const dump = exec('sqlite3 data/history.db ".dump"', {maxBuffer: 1024 * 1024 * 5}, error => {
+      const dump = exec(`sqlite3 ${dbPath} ".dump"`, {maxBuffer: 1024 * 1024 * 5}, error => {
         if (!error) {
           return;
         }

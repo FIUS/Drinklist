@@ -1,40 +1,46 @@
-import {LegacyDbService} from '../../services/api/db.service';
+import {DbService} from '../../services/api/db.service';
 import {Beverage} from '../../models/api/beverage';
 import {User} from '../../models/api/user';
 
 export class StatsService {
   constructor(
-    private dbService: LegacyDbService,
+    private dbService: DbService,
   ) {
   }
 
-  getOrderCount(): number {
-    const sql = this.dbService.prepare('SELECT COUNT(*) FROM History;');
-    return sql.get()['COUNT(*)'];
+  async getOrderCount(): Promise<number> {
+    const sql = await this.dbService.prepare('SELECT COUNT(*) AS count FROM transactions;');
+    return sql.get<{ count: number }>()
+      .then(result => result ? result.count : -1)
+      .finally(() => sql.reset());
   }
 
-  getUserCount(): number {
-    const sql = this.dbService.prepare('SELECT COUNT(*) FROM Users;');
-    return sql.get()['COUNT(*)'];
+  async getUserCount(): Promise<number> {
+    const sql = await this.dbService.prepare('SELECT COUNT(*) AS count FROM Users;');
+    return sql.get<{ count: number }>()
+      .then(result => result ? result.count : -1)
+      .finally(() => sql.reset());
   }
 
-  getBeverageCount(): number {
-    const sql = this.dbService.prepare('SELECT COUNT(*) FROM Beverages;');
-    return sql.get()['COUNT(*)'];
+  async getBeverageCount(): Promise<number> {
+    const sql = await this.dbService.prepare('SELECT COUNT(*) AS count FROM Beverages;');
+    return sql.get<{ count: number }>()
+      .then(result => result ? result.count : -1)
+      .finally(() => sql.reset());
   }
 
-  getTopBeverages(): Beverage[] {
-    const sql = this.dbService.prepare('SELECT b.name, b.stock, b.price FROM (SELECT beverage, COUNT(beverage) AS count FROM History WHERE beverage != \'\' GROUP BY beverage ORDER BY count DESC) t INNER JOIN Beverages b ON t.beverage = b.name LIMIT 5;');
+  async getTopBeverages(): Promise<(Beverage & { count: number })[]> {
+    const sql = await this.dbService.prepare('SELECT * FROM topBeverages');
     return sql.all();
   }
 
-  getTopSavers(): User[] {
-    const sql = this.dbService.prepare('SELECT name, balance, hidden FROM Users ORDER BY balance DESC LIMIT 5;');
+  async getTopSavers(): Promise<User[]> {
+    const sql = await this.dbService.prepare('SELECT * FROM users ORDER BY balance DESC LIMIT 5;');
     return sql.all();
   }
 
-  getTopDebtors(): User[] {
-    const sql = this.dbService.prepare('SELECT name, balance, hidden FROM Users ORDER BY balance ASC LIMIT 5;');
+  async getTopDebtors(): Promise<User[]> {
+    const sql = await this.dbService.prepare('SELECT * FROM users ORDER BY balance ASC LIMIT 5;');
     return sql.all();
   }
 }
