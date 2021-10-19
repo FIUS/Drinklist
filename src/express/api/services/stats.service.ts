@@ -9,7 +9,7 @@ export class StatsService {
   }
 
   async getOrderCount(): Promise<number> {
-    const sql = await this.dbService.prepare('SELECT COUNT(*) AS count FROM transactions;');
+    const sql = await this.dbService.prepare('SELECT COUNT(*) AS count FROM cash_transactions;');
     return sql.get<{ count: number }>()
       .then(result => result ? result.count : -1)
       .finally(() => sql.reset());

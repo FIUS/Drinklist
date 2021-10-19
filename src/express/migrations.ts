@@ -59,6 +59,7 @@ async function migrateConfig(meta: MigrationMeta, backupDir?: string): Promise<v
 }
 
 async function upgradeDb(meta: MigrationMeta, backupDir: string): Promise<void> {
+  // TODO: fill database with example data on initial creation
   /**
    * Since database migrations are handled by the sqlite library,
    * only meta changes (like filenames or transitions to fundamentally different database structures) are handled here.
@@ -110,9 +111,9 @@ async function upgradeDb(meta: MigrationMeta, backupDir: string): Promise<void> 
     const insertBeverage = await dbService.prepare('INSERT INTO beverages (name, price, stock) VALUES ($name, $price, $stock)');
     const getUserId = await dbService.prepare('SELECT id FROM users WHERE name = ?');
     const getBeverageId = await dbService.prepare('SELECT id FROM beverages WHERE name = ?');
-    const insertTransaction = await dbService.prepare(`INSERT INTO transactions (userFrom, amount, userTo, reason, timestamp)
+    const insertTransaction = await dbService.prepare(`INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp)
                                                        VALUES ($userFrom, $amount, 0, $reason, $timestamp)`);
-    const insertBeverageTransaction = await dbService.prepare(`INSERT INTO transactions (userFrom, amount, userTo, reason, timestamp, beverage)
+    const insertBeverageTransaction = await dbService.prepare(`INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp, beverage)
                                                                VALUES ($userFrom, $amount, 0, $reason, $timestamp, $beverage)`);
 
     // Insert Users
