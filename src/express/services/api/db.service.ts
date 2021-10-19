@@ -1,10 +1,38 @@
 import {IService} from '../service.interface';
 import {Database as OldDatabase, Statement as OldStatement} from 'better-sqlite3';
-import {Database as DatabaseDriver} from 'sqlite3';
+import {Database as DatabaseDriver, Statement as DBStatement} from 'sqlite3';
 import {Database, ISqlite, open, Statement} from 'sqlite';
 import * as path from 'path';
 
-const DatabaseConstructor = require('better-sqlite3');
+function snakeToCamel<T extends object>(o: T): T {
+  const keys = Object.keys(o) as (keyof T)[];
+  const r = {} as T;
+  for (const key of keys) {
+    if (!o.hasOwnProperty(key)) {
+      continue;
+    }
+    const k = (key as string).replace(/(?!^)_./g, p1 => p1.replace('_', '').toUpperCase()) as keyof T;
+    r[k] = o[key];
+  }
+  return r;
+}
+
+class CCStatement<S extends DBStatement = DBStatement> extends Statement {
+  constructor(stmt: S) {
+    super(stmt);
+  }
+
+  async get<T = any>(...params: any[]): Promise<T | undefined> {
+    const result = await super.get(...params);
+    return snakeToCamel(result);
+  }
+
+  async all<T = any[]>(...params: any[]): Promise<T> {
+    const result = await super.all<T>(...params);
+    // @ts-ignore
+    return result.map(value => snakeToCamel(value));
+  }
+}
 
 export class DbService implements IService {
   private readonly db: Database;
@@ -35,7 +63,8 @@ export class DbService implements IService {
     if (this.statements.has(sql)) {
       return this.statements.get(sql) as Statement;
     }
-    const statement = await this.db.prepare(sql);
+    let statement = await this.db.prepare(sql);
+    statement = new CCStatement(statement.getStatementInstance());
     this.statements.set(sql, statement);
     return statement;
   }
