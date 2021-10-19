@@ -14,6 +14,8 @@ import {StatsController} from './controllers/stats.controller';
 import {StatsService} from './services/stats.service';
 import {SettingsController} from './controllers/settings.controller';
 import {dbPath} from '../main';
+import {TransactionsService} from './services/transactions.service';
+import {TransactionsController} from './controllers/transactions.controller';
 
 export class ApiModule implements IController {
   path = '/api';
@@ -37,6 +39,7 @@ export class ApiModule implements IController {
   private initControllers(): void {
     // Create Module Services
     const userService = new UserService(this.dbService);
+    const txService = new TransactionsService(this.dbService);
     const beveragesService = new BeveragesService(this.dbService);
     const statsService = new StatsService(this.dbService);
 
@@ -44,6 +47,7 @@ export class ApiModule implements IController {
       // API Controllers
       new AuthController(this.auth),
       new UserController(userService),
+      new TransactionsController(txService),
       new BeveragesController(beveragesService),
       new StatsController(statsService),
       new SettingsController(),
