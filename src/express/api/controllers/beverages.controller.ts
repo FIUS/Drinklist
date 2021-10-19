@@ -1,9 +1,8 @@
 import {BeveragesService} from '../services/beverages.service';
 import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
-import {requireAdmin, requireUser} from '../api.util';
+import {asyncHandler, requireAdmin, requireUser} from '../api.util';
 import {Beverage} from '../../models/api/beverage';
-import * as asyncHandler from 'express-async-handler';
 
 export class BeveragesController implements IController {
   path = '/beverages';

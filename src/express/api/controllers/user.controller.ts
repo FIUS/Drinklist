@@ -1,8 +1,7 @@
 import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
 import {UserService} from '../services/user.service';
-import {requireAdmin, requireUser} from '../api.util';
-import * as asyncHandler from 'express-async-handler';
+import {asyncHandler, requireAdmin, requireUser} from '../api.util';
 
 export class UserController implements IController {
   path = '/users';

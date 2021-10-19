@@ -1,8 +1,7 @@
 import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
-import {requireAdmin} from '../api.util';
+import {asyncHandler, requireAdmin} from '../api.util';
 import {StatsService} from '../services/stats.service';
-import * as asyncHandler from 'express-async-handler';
 
 export class StatsController implements IController {
   path = '/stats';

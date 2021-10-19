@@ -1,10 +1,9 @@
 import {IController} from '../../interfaces/controller.interface';
 import {Request, Response, Router} from 'express';
-import {requireAdmin} from '../api.util';
+import {asyncHandler, requireAdmin} from '../api.util';
 import {promises as fs} from 'fs';
 import {UserSettings} from '../../models/user-settings';
 import {userSettingsPath} from '../../main';
-import * as asyncHandler from 'express-async-handler';
 
 export class SettingsController implements IController {
   path = '/settings';
