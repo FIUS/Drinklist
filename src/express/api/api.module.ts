@@ -6,8 +6,6 @@ import {AuthService} from '../services/api/auth.service';
 import {AuthController} from './controllers/auth.controller';
 import {UserController} from './controllers/user.controller';
 import {UserService} from './services/user.service';
-import {OrdersController} from './controllers/orders.controller';
-import {OrdersService} from './services/orders.service';
 import {BeveragesController} from './controllers/beverages.controller';
 import {BeveragesService} from './services/beverages.service';
 import {requireAdmin} from './api.util';
@@ -39,7 +37,6 @@ export class ApiModule implements IController {
   private initControllers(): void {
     // Create Module Services
     const userService = new UserService(this.dbService);
-    const ordersService = new OrdersService(this.dbService);
     const beveragesService = new BeveragesService(this.dbService);
     const statsService = new StatsService(this.dbService);
 
@@ -47,7 +44,6 @@ export class ApiModule implements IController {
       // API Controllers
       new AuthController(this.auth),
       new UserController(userService),
-      new OrdersController(ordersService),
       new BeveragesController(beveragesService),
       new StatsController(statsService),
       new SettingsController(),
