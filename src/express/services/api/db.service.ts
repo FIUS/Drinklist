@@ -4,6 +4,9 @@ import {Database, ISqlite, open, Statement} from 'sqlite';
 import * as path from 'path';
 
 function snakeToCamel<T extends object>(o: T): T {
+  if (o === undefined) {
+    return o;
+  }
   const keys = Object.keys(o) as (keyof T)[];
   const r = {} as T;
   for (const key of keys) {
