@@ -91,6 +91,7 @@ async function upgradeDb(meta: MigrationMeta, backupDir: string): Promise<void> 
     };
 
     // Read data from old database
+    console.log('Reading data from old database...');
     const users = await historyDb.all<userV1[]>('SELECT * FROM Users');
     const beverages = await historyDb.all<beverageV1[]>('SELECT * FROM Beverages');
     const transactions = await historyDb.all<transactionV1[]>(`SELECT user,
@@ -105,28 +106,40 @@ async function upgradeDb(meta: MigrationMeta, backupDir: string): Promise<void> 
     await historyDb.close();
 
     // Create new db and open
+    console.log('Creating new db...');
     const dbService = await DbService.create(dbPath);
+
+    // Temporarily disable triggers for migration
+    console.log('Disabling Triggers...');
+    await dbService.run('UPDATE flags SET value = 1 WHERE key = \'noTriggers\'');
 
     const insertUser = await dbService.prepare('INSERT INTO users (name, balance, hidden) VALUES ($name, $balance, $hidden)');
     const insertBeverage = await dbService.prepare('INSERT INTO beverages (name, price, stock) VALUES ($name, $price, $stock)');
     const getUserId = await dbService.prepare('SELECT id FROM users WHERE name = ?');
     const getBeverageId = await dbService.prepare('SELECT id FROM beverages WHERE name = ?');
-    const insertTransaction = await dbService.prepare(`INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp)
-                                                       VALUES ($userFrom, $amount, 0, $reason, $timestamp)`);
-    const insertBeverageTransaction = await dbService.prepare(`INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp, beverage)
-                                                               VALUES ($userFrom, $amount, 0, $reason, $timestamp, $beverage)`);
+    const insertBeverageTransaction = await dbService.prepare(`INSERT INTO beverage_transactions (user, units, beverage, money, timestamp)
+                                                               VALUES ($user, 1, $beverage, $money, $timestamp)`);
+    const updateBeverageTransaction = await dbService.prepare('UPDATE beverage_transactions SET cash_txn = $cashTxn WHERE id = $bevTxn');
+    const insertCashTransaction = await dbService.prepare(`INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp, beverage_txn)
+                                                           VALUES ($userFrom, $amount, 0, 'BTXN #' || $bevTxn, $timestamp,
+                                                                   $bevTxn)`);
+    const insertPlainCashTransaction = await dbService.prepare(`INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp)
+                                                                VALUES ($userFrom, $amount, 0, $reason, $timestamp)`);
 
     // Insert Users
     for (const user of users) {
+      console.log(`Importing user ${user.name}...`);
       await insertUser.run({$name: user.name, $balance: user.balance, $hidden: user.hidden});
     }
 
     // Insert Beverages
     for (const beverage of beverages) {
+      console.log(`Importing beverage ${beverage.name}...`);
       await insertBeverage.run({$name: beverage.name, $price: beverage.price, $stock: beverage.stock});
     }
 
     // Insert Transactions
+    console.log('Importing transactions. This could take a while depending on the size of your database...');
     for (const transaction of transactions) {
       const userFrom = (await getUserId.get<{ id: number }>(transaction.user))?.id;
       await getUserId.reset();
@@ -138,7 +151,7 @@ async function upgradeDb(meta: MigrationMeta, backupDir: string): Promise<void> 
       await getBeverageId.reset();
       if (beverage === undefined) {
         // Plain money credit to users
-        await insertTransaction.run({
+        await insertPlainCashTransaction.run({
           $userFrom: userFrom,
           $amount: transaction.amount,
           $reason: transaction.reason,
@@ -146,20 +159,37 @@ async function upgradeDb(meta: MigrationMeta, backupDir: string): Promise<void> 
         });
       } else {
         // Beverage purchase
-        await insertBeverageTransaction.run({
+        const bevIns = await insertBeverageTransaction.run({
+          $user: userFrom,
+          $beverage: beverage,
+          $money: transaction.amount,
+          $timestamp: (transaction.timestamp as Date).getTime()
+        });
+        const bevTxn = bevIns.lastID;
+        const cashIns = await insertCashTransaction.run({
           $userFrom: userFrom,
           $amount: transaction.amount,
-          $reason: transaction.reason,
           $timestamp: (transaction.timestamp as Date).getTime(),
-          $beverage: beverage
+          $bevTxn: bevTxn
+        });
+        const cashTxn = cashIns.lastID;
+        await updateBeverageTransaction.run({
+          $cashTxn: cashTxn,
+          $bevTxn: bevTxn
         });
       }
     }
 
+    // Re-enable triggers
+    console.log('Enabling Triggers...');
+    await dbService.run('UPDATE flags SET value = 0 WHERE key = \'noTriggers\'');
+
     // Close database
+    console.log('Saving database...');
     await dbService.shutdown();
 
     // Move old database file to backup folder
+    console.log('Moving old database to backup...');
     await fs.rename(path.join(cwd, 'data', 'history.db'), path.join(backupDir, 'history.db'));
   }
 }
