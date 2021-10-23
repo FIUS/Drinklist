@@ -25,14 +25,33 @@ class CCStatement<S extends DBStatement = DBStatement> extends Statement {
   }
 
   async get<T = any>(...params: any[]): Promise<T | undefined> {
-    const result = await super.get(...params);
-    return snakeToCamel(result);
+    try {
+      const result = await super.get(...params);
+      return snakeToCamel(result);
+    } catch (e) {
+      console.error(`Database error while get()ting from DB.\nError information:\n${e}\n${params}`);
+      throw e;
+    }
   }
 
   async all<T = any[]>(...params: any[]): Promise<T> {
-    const result = await super.all<T>(...params);
-    // @ts-ignore
-    return result.map(value => snakeToCamel(value));
+    try {
+      const result = await super.all<T>(...params);
+      // @ts-ignore
+      return result.map(value => snakeToCamel(value));
+    } catch (e) {
+      console.error(`Database error while all()ing from DB.\nError information:\n${e}\n${params}`);
+      throw e;
+    }
+  }
+
+  async run(...params: any[]): Promise<ISqlite.RunResult> {
+    try {
+      return super.run(...params);
+    } catch (e) {
+      console.error(`Database error while run()ning from DB.\nError information:\n${e}\n${params}`);
+      throw e;
+    }
   }
 }
 
