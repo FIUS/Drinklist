@@ -12,20 +12,20 @@ export class TransactionsController extends BaseController {
 
   protected initRoutes(): void {
     // Cash TXNs
-    this.router.get('/cash', requireUser, asyncHandler(this.getTransactions));
-    this.router.post('/cash', requireUser, asyncHandler(this.newCashTransaction));
-    this.router.get('/cash/:userid', requireUser, asyncHandler(this.getUserTransactions));
-    this.router.delete('/cash/:id', requireUser, asyncHandler(this.revertCashTransaction));
+    this.router.get('/cash', requireUser, asyncHandler(this.getTransactions.bind(this)));
+    this.router.post('/cash', requireUser, asyncHandler(this.newCashTransaction.bind(this)));
+    this.router.get('/cash/:userid', requireUser, asyncHandler(this.getUserTransactions.bind(this)));
+    this.router.delete('/cash/:id', requireUser, asyncHandler(this.revertCashTransaction.bind(this)));
     // Beverage TXNs
-    this.router.get('/beverages', requireUser, asyncHandler(this.getTransactions));
-    this.router.post('/beverages/order', requireUser, asyncHandler(this.orderBeverage));
-    this.router.get('/beverages/:userid', requireUser, asyncHandler(this.getUserTransactions));
-    this.router.delete('/beverages/:id', requireUser, asyncHandler(this.undoBeverageTransaction));
+    this.router.get('/beverages', requireUser, asyncHandler(this.getTransactions.bind(this)));
+    this.router.post('/beverages/order', requireUser, asyncHandler(this.orderBeverage.bind(this)));
+    this.router.get('/beverages/:userid', requireUser, asyncHandler(this.getUserTransactions.bind(this)));
+    this.router.delete('/beverages/:id', requireUser, asyncHandler(this.undoBeverageTransaction.bind(this)));
   }
 
   // Generic methods
 
-  private readonly getTransactions = async (req: Request, res: Response) => {
+  private async getTransactions(req: Request, res: Response): Promise<void> {
     const txnType = req.path.substr(req.path.lastIndexOf('/') + 1);
     if (txnType !== 'cash' && txnType !== 'beverages') {
       throw new Error(`Invalid path ${req.path}(${txnType}) for getTranscations()`);
@@ -42,9 +42,9 @@ export class TransactionsController extends BaseController {
 
     const transactions = await this.txnService.getTransactions(offset, limit, txnType);
     res.status(200).json(transactions);
-  };
+  }
 
-  private readonly getUserTransactions = async (req: Request, res: Response) => {
+  private async getUserTransactions(req: Request, res: Response): Promise<void> {
     const txnType = req.path.substr(req.path.lastIndexOf('/') + 1);
     if (txnType !== 'cash' && txnType !== 'beverages') {
       throw new Error(`Invalid path ${req.path}(${txnType}) for getTranscations()`);
@@ -57,16 +57,16 @@ export class TransactionsController extends BaseController {
 
     const transactions = await this.txnService.getUserTransactions(user, txnType);
     res.status(200).json(transactions);
-  };
+  }
 
   // Cash TXNs
 
-  private readonly newCashTransaction = async (req: Request, res: Response) => {
+  private async newCashTransaction(req: Request, res: Response): Promise<void> {
     // TODO: this feature is planned, but not yet implemented
     res.status(501).end(); // not implemented
-  };
+  }
 
-  private readonly revertCashTransaction = async (req: Request, res: Response) => {
+  private async revertCashTransaction(req: Request, res: Response): Promise<void> {
     const id = +req.params.id;
 
     if (isNaN(id)) {
@@ -85,11 +85,11 @@ export class TransactionsController extends BaseController {
     } else {
       await this.txnService.revertCashTransaction(id);
     }
-  };
+  }
 
   // Beverage TXNs
 
-  private readonly orderBeverage = async (req: Request, res: Response) => {
+  private async orderBeverage(req: Request, res: Response): Promise<void> {
     const beverage = +req.body.beverage;
     const user = +req.body.user;
 
@@ -99,9 +99,9 @@ export class TransactionsController extends BaseController {
 
     await this.txnService.orderBeverage(beverage, user);
     res.status(204).end();
-  };
+  }
 
-  private readonly undoBeverageTransaction = async (req: Request, res: Response) => {
+  private async undoBeverageTransaction(req: Request, res: Response): Promise<void> {
     const id = +req.params.id;
 
     if (isNaN(id)) {
@@ -112,5 +112,5 @@ export class TransactionsController extends BaseController {
     if (!isRecent) {
       await this.txnService.undoBeverageTransaction(id);
     }
-  };
+  }
 }
