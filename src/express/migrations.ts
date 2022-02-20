@@ -235,6 +235,13 @@ export async function migrate(): Promise<void> {
   let dbMeta: MigrationMeta | undefined;
 
   try {
+    // Make sure data dir does exist
+    await fs.access(path.join(cwd, 'data'));
+  } catch (e) {
+    await fs.mkdir(path.join(cwd, 'data'));
+  }
+
+  try {
     // Check for config file and extract config version
     const checkConfig: AppConfig = await fs.readFile(configPath, 'utf-8').then(JSON.parse);
     configMeta = checkConfig.version === defaultConfig.version ? undefined : {from: checkConfig.version, to: defaultConfig.version};
