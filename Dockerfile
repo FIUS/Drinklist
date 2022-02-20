@@ -12,6 +12,7 @@ RUN --mount=source=package.json,target=package.json --mount=source=package-lock.
     npm ci && \
     apk del .gyp
 
+COPY sql sql/
 COPY dist dist/
 
 EXPOSE 8080
