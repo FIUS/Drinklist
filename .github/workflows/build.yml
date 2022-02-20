@@ -83,15 +83,29 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set docker tag
-        if: ${{ github.ref_type == 'tag' }}
+      - name: Set docker tag (tags)
+        if: github.ref_type == 'tag'
         run: |
-          echo "docker_tag=$(echo ${{ github.ref_name }} | sed -e 's/v//')" >> $GITHUB_ENV
+          VERSION=$(echo ${{ github.ref_name }} | sed -e 's/v//')
+          TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}
+          TAGS=$TAGS,ghcr.io/${{ github.repository }}:$VERSION
+          TAGS=$TAGS,ghcr.io/${{ github.repository }}:$(echo $VERSION | sed -Ee 's/([0-9]+\.[0-9]+)\.[0-9]+$/\1/')
+          echo "docker_tags=$TAGS" >> $GITHUB_ENV
 
-      - name: Set docker tag
-        if: ${{ github.ref_type == 'branch' }}
+      - name: Set docker tag (master)
+        if: github.ref_type == 'branch' && github.ref_name == 'master'
         run: |
-          echo "docker_tag=latest" >> $GITHUB_ENV
+          TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}
+          TAGS=$TAGS,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          TAGS=$TAGS,ghcr.io/${{ github.repository }}:latest
+          echo "docker_tags=$TAGS" >> $GITHUB_ENV
+
+      - name: Set docker tag (other branches)
+        if: github.ref_type == 'branch' && github.ref_name != 'master'
+        run: |
+          TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}
+          TAGS=$TAGS,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          echo "docker_tags=$TAGS" >> $GITHUB_ENV
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v2
@@ -101,10 +115,8 @@ jobs:
           push: true
           platforms: |
             linux/amd64
-            linux/arm64/v8
+            linux/arm64
             linux/arm/v7
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: |
-            ghcr.io/kienhoefr/drinklist:${{ github.sha }}
-            ghcr.io/kienhoefr/drinklist:${{ env.docker_tag }}
+          tags: ${{ env.docker_tags }}
