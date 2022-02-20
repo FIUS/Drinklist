@@ -83,28 +83,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Save lowercase repository name in ENV
+        run:
+          echo "repo_name=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
       - name: Set docker tag (tags)
         if: github.ref_type == 'tag'
         run: |
           VERSION=$(echo ${{ github.ref_name }} | sed -e 's/v//')
-          TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}
-          TAGS=$TAGS,ghcr.io/${{ github.repository }}:$VERSION
-          TAGS=$TAGS,ghcr.io/${{ github.repository }}:$(echo $VERSION | sed -Ee 's/([0-9]+\.[0-9]+)\.[0-9]+$/\1/')
+          TAGS=ghcr.io/${{ env.repo_name }}:${{ github.sha }}
+          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:$VERSION
+          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:$(echo $VERSION | sed -Ee 's/([0-9]+\.[0-9]+)\.[0-9]+$/\1/')
           echo "docker_tags=$TAGS" >> $GITHUB_ENV
 
       - name: Set docker tag (master)
         if: github.ref_type == 'branch' && github.ref_name == 'master'
         run: |
-          TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}
-          TAGS=$TAGS,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-          TAGS=$TAGS,ghcr.io/${{ github.repository }}:latest
+          TAGS=ghcr.io/${{ env.repo_name }}:${{ github.sha }}
+          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:${{ github.ref_name }}
+          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:latest
           echo "docker_tags=$TAGS" >> $GITHUB_ENV
 
       - name: Set docker tag (other branches)
         if: github.ref_type == 'branch' && github.ref_name != 'master'
         run: |
-          TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}
-          TAGS=$TAGS,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          TAGS=ghcr.io/${{ env.repo_name }}:${{ github.sha }}
+          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:${{ github.ref_name }}
           echo "docker_tags=$TAGS" >> $GITHUB_ENV
 
       - name: Build and push Docker images
