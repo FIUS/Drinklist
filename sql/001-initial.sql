@@ -45,7 +45,7 @@ CREATE TABLE beverage_transactions
   CONSTRAINT beverage_txn_pk PRIMARY KEY (id),
   CONSTRAINT beverage_txn_fk_user FOREIGN KEY (user) REFERENCES users,
   CONSTRAINT beverage_txn_fk_beverage FOREIGN KEY (beverage) REFERENCES beverages,
-  CONSTRAINT beverage_txn_fk_cash_txn FOREIGN KEY (cash_txn) REFERENCES cash_transactions
+  CONSTRAINT beverage_txn_fk_cash_txn FOREIGN KEY (cash_txn) REFERENCES cash_transactions ON DELETE CASCADE
 );
 
 CREATE VIEW topBeverages AS
@@ -102,7 +102,7 @@ CREATE TABLE cash_transactions
   CONSTRAINT cash_txn_pk PRIMARY KEY (id),
   CONSTRAINT cash_txn_fk_userFrom FOREIGN KEY (user_from) REFERENCES users,
   CONSTRAINT cash_txn_fk_userTo FOREIGN KEY (user_to) REFERENCES users,
-  CONSTRAINT cash_txn_fk_beverage_txn FOREIGN KEY (beverage_txn) REFERENCES beverage_transactions,
+  CONSTRAINT cash_txn_fk_beverage_txn FOREIGN KEY (beverage_txn) REFERENCES beverage_transactions ON DELETE CASCADE,
   CONSTRAINT cash_txn_ck_reverted CHECK ( reverted IN (0, 1) )
 );
 
