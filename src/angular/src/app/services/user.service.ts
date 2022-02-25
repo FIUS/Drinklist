@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {AuthService} from './auth.service';
 import {User} from '../models/user';
 import {Observable} from 'rxjs';
@@ -25,15 +25,13 @@ export class UserService {
     this.util = new ServiceUtil(auth);
   }
 
-  /**
-   * @return Observable with ApiResponse of either User[] (if token is an admin token) or string[] (if token is an user token)
-   */
-  getUsers(): Observable<ApiResponse<User[] | string[]>> {
-    const token = this.auth.getUserToken() || '';
-    const headers = new HttpHeaders({'X-Auth-Token': token});
-    return this.http.get<User[] | string[]>(`${this.api}/users`, {observe: 'response', headers}).pipe(
-      toApiResponse<User[] | string[]>(),
-      catchError(handleError<User[] | string[]>()),
+  getUsers(): Observable<ApiResponse<User[]>> {
+    return this.http.get<User[]>(`${this.api}/users`, {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('user')
+    }).pipe(
+      toApiResponse<User[]>(),
+      catchError(handleError<User[]>()),
       handleForbiddenUser(this.auth),
     );
   }
@@ -47,8 +45,8 @@ export class UserService {
       );
   }
 
-  getUser(username: string): Observable<ApiResponse<User>> {
-    return this.http.get<User>(`${this.api}/users/${username}`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
+  getUser(id: number): Observable<ApiResponse<User>> {
+    return this.http.get<User>(`${this.api}/users/${id}`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
       .pipe(
         toApiResponse<User>(),
         catchError(handleError<User>()),

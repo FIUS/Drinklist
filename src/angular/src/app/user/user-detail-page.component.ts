@@ -7,9 +7,10 @@ import {Beverage} from '../models/beverage';
 import {LocaleService} from '../services/locale.service';
 import {Util} from '../util';
 import {OrderService} from '../services/order.service';
-import {Order} from '../models/order';
 import {faTrash} from '@fortawesome/free-solid-svg-icons/faTrash';
 import {AppConfig} from '../app.config';
+import {TransactionsService} from '../services/transactions.service';
+import {BeverageTransaction} from '../models/beverage-transaction';
 
 @Component({
   selector: 'app-user-detail-page',
@@ -28,7 +29,7 @@ export class UserDetailPageComponent implements OnInit {
 
   user: User | null = null;
   beverages: Beverage[] = [];
-  orders: Order[] = [];
+  transactions: BeverageTransaction[] = [];
 
   get showStock(): boolean {
     return AppConfig.config.stock;
@@ -46,11 +47,16 @@ export class UserDetailPageComponent implements OnInit {
     private userService: UserService,
     private beverageService: BeverageService,
     private orderService: OrderService,
+    private txnService: TransactionsService,
   ) {
   }
 
-  private loadData(username: string): void {
-    this.userService.getUser(username).subscribe(response => {
+  private loadData(userId: number): void {
+    if (userId < 0) {
+      return;
+    }
+
+    this.userService.getUser(userId).subscribe(response => {
       if (response.status === 200) {
         this.user = response.data;
       }
@@ -62,17 +68,17 @@ export class UserDetailPageComponent implements OnInit {
       }
     });
 
-    this.orderService.getUserOrders(username).subscribe(response => {
-      if (response.status === 200 && response.data) {
-        this.orders = response.data;
+    this.txnService.getBeverageTxnsByUser(userId).subscribe(res => {
+      if (res.ok && res.data) {
+        this.transactions = res.data;
       }
     });
   }
 
   ngOnInit(): void {
-    const username = this.route.snapshot.paramMap.get('username') || '';
+    const userId = +(this.route.snapshot.paramMap.get('id') || -1);
 
-    this.loadData(username);
+    this.loadData(userId);
   }
 
   getSafeUserBalance(): number {
@@ -84,25 +90,25 @@ export class UserDetailPageComponent implements OnInit {
       return;
     }
 
-    this.orderService.createOrder(this.user, beverage).subscribe(response => {
-      if (response.status === 200) {
+    this.txnService.orderBeverage(this.user, beverage).subscribe(response => {
+      if (response.ok) {
         // Give the DB some time to process the order.
         setTimeout(() => {
-          this.loadData(this.user?.name || '');
+          this.loadData(this.user?.id || -1);
         }, 100);
       }
     });
   }
 
-  deleteFreshOrder(order: Order): void {
-    if (!order.isFresh()) {
+  deleteFreshOrder(txn: BeverageTransaction): void {
+    if (!txn.isFresh()) {
       return;
     }
-    this.orderService.deleteRecentOrder(order).subscribe(response => {
-      if (response.status === 200) {
+    this.txnService.deleteBeverageTxn(txn).subscribe(res => {
+      if (res.ok) {
         // Give the DB some time to process the deletion.
         setTimeout(() => {
-          this.loadData(this.user?.name || '');
+          this.loadData(this.user?.id || -1);
         }, 100);
       }
     });

@@ -12,6 +12,8 @@ import {BeverageTransaction} from '../models/beverage-transaction';
 import {UserService} from './user.service';
 import {BeverageService} from './beverage.service';
 import {CashTransaction} from '../models/cash-transaction';
+import {User} from '../models/user';
+import {Beverage} from '../models/beverage';
 
 @Injectable({
   providedIn: 'root'
@@ -68,8 +70,8 @@ export class TransactionsService {
     );
   }
 
-  getBeverageTxns(): Observable<ApiResponse<BeverageTransaction[]>> {
-    return this.http.get<IBeverageTransaction[]>(`${this.api}/transactions/beverages`, {
+  getBeverageTxns(limit?: number): Observable<ApiResponse<BeverageTransaction[]>> {
+    return this.http.get<IBeverageTransaction[]>(`${this.api}/transactions/beverages${limit ? `?limit=${limit}` : ''}`, {
       headers: this.util.getTokenHeaders('user'),
       observe: 'response'
     }).pipe(
@@ -92,6 +94,44 @@ export class TransactionsService {
           return res as ApiResponse<BeverageTransaction[]>;
         }
       })
+    );
+  }
+
+  getBeverageTxnsByUser(userId: number): Observable<ApiResponse<BeverageTransaction[]>> {
+    return this.http.get<IBeverageTransaction[]>(`${this.api}/transactions/beverages/${userId}`, {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('user')
+    }).pipe(
+      toApiResponse<IBeverageTransaction[]>(),
+      catchError(handleError<IBeverageTransaction[]>()),
+      handleForbiddenUser(this.auth),
+      map((res: ApiResponse<IBeverageTransaction[]>) => {
+        if (res.data) {
+          for (const txn of res.data) {
+            txn.timestamp = new Date(txn.timestamp);
+          }
+        }
+        return res;
+      }),
+      map(res => {
+        if (res.ok && res.data) {
+          return new ApiResponse<BeverageTransaction[]>(res.ok, res.status,
+            res.data.map(txn => BeverageTransaction.fromInterface(txn, this.userService, this.beverageService)));
+        } else {
+          return res as ApiResponse<BeverageTransaction[]>;
+        }
+      })
+    );
+  }
+
+  orderBeverage(user: User, beverage: Beverage): Observable<ApiResponse> {
+    return this.http.post(`${this.api}/transactions/beverages/order`, {
+      user: user.id,
+      beverage: beverage.id
+    }, {observe: 'response', headers: this.util.getTokenHeaders('user')}).pipe(
+      toApiResponse(),
+      catchError(handleError()),
+      handleForbiddenUser(this.auth),
     );
   }
 

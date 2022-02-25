@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {LocaleService} from '../services/locale.service';
 import {UserService} from '../services/user.service';
-import {Order} from '../models/order';
-import {OrderService} from '../services/order.service';
 import {AppConfig} from '../app.config';
-import {AuthService} from '../services/auth.service';
 import {User} from '../models/user';
+import {TransactionsService} from '../services/transactions.service';
+import {BeverageTransaction} from '../models/beverage-transaction';
 
 @Component({
   selector: 'app-user-list-page',
@@ -18,10 +17,10 @@ import {User} from '../models/user';
         <input class="form-control" placeholder="User" [(ngModel)]="searchTerm">
       </div>
       <div class="row mx-0">
-        <ng-container *ngFor="let username of usernames">
+        <ng-container *ngFor="let user of users">
           <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
-            <button class="btn btn-lg btn-block mt-2" [class.btn-warning]="matchesSearch(username)"
-                    [routerLink]="'/user/' + username">{{username}}</button>
+            <button class="btn btn-lg btn-block mt-2" [class.btn-warning]="matchesSearch(user)"
+                    [routerLink]="'/user/' + user.id">{{user.name}}</button>
           </div>
         </ng-container>
       </div>
@@ -30,7 +29,8 @@ import {User} from '../models/user';
       <div class="h5 mt-2">
         <span class="font-weight-bold mb-0">{{locale.getMessage('rlabel')}}</span>
         <div class="ticker">
-          <div *ngFor="let item of tickerItems">{{item.user}}: {{item.reason}} @ {{item.timestamp}} </div>
+          <div *ngFor="let item of tickerItems">
+            {{(item.user$ | async)?.name}}: {{(item.beverage$ | async)?.name}} @ {{item.timestamp | date: 'd.MM.yyyy HH:mm'}} </div>
         </div>
       </div>
     </footer>
@@ -89,45 +89,38 @@ import {User} from '../models/user';
 export class UserListPageComponent implements OnInit {
 
   searchTerm = '';
-  usernames: string[] = [];
+  users: User[] = [];
 
   get tickerEnabled(): boolean {
     return AppConfig.config.recentlyPurchased;
   }
 
-  tickerItems: Order[] = [];
+  tickerItems: BeverageTransaction[] = [];
 
   constructor(
     public locale: LocaleService,
     private userService: UserService,
-    private orderService: OrderService,
-    private auth: AuthService,
+    private txnService: TransactionsService,
   ) {
   }
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe(response => {
       if (response.status === 200 && response.data) {
-        let usernames = response.data;
-        if (this.auth.isLoggedIn('admin')) { // Map User objects to usernames if admin
-          usernames = (usernames as User[]).map((user => {
-            return user.name;
-          }));
-        }
-        this.usernames = usernames as string[];
+        this.users = response.data;
       }
     });
     if (this.tickerEnabled) {
-      this.orderService.getLatestOrders().subscribe(response => {
-        if (response.status === 200 && response.data) {
-          this.tickerItems = response.data;
+      this.txnService.getBeverageTxns(3).subscribe(res => {
+        if (res.ok && res.data) {
+          this.tickerItems = res.data;
         }
       });
     }
   }
 
-  matchesSearch(name: string): boolean {
-    return name.toLowerCase().includes(this.searchTerm.toLowerCase());
+  matchesSearch(user: User): boolean {
+    return user.name.toLowerCase().includes(this.searchTerm.toLowerCase());
   }
 
 }

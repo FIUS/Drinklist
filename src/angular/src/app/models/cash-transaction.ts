@@ -42,4 +42,9 @@ export class CashTransaction implements ICashTransaction {
     return new CashTransaction(txn.amount, txn.id, txn.reason, txn.reverted, txn.timestamp, txn.userFrom, txn.userTo,
       userService, txn.beverageTxn);
   }
+
+  isFresh(): boolean {
+    const deadline = new Date (new Date(this.timestamp).getTime() + 30000);
+    return deadline > new Date();
+  }
 }

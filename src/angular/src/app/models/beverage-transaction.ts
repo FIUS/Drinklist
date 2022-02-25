@@ -44,4 +44,9 @@ export class BeverageTransaction implements IBeverageTransaction {
     return new BeverageTransaction(txn.beverage, txn.id, txn.money, txn.timestamp, txn.units, txn.user,
       userService, beverageService, txn.cashTxn);
   }
+
+  isFresh(): boolean {
+    const deadline = new Date (new Date(this.timestamp).getTime() + 30000);
+    return deadline > new Date();
+  }
 }

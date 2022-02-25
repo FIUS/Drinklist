@@ -33,13 +33,13 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let order of orders">
+        <ng-container *ngFor="let txn of transactions">
           <tr>
-            <td>{{order.reason}}</td>
-            <td>{{moneyFormat(order.amount)}}</td>
-            <td>{{order.timestamp}}</td>
-            <td (click)="deleteFreshOrder(order)">
-              <fa-icon *ngIf="order.isFresh()" [icon]="faTrash"></fa-icon>
+            <td>{{(txn.beverage$ | async)?.name}}</td>
+            <td>{{moneyFormat(txn.money)}}</td>
+            <td>{{txn.timestamp | date: 'd.MM.yyyy HH:mm'}}</td>
+            <td (click)="deleteFreshOrder(txn)">
+              <fa-icon *ngIf="txn.isFresh()" [icon]="faTrash"></fa-icon>
             </td>
           </tr>
         </ng-container>
