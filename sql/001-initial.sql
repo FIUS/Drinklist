@@ -7,7 +7,8 @@ CREATE TABLE flags
   key   TEXT    NOT NULL PRIMARY KEY,
   value INTEGER NOT NULL
 );
-INSERT INTO flags (key, value) VALUES ('noTriggers', 0);
+INSERT INTO flags (key, value)
+VALUES ('noTriggers', 0);
 
 CREATE TABLE beverages
 (
@@ -29,7 +30,7 @@ CREATE TABLE users
   CONSTRAINT users_pk PRIMARY KEY (id),
   CONSTRAINT users_ck_hidden CHECK ( hidden IN (0, 1) )
 );
-INSERT INTO users
+INSERT INTO users (id, name, balance, hidden)
 VALUES (0, 'Drinklist', 0, 1);
 
 CREATE TABLE beverage_transactions
@@ -58,7 +59,9 @@ CREATE TRIGGER beverage_txn_trg_on_insert
   AFTER INSERT
   ON beverage_transactions
   FOR EACH ROW
-  WHEN (SELECT value FROM flags WHERE key = 'noTriggers') = 0
+  WHEN (SELECT value
+        FROM flags
+        WHERE key = 'noTriggers') = 0
 BEGIN
   -- Create cash transaction
   INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp, beverage_txn)
@@ -73,7 +76,9 @@ CREATE TRIGGER beverage_txn_trg_on_delete
   AFTER DELETE
   ON beverage_transactions
   FOR EACH ROW
-  WHEN (SELECT value FROM flags WHERE key = 'noTriggers') = 0
+  WHEN (SELECT value
+        FROM flags
+        WHERE key = 'noTriggers') = 0
 BEGIN
   -- Delete cash transaction
   DELETE FROM cash_transactions WHERE id = old.cash_txn;
@@ -108,7 +113,9 @@ CREATE TRIGGER cash_txn_trg_update_balances_on_insert
   AFTER INSERT
   ON cash_transactions
   FOR EACH ROW
-  WHEN (SELECT value FROM flags WHERE key = 'noTriggers') = 0
+  WHEN (SELECT value
+        FROM flags
+        WHERE key = 'noTriggers') = 0
 BEGIN
   UPDATE users SET balance = balance - new.amount WHERE users.id = new.user_from;
   UPDATE users SET balance = balance + new.amount WHERE users.id = new.user_to;
@@ -118,7 +125,9 @@ CREATE TRIGGER cash_txn_trg_update_balances_on_delete
   AFTER DELETE
   ON cash_transactions
   FOR EACH ROW
-  WHEN (SELECT value FROM flags WHERE key = 'noTriggers') = 0
+  WHEN (SELECT value
+        FROM flags
+        WHERE key = 'noTriggers') = 0
 BEGIN
   UPDATE users SET balance = balance + old.amount WHERE users.id = old.user_from;
   UPDATE users SET balance = balance - old.amount WHERE users.id = old.user_to;
@@ -128,7 +137,9 @@ CREATE TRIGGER cash_txn_trg_create_reversion
   AFTER UPDATE OF reverted
   ON cash_transactions
   FOR EACH ROW
-  WHEN reverted = 1 AND (SELECT value FROM flags WHERE key = 'noTriggers') = 0
+  WHEN reverted = 1 AND (SELECT value
+                         FROM flags
+                         WHERE key = 'noTriggers') = 0
 BEGIN
   INSERT INTO cash_transactions (user_from, amount, user_to, reason, timestamp, beverage_txn)
   VALUES (old.user_to, -old.amount, old.user_from, 'CTXN #' || old.id, STRFTIME('%s', 'now') * 1000, old.beverage_txn);
