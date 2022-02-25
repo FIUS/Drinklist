@@ -20,8 +20,7 @@ export const configPath = path.join(cwd, 'data', 'config.json');
 export const userSettingsPath = path.join(cwd, 'data', 'user-settings.json');
 export const dbPath = path.join(cwd, 'data', 'drinklist.sqlite');
 
-// Global async scope
-(async () => {
+async function main(): Promise<void> {
   // Check and migrate config files
   await migrate();
 
@@ -57,6 +56,13 @@ export const dbPath = path.join(cwd, 'data', 'drinklist.sqlite');
 
   server.listen();
 
-  process.on('SIGINT', server.shutdown());
-  process.on('SIGTERM', server.shutdown());
-})();
+  process.on('beforeExit', async () => {
+    await server.shutdown();
+    process.exit(0);
+  });
+}
+
+main().catch(e => {
+  console.error(`Critical Error occured: ${e.message}`);
+  process.exit(1);
+});
