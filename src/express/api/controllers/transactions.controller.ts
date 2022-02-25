@@ -28,7 +28,7 @@ export class TransactionsController extends BaseController {
   private async getTransactions(req: Request, res: Response): Promise<void> {
     const txnType = req.path.substr(req.path.lastIndexOf('/') + 1);
     if (txnType !== 'cash' && txnType !== 'beverages') {
-      throw new Error(`Invalid path ${req.path}(${txnType}) for getTranscations()`);
+      throw new Error(`Invalid path ${req.path} (${txnType}) for getTranscations()`);
     }
     let offset = +(req.query.offset || 0); // used for pagination
     let limit = +(req.query.limit || 100);
@@ -45,9 +45,10 @@ export class TransactionsController extends BaseController {
   }
 
   private async getUserTransactions(req: Request, res: Response): Promise<void> {
-    const txnType = req.path.substr(req.path.lastIndexOf('/') + 1);
+    const pathSegments = req.path.split('/');
+    const txnType = pathSegments[pathSegments.length - 2];
     if (txnType !== 'cash' && txnType !== 'beverages') {
-      throw new Error(`Invalid path ${req.path}(${txnType}) for getTranscations()`);
+      throw new Error(`Invalid path ${req.path} (${txnType}) for getUserTranscations()`);
     }
     const user = +req.params.userid;
 
