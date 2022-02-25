@@ -1,6 +1,6 @@
 import {Router} from 'express';
 
 export interface IController {
-  router: Router;
-  path: string;
+  readonly router: Router;
+  readonly path: string;
 }
