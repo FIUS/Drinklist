@@ -32,6 +32,17 @@ export class BeverageService {
       );
   }
 
+  getBeverageById(id: number): Observable<ApiResponse<Beverage>> {
+    return this.http.get<Beverage>(`${this.api}/beverages/${id}`, {
+      headers: this.util.getTokenHeaders('user'),
+      observe: 'response',
+    }).pipe(
+      toApiResponse<Beverage>(),
+      catchError(handleError<Beverage>()),
+      handleForbiddenUser(this.auth),
+    );
+  }
+
   getBeveragesAdmin(): Observable<ApiResponse<Beverage[]>> {
     return this.http.get<Beverage[]>(`${this.api}/beverages`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
       .pipe(

@@ -15,10 +15,10 @@ import {AdminBeveragesTableEntryComponent} from './admin-beverages/admin-beverag
 import {AdminBeveragesActionsComponent} from './admin-beverages/admin-beverages-actions.component';
 import {AdminModalsModule} from './admin-modals/admin-modals.module';
 import {FormsModule} from '@angular/forms';
-import {AdminHistoryComponent} from './admin-history/admin-history.component';
-import {AdminHistoryTableComponent} from './admin-history/admin-history-table.component';
-import {AdminHistoryTableEntryComponent} from './admin-history/admin-history-table-entry.component';
-import {AdminHistoryActionsComponent} from './admin-history/admin-history-actions.component';
+import {AdminCashTransactionComponent} from './admin-cash-transactions/admin-cash-transaction.component';
+import {AdminCashTransactionTableComponent} from './admin-cash-transactions/admin-cash-transaction-table.component';
+import {AdminCashTransactionTableEntryComponent} from './admin-cash-transactions/admin-cash-transaction-table-entry.component';
+import {AdminCashTransactionActionsComponent} from './admin-cash-transactions/admin-cash-transaction-actions.component';
 import {AdminUsersComponent} from './admin-users/admin-users.component';
 import {AdminUsersTableComponent} from './admin-users/admin-users-table.component';
 import {AdminUsersTableEntryComponent} from './admin-users/admin-users-table-entry.component';
@@ -27,6 +27,10 @@ import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
 import {AdminTokensTableComponent} from './admin-tokens/admin-tokens-table.component';
 import {AdminTokensTableEntryComponent} from './admin-tokens/admin-tokens-table-entry.component';
 import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
+import {AdminBeverageTransactionComponent} from './admin-beverage-transactions/admin-beverage-transaction.component';
+import {AdminBeverageTransactionTableComponent} from './admin-beverage-transactions/admin-beverage-transaction-table.component';
+import {AdminBeverageTransactionActionsComponent} from './admin-beverage-transactions/admin-beverage-transaction-actions.component';
+import {AdminBeverageTransactionTableEntryComponent} from './admin-beverage-transactions/admin-beverage-transaction-table-entry.component';
 
 
 @NgModule({
@@ -41,10 +45,14 @@ import {AdminSettingsComponent} from './admin-settings/admin-settings.component'
     AdminBeveragesTableComponent,
     AdminBeveragesTableEntryComponent,
     AdminBeveragesActionsComponent,
-    AdminHistoryComponent,
-    AdminHistoryTableComponent,
-    AdminHistoryTableEntryComponent,
-    AdminHistoryActionsComponent,
+    AdminCashTransactionComponent,
+    AdminCashTransactionTableComponent,
+    AdminCashTransactionTableEntryComponent,
+    AdminCashTransactionActionsComponent,
+    AdminBeverageTransactionComponent,
+    AdminBeverageTransactionTableComponent,
+    AdminBeverageTransactionTableEntryComponent,
+    AdminBeverageTransactionActionsComponent,
     AdminUsersComponent,
     AdminUsersTableComponent,
     AdminUsersTableEntryComponent,

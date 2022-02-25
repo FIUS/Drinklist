@@ -1,37 +1,35 @@
 import {Component, Input} from '@angular/core';
-import {Order} from '../../models/order';
 import {faUndoAlt} from '@fortawesome/free-solid-svg-icons';
-import {OrderService} from '../../services/order.service';
 import {Util} from '../../util';
+import {ICashTransaction} from '../../models/i-cash-transaction';
+import {TransactionsService} from '../../services/transactions.service';
 
 @Component({
-  selector: 'app-admin-history-actions',
+  selector: 'app-admin-cash-transaction-actions',
   template: `
     <button class="btn btn-sm btn-warning" (click)="deleteConfirm.open()">
       <fa-icon [icon]="icons.undo"></fa-icon>
       Rollback
     </button>
-    <app-admin-confirmation-modal #deleteConfirm [callback]="deleteOrder">
-      Do you really want to rollback transaction <strong>{{order.id}}</strong>?<br>
+    <app-admin-confirmation-modal #deleteConfirm [callback]="deleteTransaction">
+      Do you really want to rollback transaction #<strong>{{transaction.id}}</strong>?<br>
       Doing so will:
       <ul>
-        <li *ngIf="order.beverage"><span class="font-weight-bold" [class.text-success]="order.beverage_count > 0"
-                                         [class.text-danger]="order.beverage_count < 0">
-          {{order.beverage_count > 0 ? 'In' : 'De'}}crease
-        </span> the stock of <strong>{{order.beverage}}</strong> by {{abs(order.beverage_count)}}
-        </li>
+        <li *ngIf="transaction.beverageTxn">Also revert beverage transaction #<strong>{{transaction.beverageTxn}}</strong>.</li>
+        <!-- TODO: bring this to current featureset
         <li>
           <span class="font-weight-bold" [class.text-success]="order.amount < 0" [class.text-danger]="order.amount > 0">
           {{order.amount < 0 ? 'In' : 'De'}}crease
         </span> the balance of <strong>{{order.user}}</strong> by {{moneyFormat(abs(order.amount))}}
-        </li>
+        </li> -->
+        <li>TBD</li>
       </ul>
     </app-admin-confirmation-modal>
   `,
   styles: []
 })
-export class AdminHistoryActionsComponent {
-  @Input() order!: Order;
+export class AdminCashTransactionActionsComponent {
+  @Input() transaction!: ICashTransaction;
 
   @Input() refresh!: () => void;
 
@@ -45,12 +43,12 @@ export class AdminHistoryActionsComponent {
   };
 
   constructor(
-    private orderService: OrderService,
+    private txnService: TransactionsService,
   ) {
   }
 
-  deleteOrder = () => {
-    this.orderService.deleteOrder(this.order).subscribe(response => {
+  deleteTransaction = () => {
+    this.txnService.deleteCashTxn(this.transaction).subscribe(response => {
       if (response.status === 200) {
         this.refresh();
       }

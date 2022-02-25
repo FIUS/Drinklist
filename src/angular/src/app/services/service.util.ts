@@ -5,14 +5,14 @@ import {Observable, of} from 'rxjs';
 import {AuthService} from './auth.service';
 
 export const toApiResponse = <T = null>() => map((value: HttpResponse<T>) => {
-  return new ApiResponse(value.status, value.body);
+  return new ApiResponse(value.ok, value.status, value.body);
 });
 
 export const handleError = <T = null>() => {
   return (err: HttpErrorResponse): Observable<ApiResponse<T>> => {
     console.error(err);
 
-    return of(new ApiResponse<T>(err.status, null));
+    return of(new ApiResponse<T>(false, err.status, null));
   };
 };
 

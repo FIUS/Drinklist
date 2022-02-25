@@ -56,6 +56,15 @@ export class UserService {
       );
   }
 
+  getUserById(id: number): Observable<ApiResponse<User>> {
+    return this.http.get<User>(`${this.api}/users/${id}`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
+      .pipe(
+        toApiResponse<User>(),
+        catchError(handleError<User>()),
+        handleForbiddenUser(this.auth),
+      );
+  }
+
   addUser(name: string): Observable<ApiResponse> {
     return this.http.post(`${this.api}/users/${name}`, '', {
       observe: 'response',

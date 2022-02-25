@@ -4,12 +4,13 @@ import {faBeer, faCog, faDownload, faHistory, faHome, faKey, faUsers} from '@for
 import {AdminPageModule} from './admin-page-module';
 import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.component';
 import {AdminBeveragesComponent} from './admin-beverages/admin-beverages.component';
-import {AdminHistoryComponent} from './admin-history/admin-history.component';
+import {AdminCashTransactionComponent} from './admin-cash-transactions/admin-cash-transaction.component';
 import {AdminUsersComponent} from './admin-users/admin-users.component';
 import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
 import {BackupService} from '../services/backup.service';
 import {saveAs} from 'file-saver';
 import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
+import {AdminBeverageTransactionComponent} from './admin-beverage-transactions/admin-beverage-transaction.component';
 
 @Component({
   selector: 'app-admin-page',
@@ -37,11 +38,18 @@ export class AdminPageComponent implements OnInit {
       component: AdminBeveragesComponent,
     },
     {
-      id: 'history',
-      displayName: 'History',
+      id: 'cash-transaction',
+      displayName: 'History (Cash)',
       icon: faHistory,
       spacerAfter: false,
-      component: AdminHistoryComponent,
+      component: AdminCashTransactionComponent,
+    },
+    {
+      id: 'beverage-transaction',
+      displayName: 'History (Beverages)',
+      icon: faHistory,
+      spacerAfter: false,
+      component: AdminBeverageTransactionComponent,
     },
     {
       id: 'users',
