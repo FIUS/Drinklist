@@ -1,8 +1,7 @@
-export class User {
-  constructor(
-    public name: string,
-    public balance = 0.0,
-    public hidden = 0
-  ) {
-  }
+export interface User {
+  id: number;
+  name: string;
+  balance: number;
+  hidden: number;
+  deleted: number;
 }

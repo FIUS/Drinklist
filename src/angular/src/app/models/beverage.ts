@@ -1,5 +1,6 @@
 export class Beverage {
   constructor(
+    public id: number,
     public name: string,
     public stock: number,
     public price: number
@@ -7,6 +8,6 @@ export class Beverage {
   }
 
   static newEmpty(): Beverage {
-    return new Beverage('', 0, 0);
+    return new Beverage(0, '', 0, 0);
   }
 }

@@ -10,14 +10,14 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
     <table class="table table-sm">
       <thead>
         <tr>
-          <th scope="col" class="text-right" style="width: 2.5%">#</th>
+          <th scope="col">ID</th>
           <th scope="col">Name</th>
-          <th scope="col" style="width: 10%">Balance</th>
-          <th scope="col" style="width: 10%">Visibility</th>
-          <th scope="col" style="width: 25%"></th>
+          <th scope="col">Balance</th>
+          <th scope="col">Visibility</th>
+          <th scope="col"></th>
         </tr>
         <tr>
-          <th class="text-right">{{users.filter(matchesSearch, this).length}}</th>
+          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.id"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.name"></th>
           <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.balance"></th>
           <th>
@@ -36,7 +36,7 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
         </tr>
       </thead>
       <tbody>
-        <tr app-admin-users-table-entry *ngFor="let user of users.filter(matchesSearch, this); index as i" [user]="user" [number]="i + 1"
+        <tr app-admin-users-table-entry *ngFor="let user of users.filter(matchesSearch, this)" [user]="user"
             [refresh]="refresh" [class.table-warning]="user.balance < 0 && !user.hidden" [class.table-secondary]="!!user.hidden"></tr>
       </tbody>
     </table>
@@ -49,6 +49,7 @@ export class AdminUsersTableComponent implements OnInit {
   users: User[] = [];
 
   search = {
+    id: '',
     name: '',
     balance: '',
     visibility: 'any',

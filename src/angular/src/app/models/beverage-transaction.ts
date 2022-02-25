@@ -28,14 +28,14 @@ export class BeverageTransaction implements IBeverageTransaction {
       if (res.ok && res.data) {
         this.userSubject.next(res.data);
       } else {
-        this.userSubject.next({name: '[Unkown User]', balance: 0, hidden: 0});
+        this.userSubject.next({id: -1, name: '[Unkown User]', balance: 0, hidden: 0, deleted: 0});
       }
     });
     beverageService.getBeverageById(beverage).subscribe(res => {
       if (res.ok && res.data) {
         this.beverageSubject.next(res.data);
       } else {
-        this.beverageSubject.next({name: '[Unknown Beverage]', stock: 0, price: 0});
+        this.beverageSubject.next({id: -1, name: '[Unknown Beverage]', stock: 0, price: 0});
       }
     });
   }

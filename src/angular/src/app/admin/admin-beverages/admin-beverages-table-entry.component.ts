@@ -6,19 +6,18 @@ import {Util} from '../../util';
   // tslint:disable-next-line:component-selector
   selector: '[app-admin-beverages-table-entry]',
   template: `
-    <th scope="row" class="text-right">{{number}}</th>
-    <td>{{beverage?.name}}</td>
-    <td class="text-right pr-3">{{beverage?.stock}}</td>
-    <td class="text-right pr-3">{{moneyFormat(beverage!.price)}}</td>
+    <th scope="row" class="text-right pr-3">{{beverage.id}}</th>
+    <td>{{beverage.name}}</td>
+    <td class="text-right pr-3">{{beverage.stock}}</td>
+    <td class="text-right pr-3">{{moneyFormat(beverage.price)}}</td>
     <td>
-      <app-admin-beverages-actions [beverage]="beverage!" [refresh]="refresh"></app-admin-beverages-actions>
+      <app-admin-beverages-actions [beverage]="beverage" [refresh]="refresh"></app-admin-beverages-actions>
     </td>
   `,
   styles: []
 })
 export class AdminBeveragesTableEntryComponent {
-  @Input() beverage: Beverage | undefined;
-  @Input() number = -1;
+  @Input() beverage!: Beverage;
 
   @Input() refresh!: () => void;
 

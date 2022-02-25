@@ -26,14 +26,14 @@ export class CashTransaction implements ICashTransaction {
       if (res.ok && res.data) {
         this.userFromSubject.next(res.data);
       } else {
-        this.userFromSubject.next({name: '[Unkown User]', balance: 0, hidden: 0});
+        this.userFromSubject.next({id: -1, name: '[Unkown User]', balance: 0, hidden: 0, deleted: 0});
       }
     });
     userService.getUserById(userTo).subscribe(res => {
       if (res.ok && res.data) {
         this.userToSubject.next(res.data);
       } else {
-        this.userToSubject.next({name: '[Unkown User]', balance: 0, hidden: 0});
+        this.userToSubject.next({id: -1, name: '[Unkown User]', balance: 0, hidden: 0, deleted: 0});
       }
     });
   }
