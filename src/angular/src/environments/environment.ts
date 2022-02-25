@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiRoot: 'http://localhost:8080/api',
-  host: 'http://localhost:8080',
+  apiRoot: '/api',
+  host: '',
 };
 
 /*
