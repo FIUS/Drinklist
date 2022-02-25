@@ -33,7 +33,7 @@ export class TransactionsController extends BaseController {
     let offset = +(req.query.offset || 0); // used for pagination
     let limit = +(req.query.limit || 100);
 
-    if (req.header('x-auth-header') !== 'admin') {
+    if (req.header('x-auth-state') !== 'admin') {
       // Restrict users' ability to retrieve transactions
       offset = 0;
       // TODO: read setting (once setting exists)
