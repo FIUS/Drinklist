@@ -52,7 +52,7 @@ CREATE VIEW topBeverages AS
 SELECT b.id AS id, b.name AS name, b.stock AS stock, COUNT(*) AS count, b.deleted AS deleted
 FROM beverage_transactions txn
        INNER JOIN beverages b ON txn.beverage = b.id
-WHERE txn.units < 0
+WHERE txn.units > 0
 GROUP BY b.id;
 
 CREATE TRIGGER beverage_txn_trg_on_insert
