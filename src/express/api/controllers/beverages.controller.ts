@@ -17,6 +17,7 @@ export class BeveragesController implements IController {
   private initRoutes(): void {
     this.router.get('/', requireUser, asyncHandler(this.getBeverages));
     this.router.post('/', requireAdmin, asyncHandler(this.addBeverage));
+    this.router.get('/:id', requireAdmin, asyncHandler(this.getBeverageById));
     this.router.patch('/:beverage', requireAdmin, asyncHandler(this.updateBeverage));
     this.router.delete('/:beverage', requireAdmin, asyncHandler(this.deleteBeverage));
   }
@@ -24,6 +25,21 @@ export class BeveragesController implements IController {
   private getBeverages = async (req: Request, res: Response) => {
     const beverages = await this.beveragesService.getBeverages();
     res.status(200).json(beverages);
+  };
+
+  private getBeverageById = async (req: Request, res: Response) => {
+    const id = +req.params.id;
+
+    if (isNaN(id)) {
+      return res.status(400).end();
+    }
+
+    const beverage = await this.beveragesService.getBeverageById(id);
+    if (!beverage) {
+      return res.status(404).end();
+    }
+
+    res.status(200).json(beverage);
   };
 
   private addBeverage = async (req: Request, res: Response) => {

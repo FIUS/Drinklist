@@ -14,6 +14,19 @@ export class BeveragesService {
     return result;
   }
 
+  async getBeverageById(id: number): Promise<Beverage | undefined> {
+    const sql = await this.dbService.prepare('SELECT * FROM beverages WHERE id = ?;');
+    try {
+      const result = await sql.get<Beverage>(id);
+      if (result) {
+        result.deleted = Boolean(result.deleted);
+      }
+      return result;
+    } finally {
+      await sql.reset();
+    }
+  }
+
   async addBeverage(beverage: Beverage): Promise<void> {
     const sql = await this.dbService.prepare('INSERT INTO beverages (name, price, stock) VALUES (?, ?, ?);');
 
