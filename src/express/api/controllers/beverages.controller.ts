@@ -17,7 +17,7 @@ export class BeveragesController implements IController {
   private initRoutes(): void {
     this.router.get('/', requireUser, asyncHandler(this.getBeverages));
     this.router.post('/', requireAdmin, asyncHandler(this.addBeverage));
-    this.router.get('/:id', requireAdmin, asyncHandler(this.getBeverageById));
+    this.router.get('/:id', requireUser, asyncHandler(this.getBeverageById));
     this.router.patch('/:beverage', requireAdmin, asyncHandler(this.updateBeverage));
     this.router.delete('/:beverage', requireAdmin, asyncHandler(this.deleteBeverage));
   }
