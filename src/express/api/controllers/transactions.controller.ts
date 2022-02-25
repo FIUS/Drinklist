@@ -109,8 +109,12 @@ export class TransactionsController extends BaseController {
     }
 
     const isRecent = await this.txnService.isRecent(id, 'beverages');
-    if (!isRecent) {
-      await this.txnService.undoBeverageTransaction(id);
+    if (!isRecent && req.header('x-auth-state') !== 'admin') {
+      // Only admins can undo dated beverage transactions
+      return res.status(403).end();
     }
+
+    await this.txnService.undoBeverageTransaction(id);
+    res.status(204).end();
   }
 }
