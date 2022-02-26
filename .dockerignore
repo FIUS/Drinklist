@@ -1,6 +1,5 @@
 node_modules
-npm-debug.log
 
 # Ignore already built frontend
-src/frontend-server/wwwroot
+src/
 data
