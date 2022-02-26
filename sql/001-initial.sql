@@ -27,6 +27,7 @@ CREATE TABLE users
   name    TEXT    NOT NULL,
   balance INTEGER NOT NULL DEFAULT 0,
   hidden  INTEGER NOT NULL DEFAULT 0,
+  deleted INTEGER NOT NULL DEFAULT 0,
   CONSTRAINT users_pk PRIMARY KEY (id),
   CONSTRAINT users_ck_hidden CHECK ( hidden IN (0, 1) )
 );

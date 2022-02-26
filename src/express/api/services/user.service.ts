@@ -10,15 +10,15 @@ export class UserService {
   async getUsers(includeHidden: boolean): Promise<User[]> {
     let sql;
     if (includeHidden) {
-      sql = await this.dbService.prepare('SELECT * FROM users;');
+      sql = await this.dbService.prepare('SELECT * FROM users WHERE deleted = 0;');
     } else {
-      sql = await this.dbService.prepare('SELECT * FROM users WHERE hidden = 0;');
+      sql = await this.dbService.prepare('SELECT * FROM users WHERE deleted = 0 AND hidden = 0;');
     }
     return sql.all();
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    const sql = await this.dbService.prepare('SELECT * FROM users WHERE id = ?;');
+    const sql = await this.dbService.prepare('SELECT * FROM users WHERE id = ? AND deleted = 0;');
     return sql.get<User>(id).finally(() => sql.reset());
   }
 
@@ -45,7 +45,7 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<void> {
-    const sql = await this.dbService.prepare('DELETE FROM users WHERE id = ?;');
+    const sql = await this.dbService.prepare('UPDATE users SET deleted = 1 WHERE id = ?;');
     await sql.run(id);
   }
 }
