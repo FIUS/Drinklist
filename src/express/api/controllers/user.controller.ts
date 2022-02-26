@@ -74,6 +74,9 @@ export class UserController implements IController {
   };
 
   private patchUser = async (req: Request, res: Response) => {
+    return res.status(501).end();
+    // TODO: change functionality. this is no longer needed with transactions
+    /*
     const id = +req.params.id;
     const reason = req.body.reason as string;
     const amount = +req.body.amount;
@@ -83,6 +86,7 @@ export class UserController implements IController {
     }
     await this.userService.updateBalance(id, reason, amount);
     res.status(200).end();
+    */
   };
 
   private deleteUser = async (req: Request, res: Response) => {

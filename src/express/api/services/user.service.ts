@@ -32,18 +32,6 @@ export class UserService {
     await sql.run(+hidden, id);
   }
 
-  // TODO: rework into transaction system
-  updateBalance(id: number, reason: string, amount: number): void {
-    return; // "Disable" this method for now
-    /*
-    const addHistoryEntry = this.dbService.prepare('INSERT INTO History(id, user, reason, amount) VALUES (?, ?, ?, ?);');
-    const updateBalance = this.dbService.prepare('UPDATE Users SET balance = balance + ? WHERE name = ?;');
-
-    addHistoryEntry.run(v4(), id, reason, amount);
-    updateBalance.run(amount, id);
-    */
-  }
-
   async deleteUser(id: number): Promise<void> {
     const sql = await this.dbService.prepare('UPDATE users SET deleted = 1 WHERE id = ?;');
     await sql.run(id);
