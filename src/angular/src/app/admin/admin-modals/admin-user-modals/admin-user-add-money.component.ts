@@ -3,6 +3,7 @@ import {User} from '../../../models/user';
 import {UserService} from '../../../services/user.service';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {Util} from '../../../util';
+import {TransactionsService} from '../../../services/transactions.service';
 
 @Component({
   selector: 'app-admin-user-add-money',
@@ -55,6 +56,7 @@ export class AdminUserAddMoneyComponent {
 
   constructor(
     private userService: UserService,
+    private txnService: TransactionsService,
     private modalService: NgbModal,
   ) {
   }
@@ -73,8 +75,8 @@ export class AdminUserAddMoneyComponent {
       return;
     }
     this.busy = true;
-    this.userService.updateBalance(this.user, this.moneyToAdd, this.reason).subscribe(response => {
-      if (response.status === 200) {
+    this.txnService.newCashTransaction(0, this.user.id, this.moneyToAdd, this.reason).subscribe(response => {
+      if (response.ok) {
         this.modal?.close();
         this.busy = false;
         this.refresh();

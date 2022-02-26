@@ -25,6 +25,26 @@ export class TransactionsService {
     return sql.all(offset, limit);
   }
 
+  async newCashTransaction(userFromId: number, userToId: number, amount: number, reason: string): Promise<void> {
+    const getUser = await this.dbService.prepare('SELECT * FROM users WHERE id = ?;');
+    const insert = await this.dbService.prepare(`INSERT INTO cash_transactions (user_from, user_to, amount, reason, timestamp)
+                                                 VALUES ($userFrom, $userTo, $amount, $reason, $timestamp);`);
+
+    const userFrom = await getUser.get<User>(userFromId).finally(() => getUser.reset());
+    const userTo = await getUser.get<User>(userToId).finally(() => getUser.reset());
+    if (!userFrom || !userTo) {
+      throw new RequestError(404, 'User not found');
+    }
+
+    await insert.run({
+      $userFrom: userFromId,
+      $userTo: userToId,
+      $amount: amount,
+      $reason: reason,
+      $timestamp: Date.now()
+    });
+  }
+
   async orderBeverage(beverageId: number, userId: number): Promise<void> {
     const getBeverage = await this.dbService.prepare('SELECT * FROM beverages WHERE id = ? AND deleted = 0');
     const getUser = await this.dbService.prepare('SELECT * FROM users WHERE id = ?');
@@ -45,7 +65,7 @@ export class TransactionsService {
       $user: userId,
       $beverage: beverage.id,
       $money: beverage.price,
-      $timestamp: new Date().getTime()
+      $timestamp: Date.now(),
     });
   }
 

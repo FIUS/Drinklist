@@ -59,6 +59,17 @@ export class TransactionsService {
     );
   }
 
+  newCashTransaction(userFrom: number, userTo: number, amount: number, reason: string): Observable<ApiResponse> {
+    return this.http.post(`${this.api}/transactions/cash`, {userFrom, userTo, amount, reason}, {
+      observe: 'response',
+      headers: this.util.getTokenHeaders('admin')
+    }).pipe(
+      toApiResponse(),
+      catchError(handleError()),
+      handleForbiddenAdmin(this.auth),
+    );
+  }
+
   deleteCashTxn(txn: ICashTransaction): Observable<ApiResponse> {
     return this.http.delete(`${this.api}/transactions/cash/${txn.id}`, {
       headers: this.util.getTokenHeaders('user'),

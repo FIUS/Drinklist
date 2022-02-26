@@ -1,7 +1,8 @@
 import {BaseController} from './base.controller';
-import {asyncHandler, requireUser} from '../api.util';
+import {asyncHandler, requireAdmin, requireUser} from '../api.util';
 import {Request, Response} from 'express';
 import {TransactionsService} from '../services/transactions.service';
+import {CashTransaction} from '../../models/api/cash-transaction';
 
 export class TransactionsController extends BaseController {
   constructor(
@@ -13,7 +14,7 @@ export class TransactionsController extends BaseController {
   protected initRoutes(): void {
     // Cash TXNs
     this.router.get('/cash', requireUser, asyncHandler(this.getTransactions.bind(this)));
-    this.router.post('/cash', requireUser, asyncHandler(this.newCashTransaction.bind(this)));
+    this.router.post('/cash', requireAdmin, asyncHandler(this.newCashTransaction.bind(this)));
     this.router.get('/cash/:userid', requireUser, asyncHandler(this.getUserTransactions.bind(this)));
     this.router.delete('/cash/:id', requireUser, asyncHandler(this.revertCashTransaction.bind(this)));
     // Beverage TXNs
@@ -63,8 +64,15 @@ export class TransactionsController extends BaseController {
   // Cash TXNs
 
   private async newCashTransaction(req: Request, res: Response): Promise<void> {
-    // TODO: this feature is planned, but not yet implemented
-    res.status(501).end(); // not implemented
+    const txn: CashTransaction = req.body;
+
+    if (isNaN(+txn.userTo) || isNaN(+txn.userFrom) || isNaN(+txn.amount) || !txn.reason) {
+      return res.send(400).end();
+    }
+
+    await this.txnService.newCashTransaction(+txn.userFrom, +txn.userTo, +txn.amount, txn.reason);
+
+    res.status(204).end();
   }
 
   private async revertCashTransaction(req: Request, res: Response): Promise<void> {
