@@ -156,4 +156,15 @@ export class TransactionsService {
       handleForbiddenUser(this.auth)
     );
   }
+
+  // Admin dashboard statistics
+
+  getTransactionCount(): Observable<ApiResponse<number>> {
+    return this.http.get<number>(`${this.api}/stats/transactions`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+      .pipe(
+        toApiResponse<number>(),
+        catchError(handleError<number>()),
+        handleForbiddenAdmin(this.auth),
+      );
+  }
 }

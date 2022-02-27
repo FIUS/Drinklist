@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {faBeer, faMoneyBill, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {UserService} from '../../services/user.service';
 import {BeverageService} from '../../services/beverage.service';
-import {OrderService} from '../../services/order.service';
+import {TransactionsService} from '../../services/transactions.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -50,7 +50,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private beverageService: BeverageService,
-    private orderService: OrderService,
+    private txnService: TransactionsService,
   ) {
   }
 
@@ -67,7 +67,7 @@ export class AdminDashboardComponent implements OnInit {
       }
     });
 
-    this.orderService.getOrderCount().subscribe(response => {
+    this.txnService.getTransactionCount().subscribe(response => {
       if (response.status === 200 && response.data !== null) {
         this.orderCount = response.data;
       }

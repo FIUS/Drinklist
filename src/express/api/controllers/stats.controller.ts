@@ -14,7 +14,7 @@ export class StatsController implements IController {
   }
 
   private initRoutes(): void {
-    this.router.get('/orders', requireAdmin, asyncHandler(this.getOrderCount));
+    this.router.get('/transactions', requireAdmin, asyncHandler(this.getTransactionCount));
     this.router.get('/users', requireAdmin, asyncHandler(this.getUserCount));
     this.router.get('/beverages', requireAdmin, asyncHandler(this.getBeverageCount));
     this.router.get('/top/beverages', requireAdmin, asyncHandler(this.getTopBeverages));
@@ -22,8 +22,8 @@ export class StatsController implements IController {
     this.router.get('/top/debtors', requireAdmin, asyncHandler(this.getTopDebtors));
   }
 
-  private getOrderCount = async (req: Request, res: Response) => {
-    const orderCount = await this.statsService.getOrderCount();
+  private getTransactionCount = async (req: Request, res: Response) => {
+    const orderCount = await this.statsService.getTransactionCount();
     res.status(200).json(orderCount);
   };
 
