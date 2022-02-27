@@ -3,7 +3,7 @@ import {User} from '../../models/user';
 import {Util} from '../../util';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[app-admin-users-table-entry]',
   template: `
     <th class="text-right pr-3">{{user.id}}</th>

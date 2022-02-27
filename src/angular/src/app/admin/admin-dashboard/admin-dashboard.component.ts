@@ -10,14 +10,15 @@ import {OrderService} from '../../services/order.service';
     <h1>Admin Dashboard</h1>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
       <div class="col mb-4">
-        <app-admin-stat-counter title="Total Users" [icon]="icons.users" [count]="userCount != undefined ? userCount : -1" counted="users"></app-admin-stat-counter>
+        <app-admin-stat-counter title="Total Users" [icon]="icons.users" [count]="userCount !== undefined ? userCount : -1"
+                                counted="users"></app-admin-stat-counter>
       </div>
       <div class="col mb-4">
-        <app-admin-stat-counter title="Total Beverages" [icon]="icons.beer" [count]="beverageCount != undefined ? beverageCount : -1"
+        <app-admin-stat-counter title="Total Beverages" [icon]="icons.beer" [count]="beverageCount !== undefined ? beverageCount : -1"
                                 counted="beverages"></app-admin-stat-counter>
       </div>
       <div class="col mb-4">
-        <app-admin-stat-counter title="Total Transactions" [icon]="icons.moneyBill" [count]="orderCount != undefined ? orderCount : -1"
+        <app-admin-stat-counter title="Total Transactions" [icon]="icons.moneyBill" [count]="orderCount !== undefined ? orderCount : -1"
                                 counted="transactions"></app-admin-stat-counter>
       </div>
       <div class="col mb-4">

@@ -22,7 +22,6 @@
             "main": "src/angular/src/main.ts",
             "polyfills": "src/angular/src/polyfills.ts",
             "tsConfig": "tsconfig.angular.json",
-            "aot": true,
             "assets": [
               "src/angular/src/favicon.ico",
               "src/angular/src/assets"
@@ -34,7 +33,13 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "file-saver"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -64,7 +69,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -100,19 +106,6 @@
             "scripts": []
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "tsconfig.angular.json",
-              "tsconfig.spec.json",
-              "src/angular/e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
@@ -124,9 +117,21 @@
               "devServerTarget": "frontend:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "frontend"
+  "defaultProject": "frontend",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

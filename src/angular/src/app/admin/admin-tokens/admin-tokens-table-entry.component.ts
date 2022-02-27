@@ -4,7 +4,7 @@ import {faBan} from '@fortawesome/free-solid-svg-icons';
 import {AuthService} from '../../services/auth.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[app-admin-tokens-table-entry]',
   template: `
     <th scope="row" class="text-right">{{number}}</th>

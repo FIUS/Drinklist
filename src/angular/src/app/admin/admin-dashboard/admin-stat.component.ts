@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
 
 @Component({
@@ -29,7 +29,7 @@ import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
   `,
   styles: []
 })
-export class AdminStatComponent implements OnInit {
+export class AdminStatComponent {
   @Input() title = 'TITLE MISSING';
   @Input() icon: IconDefinition | undefined;
 
@@ -41,9 +41,6 @@ export class AdminStatComponent implements OnInit {
   @Input() ordered = false;
 
   constructor() {
-  }
-
-  ngOnInit(): void {
   }
 
 }

@@ -3,7 +3,7 @@ import {Beverage} from '../../models/beverage';
 import {Util} from '../../util';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[app-admin-beverages-table-entry]',
   template: `
     <th scope="row" class="text-right pr-3">{{beverage.id}}</th>
