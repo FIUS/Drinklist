@@ -1,21 +1,16 @@
 {
   "name": "drinklist",
   "version": "1.3.0",
-  "description": "Web app for order various drinks",
+  "description": "Web app for ordering various drinks",
   "main": "dist/express/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore 'data/*' build/main.js",
+    "start": "node dist/express/main.js",
     "build": "npm run build-express && npm run build-angular",
-    "prestart-angular": "npm run build-angular",
-    "start-angular": "node .",
-    "prestart-debug": "npm run build",
-    "start-debug": "nodemon --inspect --ignore 'data/*' build/main.js",
-    "start-prod": "forever build/main.js",
-    "setup-data-folder": "node src/setup-data-folder.js",
-    "postsetup-data-folder": "npm run build",
     "build-angular": "ng b -c production",
-    "build-express": "tsc -p tsconfig.express.json"
+    "build-express": "tsc -p tsconfig.express.json",
+    "setup-data-folder": "node src/setup-data-folder.js",
+    "postsetup-data-folder": "npm run build"
   },
   "repository": {
     "type": "git",
