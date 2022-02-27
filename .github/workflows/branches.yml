@@ -1,0 +1,70 @@
+name: Branches CI
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+  workflow_dispatch: # Enable manual run
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Update NPM
+        run: npm -g install npm
+
+      - name: Cache
+        uses: actions/cache@v2.1.5
+        with:
+          path: .npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Install NPM dependencies
+        run: npm ci --cache .npm --prefer-offline
+
+      - name: Build Drinklist
+        run: npm run build
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-output
+          path: dist
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Update NPM
+        run: npm -g install npm
+
+      - name: Cache
+        uses: actions/cache@v2.1.5
+        with:
+          path: .npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Install NPM dependencies
+        run: npm ci --cache .npm --prefer-offline
+
+      - name: Lint Drinklist
+        run: npm run lint
