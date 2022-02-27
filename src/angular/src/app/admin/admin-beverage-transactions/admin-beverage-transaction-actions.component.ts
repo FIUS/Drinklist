@@ -1,6 +1,5 @@
 import {Component, Input} from '@angular/core';
 import {faUndoAlt} from '@fortawesome/free-solid-svg-icons';
-import {OrderService} from '../../services/order.service';
 import {Util} from '../../util';
 import {BeverageTransaction} from '../../models/beverage-transaction';
 import {TransactionsService} from '../../services/transactions.service';
@@ -46,7 +45,6 @@ export class AdminBeverageTransactionActionsComponent {
   };
 
   constructor(
-    private orderService: OrderService,
     private txnService: TransactionsService
   ) {
   }

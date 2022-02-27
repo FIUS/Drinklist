@@ -6,7 +6,6 @@ import {BeverageService} from '../services/beverage.service';
 import {Beverage} from '../models/beverage';
 import {LocaleService} from '../services/locale.service';
 import {Util} from '../util';
-import {OrderService} from '../services/order.service';
 import {faTrash} from '@fortawesome/free-solid-svg-icons/faTrash';
 import {AppConfig} from '../app.config';
 import {TransactionsService} from '../services/transactions.service';
@@ -46,7 +45,6 @@ export class UserDetailPageComponent implements OnInit {
     public locale: LocaleService,
     private userService: UserService,
     private beverageService: BeverageService,
-    private orderService: OrderService,
     private txnService: TransactionsService,
   ) {
   }
