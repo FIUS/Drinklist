@@ -107,7 +107,7 @@ export class UserListPageComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUsers().subscribe(response => {
       if (response.status === 200 && response.data) {
-        this.users = response.data;
+        this.users = response.data.filter(user => !user.hidden);
       }
     });
     if (this.tickerEnabled) {
