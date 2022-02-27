@@ -19,14 +19,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spethso/Drinklist.git"
+    "url": "git+https://github.com/kienhoefr/Drinklist.git"
   },
-  "author": "Sandro Speth, Tobias Wältken",
+  "author": {
+    "name": "Raphael Kienhöfer",
+    "email": "commit@kienhoefr.de"
+  },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/spethso/Drinklist/issues"
+    "url": "https://github.com/kienhoefr/Drinklist/issues"
   },
-  "homepage": "https://github.com/spethso/Drinklist#readme",
+  "homepage": "https://github.com/kienhoefr/Drinklist#readme",
   "dependencies": {
     "@angular/animations": "~11.2.14",
     "@angular/common": "~11.2.14",
