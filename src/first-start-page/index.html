@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" class="min-vh-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drinklist First Start</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body class="d-flex justify-content-center align-items-center min-vh-100 user-select-none">
+<main class="m-3">
+  <header class="mb-3 text-center">
+    <h1 class="mb-0">Drinklist</h1>
+    <span>First Start Configuration</span>
+  </header>
+
+  <section id="form">
+    <div class="row">
+      <div class="col">
+        <div class="mb-3">
+          <h2 class="h4 mb-0">Authentication config</h2>
+          <small>Passwords will be saved in <strong>plaintext</strong> in <code>data/auth.json</code></small>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label for="admin-pass">Admin password</label>
+            <input class="form-control" id="admin-pass" name="admin-pass" required type="password">
+            <small class="form-text text-muted">Password for management interface</small>
+          </div>
+          <div class="col form-group">
+            <label for="admin-pass-check">Confirm admin password</label>
+            <input class="form-control" id="admin-pass-check" name="admin-pass-check" required type="password">
+          </div>
+        </div>
+        <div class="row border-bottom">
+          <div class="col form-group">
+            <label for="kiosk-pass">Kiosk password</label>
+            <input class="form-control" id="kiosk-pass" name="kiosk-pass" required type="password">
+            <small class="form-text text-muted">Password for "public" user interface</small>
+          </div>
+          <div class="col form-group">
+            <label for="kiosk-pass-check">Confirm kiosk password</label>
+            <input class="form-control" id="kiosk-pass-check" name="kiosk-pass-check" required type="password">
+          </div>
+        </div>
+
+        <div class="my-3">
+          <h2 class="h4 mb-0">Server config</h2>
+          <small>Config will be saved in <code>data/config.json</code></small>
+        </div>
+        <div class="form-group">
+          <label for="server-port">Server port (default 8080)</label>
+          <input class="form-control" type="number" id="server-port" min="1" max="65535" value="8080">
+          <small class="form-text text-muted">Only change this if you really need to. Remember to change the port
+            forwarding for the Docker container if
+            using Docker.</small>
+        </div>
+      </div>
+
+      <div class="col-md border-left">
+        <div class="mb-3">
+          <h2 class="h4 mb-0">Drinklist settings</h2>
+          <small>Settings will be saved in <code>data/user-settings.json</code></small>
+        </div>
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input class="form-control" value="daGl/TOBL" id="title" style="width: auto">
+          <small>This is the title displayed in your browser's tab</small>
+        </div>
+        <div class="form-group">
+          <label for="currency">Currency Symbol</label>
+          <input class="form-control" value="€" id="currency" style="width: auto">
+          <small>Set the currency symbol used within Drinklist to display money values</small>
+        </div>
+        <div class="form-group">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" checked class="custom-control-input" id="imprint">
+            <label class="custom-control-label" for="imprint">Show imprint</label>
+          </div>
+          <small>Toggle the imprint button in the header</small>
+        </div>
+        <div class="form-group">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" checked class="custom-control-input" id="data-protection">
+            <label class="custom-control-label" for="data-protection">Show data protection</label>
+          </div>
+          <small>Toggle the data protection button in the header</small>
+        </div>
+        <div class="form-group">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" checked class="custom-control-input" id="recent">
+            <label class="custom-control-label" for="recent">Recently Purchased</label>
+          </div>
+          <small>Toggles the ticker in the footer of the user selection page</small>
+        </div>
+        <div class="form-group">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" checked class="custom-control-input" id="stock">
+            <label class="custom-control-label" for="stock">Stock display</label>
+          </div>
+          <small>Toggles stock amount display in user detail view</small>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-primary" onclick="submitConfig()">Save</button>
+      <div class="alert alert-danger mt-3" hidden id="error-banner">
+        <span class="font-weight-bold">Error:</span> <span id="error-message"></span>
+      </div>
+    </div>
+  </section>
+  <section class="text-center" id="progress" hidden>
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+    </div>
+    Please wait while Drinklist is getting ready!
+  </section>
+</main>
+<script>
+  function disableUserInput() {
+    const inputs = document.querySelectorAll('input');
+    const buttons = document.querySelectorAll('button');
+    inputs.forEach(i => i.disabled = true);
+    buttons.forEach(b => b.disabled = true);
+  }
+
+  function enableUserInput() {
+    const inputs = document.querySelectorAll('input');
+    const buttons = document.querySelectorAll('button');
+    inputs.forEach(i => i.disabled = false);
+    buttons.forEach(b => b.disabled = false);
+  }
+
+  function showError(err) {
+    const errorMessage = document.querySelector('#error-message');
+    errorMessage.textContent = err.message;
+    const errorBanner = document.querySelector('#error-banner');
+    errorBanner.hidden = false;
+  }
+
+  function clearError() {
+    const errorBanner = document.querySelector('#error-banner');
+    errorBanner.hidden = true;
+  }
+
+  function parseInputs() {
+    const payload = {
+      auth: {},
+      config: {},
+      settings: {}
+    };
+
+    // Passwords
+    const kioskPass = document.querySelector('#kiosk-pass').value;
+    const kioskPassCheck = document.querySelector('#kiosk-pass-check').value;
+    const adminPass = document.querySelector('#admin-pass').value;
+    const adminPassCheck = document.querySelector('#admin-pass-check').value;
+
+    if (kioskPass !== kioskPassCheck) {
+      throw new Error('Kiosk passwords do not match!');
+    }
+
+    if (adminPass !== adminPassCheck) {
+      throw new Error('Admin passwords do not match!');
+    }
+
+    if (adminPass === '') {
+      throw new Error('Admin password cannot be empty!');
+    }
+
+    if (kioskPass === '') {
+      throw new Error('Kiosk password cannot be empty!');
+    }
+
+    if (adminPass === kioskPass) {
+      throw new Error('Admin and kiosk passwords cannot be the same!');
+    }
+
+    payload.auth.kiosk = kioskPass;
+    payload.auth.admin = adminPass;
+
+    // Config
+    const serverPort = parseInt(document.querySelector('#server-port').value);
+
+    if (isNaN(serverPort)) {
+      throw new Error('Port must be an integer!');
+    }
+
+    if (serverPort < 1 || serverPort > 65535) {
+      throw new Error('Port must be in valid port range (1-65535)!');
+    }
+
+    payload.config.port = serverPort;
+
+    // Settings
+    const title = document.querySelector('#title').value;
+    const currencySymbol = document.querySelector('#currency').value;
+    const imprint = document.querySelector('#imprint').checked;
+    const dataProtection = document.querySelector('#data-protection').checked;
+    const recentlyPurchased = document.querySelector('#recent').checked;
+    const stock = document.querySelector('#stock').checked;
+
+    if (!title) {
+      throw new Error('Title cannot be empty!');
+    }
+
+    if (!currencySymbol) {
+      throw new Error('Currency Symbol must be set! (can also be a string like "EUR")')
+    }
+
+    payload.settings = {
+      title,
+      currencySymbol,
+      stock,
+      imprint,
+      dataProtection,
+      recentlyPurchased
+    };
+
+    return payload;
+  }
+
+  function showLoader() {
+    const form = document.querySelector('#form');
+    const progress = document.querySelector('#progress');
+    form.hidden = true;
+    progress.hidden = false;
+  }
+
+  async function submitConfig() {
+    clearError();
+    console.log('Parsing and validating inputs...');
+    let payload;
+    try {
+      payload = parseInputs();
+    } catch (e) {
+      return showError(e);
+    }
+    disableUserInput();
+
+    console.log('Inputs valid', payload);
+    console.log('Submitting config...');
+    const response = await fetch('/config', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    if (!response.ok) {
+      enableUserInput();
+      console.error('Request to /config failed!', response);
+      return showError(new Error(`Saving config failed! Details: ${response.status} ${response.statusText}`));
+    }
+
+    console.log('Config submitted. Waiting for Drinklist to be ready...');
+    showLoader();
+    setInterval(async () => {
+      const url = `${location.protocol}//${location.hostname}:${payload.config.port}`;
+      const res = await fetch(`${url}/settings`);
+      if (res.ok) {
+        console.log('navigating!');
+        location.assign(url);
+      }
+    }, 1000)
+  }
+</script>
+</body>
+</html>

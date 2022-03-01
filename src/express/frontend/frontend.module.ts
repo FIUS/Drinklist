@@ -37,6 +37,12 @@ export class FrontendModule implements IController {
       this.initData();
       delete process.env.settingsUpdated;
     }
+
+    if (process.env.hasOwnProperty('firstStart')) {
+      // Allow CORS for this request only (needed for first start page)
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+
     if (!this.settings) {
       res.setHeader('Retry-After', '5');
       return res.status(503).end();

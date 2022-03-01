@@ -1,6 +1,7 @@
 import {Session} from '../../models/api/session';
 import * as fs from 'fs';
 import {IService} from '../service.interface';
+import {authPath} from '../../main';
 
 interface AuthConfig {
   kiosk: string;
@@ -17,8 +18,7 @@ export class AuthService implements IService {
   }
 
   private initAuth(): void {
-    const root = fs.realpathSync('./');
-    const config = JSON.parse(fs.readFileSync(`${root}/data/auth.json`, 'utf-8')) as AuthConfig;
+    const config = JSON.parse(fs.readFileSync(authPath, 'utf-8')) as AuthConfig;
 
     this.auth.set(config.kiosk, false);
     this.auth.set(config.admin, true);
