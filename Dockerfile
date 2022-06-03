@@ -15,7 +15,7 @@ RUN --mount=source=package.json,target=package.json --mount=source=package-lock.
     apk del .gyp
 
 COPY sql sql/
-COPY dist dist/
+#COPY dist dist/
 
 EXPOSE 8080
 
