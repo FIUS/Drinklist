@@ -1,0 +1,23 @@
+{
+	"legal": "Dataprotection",
+	"imprint": "Imprint",
+	"header01": "TOBL",
+	"header02": "The Other Beverage List",
+	"header1": "SoH 'Iv?",
+	"header21": "nuqneH",
+	"header22": "naDev 'oH account!",
+	"plabel": "naw' mu'wIj:",
+	"rlabel": "recent activities:",
+	"blabel": "vItlhap ...",
+	"mlabel": "account ngaD:",
+	"hlabel": "rIntaH je':",
+	"hcol1": "Hech lo'",
+	"hcol2": "'ay'",
+	"hcol3": "date",
+	"btnfinish": "chap",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
+}

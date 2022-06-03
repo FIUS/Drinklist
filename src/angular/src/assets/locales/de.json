@@ -1,0 +1,23 @@
+{
+	"legal": "Datenschutz",
+	"imprint": "Impressum",
+	"header01": "daGL",
+	"header02": "die andere Getränke Liste",
+	"header1": "Wer bist du?",
+	"header21": "Hallo",
+	"header22": "Hier ist dein Konto!",
+	"plabel": "Zugangs Kennwort:",
+	"rlabel": "Kürzliche Aktionen:",
+	"blabel": "Ich nehme ...",
+	"mlabel": "Kontostand:",
+	"hlabel": "Vergangene Einkäufe:",
+	"hcol1": "Grund",
+	"hcol2": "Preis",
+	"hcol3": "Datum",
+	"btnfinish": "Fertig",
+  "loginFail": "Login fehlgeschlagen",
+  "loginFail0": "Verbindungsfehler",
+  "loginFail1": "Das Passwort ist falsch",
+  "adminPasswordLabel": "Admin Passwort:",
+  "adminLoginInfo": "Dies ist der Admin-Login. Wenn du nur etwas zu trinken möchtest, klicke hier."
+}

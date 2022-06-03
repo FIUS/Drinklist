@@ -1,0 +1,23 @@
+{
+	"legal": "Ochrony danych",
+	"imprint": "Impressum",
+	"header01": "Iln",
+	"header02": "Inna lista napojów",
+	"header1": "Kto ty jesteś?",
+	"header21": "Cześć",
+	"header22": "To jest twoje konto!",
+	"plabel": "Hasło dostępu:",
+	"rlabel": "Ostatnie działania:",
+	"blabel": "Ja wezmę ...",
+	"mlabel": "Stan konta:",
+	"hlabel": "Ostatnie zakupy:",
+	"hcol1": "Przyczyna",
+	"hcol2": "Cena",
+	"hcol3": "Data",
+	"btnfinish": "Gotowy",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
+}

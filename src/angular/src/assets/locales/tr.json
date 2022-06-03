@@ -1,0 +1,23 @@
+{
+	"legal": "Dataprotection",
+	"imprint": "Imprint",
+	"header01": "TOBL",
+	"header02": "The Other Beverage List",
+	"header1": "Siz kimsiniz?",
+	"header21": "Iyi günler",
+	"header22": "Sizin  hesabınız burada",
+	"plabel": "Şifrenizi lütfen giriniz",
+	"rlabel": "Son alışveriş:",
+	"blabel": "Sizin Seçiminiz:",
+	"mlabel": "Sizin bakiyeniz:",
+	"hlabel": "Tarih:",
+	"hcol1": "amaç",
+	"hcol2": "fiyat",
+	"hcol3": "tarih",
+	"btnfinish": "bitiş",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
+}

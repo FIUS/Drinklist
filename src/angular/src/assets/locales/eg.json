@@ -1,0 +1,23 @@
+{
+	"legal": "El-5ososya",
+	"imprint": "Basma",
+	"header01": "LeMeT",
+	"header02": "Listet El-Mashroobat El-Tanya",
+	"header1": "Enta / enty meen?",
+	"header21": "Ahlan!",
+	"header22": "Hena 7esabak / 7esabik!",
+	"plabel": "Password El-D5ool:",
+	"rlabel": "El-Moshtaryat El-25ira:",
+	"blabel": "Ana ha5od ...",
+	"mlabel": "Rasid 7esabak:",
+	"hlabel": "Tari5 moshtarayatak / moshtarayatik:",
+	"hcol1": "El-Sabab",
+	"hcol2": "El-S3r",
+	"hcol3": "El-Tari5",
+	"btnfinish": "5alast!",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
+}

@@ -1,0 +1,34 @@
+<nav class="navbar border-bottom border-gray fixed-top bg-white">
+  <form class="form-inline">
+    <button *ngIf="isLoggedIn()" class="btn btn-outline-danger mr-1" type="button" (click)="logout()">
+      <fa-icon [rotate]="180" [icon]="faSignOutAlt"></fa-icon>
+    </button>
+    <ng-container *ngIf="isLoggedIn()">
+      <button *ngIf="!isAdmin(); else userPageLink" class="btn btn-outline-danger" role="link" routerLink="/admin">
+        <fa-icon [icon]="faCogs"></fa-icon>
+      </button>
+      <ng-template #userPageLink>
+        <button class="btn btn-outline-danger" role="link" routerLink="/">
+          <fa-icon [icon]="faUser"></fa-icon>
+        </button>
+      </ng-template>
+    </ng-container>
+  </form>
+  <form class="form-inline">
+    <select class="form-control" [class.mr-3]="showImprintBtn() || showPrivacyBtn()" name="lang"
+            [(ngModel)]="selectedLocale" (change)="setLocale()">
+      <option *ngFor="let locale of locales" value="{{locale.id}}">{{locale.name}}</option>
+    </select>
+    <a class="btn btn-outline-primary mr-3" [class.mr-3]="showPrivacyBtn()" href="./imprint" *ngIf="showImprintBtn()">
+      <fa-icon class="mr-1" [icon]="faInfo"></fa-icon>
+      {{localeService.getMessage('imprint')}}
+    </a>
+    <a class="btn btn-outline-primary" href="./legal" *ngIf="showPrivacyBtn()">
+      <fa-icon class="mr-1" [icon]="faInfo"></fa-icon>
+      {{localeService.getMessage('legal')}}
+    </a>
+  </form>
+</nav>
+<div class="mt-6vh">
+  <router-outlet></router-outlet>
+</div>

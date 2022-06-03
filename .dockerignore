@@ -1,0 +1,5 @@
+node_modules
+
+# Ignore already built frontend
+src/
+data

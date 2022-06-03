@@ -1,0 +1,23 @@
+{
+	"legal": "数据保护",
+	"imprint": "版权说明",
+	"header01": "TOBL",
+	"header02": "The Other Beverage List",
+	"header1": "你是谁？",
+	"header21": "你好",
+	"header22": "这是你的账户！",
+	"plabel": "密码：",
+	"rlabel": "最近交易",
+	"blabel": "我要 ...",
+	"mlabel": "账户余额：",
+	"hlabel": "购买历史：",
+	"hcol1": "购买物品",
+	"hcol2": "价格",
+	"hcol3": "日期",
+	"btnfinish": "返回",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
+}
