@@ -256,11 +256,18 @@
     console.log('Config submitted. Waiting for Drinklist to be ready...');
     showLoader();
     setInterval(async () => {
-      const url = `${location.protocol}//${location.hostname}:${payload.config.port}`;
-      const res = await fetch(`${url}/settings`);
-      if (res.ok) {
-        console.log('navigating!');
-        location.assign(url);
+      let url = '';
+      if (payload.config.port !== 8080) {
+        url = `${location.protocol}//${location.hostname}:${payload.config.port}`;
+      }
+      try {
+        const res = await fetch(`${url}/settings`);
+        if (res.ok) {
+          console.log('navigating!');
+          location.assign(`${url}/`);
+        }
+      } catch (e) {
+        console.debug('Drinklist is not ready yet')
       }
     }, 1000)
   }
