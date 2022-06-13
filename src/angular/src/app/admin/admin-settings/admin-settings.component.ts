@@ -8,7 +8,7 @@ import {Title} from '@angular/platform-browser';
 @Component({
   selector: 'app-admin-settings',
   templateUrl: './admin-settings.component.html',
-  styles: [``],
+  styles: [],
   providers: [AdminSettingsService]
 })
 export class AdminSettingsComponent implements OnInit {
