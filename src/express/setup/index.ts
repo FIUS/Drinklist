@@ -37,6 +37,7 @@ export function runSetupWebsite(): Promise<void> {
       valid &&= settings.stock !== undefined;
 
       if (!valid) {
+        res.setHeader('Connection', 'close'); // Add Connection header in case we are on HTTP 1
         return res.status(400).end();
       }
 
@@ -47,6 +48,7 @@ export function runSetupWebsite(): Promise<void> {
       writeFileSync(configPath, JSON.stringify(config));
       writeFileSync(authPath, JSON.stringify(auth));
 
+      res.setHeader('Connection', 'close'); // Add Connection header in case we are on HTTP 1
       res.status(204).end();
 
       server.close(() => {
@@ -59,11 +61,13 @@ export function runSetupWebsite(): Promise<void> {
     });
 
     app.get('/css/bootstrap.min.css', (req: Request, res: Response) => {
+      res.setHeader('Connection', 'close'); // Add Connection header in case we are on HTTP 1
       res.sendFile(path.join(process.cwd(), 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.min.css'));
     });
     app.use(express.static(path.join(process.cwd(), 'dist', 'first-start-page')));
 
     app.use((req: Request, res: Response) => {
+      res.setHeader('Connection', 'close'); // Add Connection header in case we are on HTTP 1
       res.sendStatus(404);
     });
 
