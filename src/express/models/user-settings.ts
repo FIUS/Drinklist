@@ -10,6 +10,10 @@ export class UserSettings {
   ) {
   }
 
+  /**
+   * Check if an object is a valid user settings object
+   * @param obj the object to check
+   */
   static isValid(obj: any): boolean {
     // List of all properties
     const props = [
