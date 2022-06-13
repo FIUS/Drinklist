@@ -45,7 +45,8 @@ export class FrontendModule implements IController {
 
     if (!this.settings) {
       res.setHeader('Retry-After', '5');
-      return res.status(503).end();
+      res.status(503).end();
+      return;
     }
     res.status(200).json(this.settings);
   };

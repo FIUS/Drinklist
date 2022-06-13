@@ -74,7 +74,8 @@ export class UserController implements IController {
   };
 
   private patchUser = async (req: Request, res: Response) => {
-    return res.status(501).end();
+    res.status(501).end();
+    return;
     // TODO: change functionality. this is no longer needed with transactions
     /*
     const id = +req.params.id;

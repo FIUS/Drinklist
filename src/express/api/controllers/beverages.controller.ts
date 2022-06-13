@@ -31,12 +31,14 @@ export class BeveragesController implements IController {
     const id = +req.params.id;
 
     if (isNaN(id)) {
-      return res.status(400).end();
+      res.status(400).end();
+      return;
     }
 
     const beverage = await this.beveragesService.getBeverageById(id);
     if (!beverage) {
-      return res.status(404).end();
+      res.status(404).end();
+      return;
     }
 
     res.status(200).json(beverage);
@@ -46,7 +48,8 @@ export class BeveragesController implements IController {
     const beverage = req.body as Beverage;
 
     if (!beverage || !beverage.name || isNaN(+beverage.price)) {
-      return res.status(400).end();
+      res.status(400).end();
+      return;
     }
 
     await this.beveragesService.addBeverage(beverage);

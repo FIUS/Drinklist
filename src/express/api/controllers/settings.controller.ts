@@ -22,7 +22,8 @@ export class SettingsController implements IController {
     const settings = req.body;
 
     if (!UserSettings.isValid(settings)) {
-      return res.status(400).end();
+      res.status(400).end();
+      return;
     }
 
     // If we reach this, the sent config is valid

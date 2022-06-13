@@ -54,7 +54,8 @@ export class TransactionsController extends BaseController {
     const user = +req.params.userid;
 
     if (isNaN(user)) {
-      return res.status(400).end();
+      res.status(400).end();
+      return;
     }
 
     const transactions = await this.txnService.getUserTransactions(user, txnType);
@@ -67,7 +68,8 @@ export class TransactionsController extends BaseController {
     const txn: CashTransaction = req.body;
 
     if (isNaN(+txn.userTo) || isNaN(+txn.userFrom) || isNaN(+txn.amount) || !txn.reason) {
-      return res.send(400).end();
+      res.send(400).end();
+      return;
     }
 
     await this.txnService.newCashTransaction(+txn.userFrom, +txn.userTo, +txn.amount, txn.reason);
@@ -79,14 +81,16 @@ export class TransactionsController extends BaseController {
     const id = +req.params.id;
 
     if (isNaN(id)) {
-      return res.status(400).end();
+      res.status(400).end();
+      return;
     }
 
     const isRecent = await this.txnService.isRecent(id, 'cash');
 
     if (!isRecent && req.header('x-auth-state') === 'user') {
       // Users cannot undo old transactions
-      return res.status(403).end();
+      res.status(403).end();
+      return;
     }
 
     if (isRecent) {
@@ -103,7 +107,8 @@ export class TransactionsController extends BaseController {
     const user = +req.body.user;
 
     if (isNaN(beverage) || isNaN(user)) {
-      return res.status(400).end();
+      res.status(400).end();
+      return;
     }
 
     await this.txnService.orderBeverage(beverage, user);
@@ -114,13 +119,15 @@ export class TransactionsController extends BaseController {
     const id = +req.params.id;
 
     if (isNaN(id)) {
-      return res.status(400).end();
+      res.status(400).end();
+      return;
     }
 
     const isRecent = await this.txnService.isRecent(id, 'beverages');
     if (!isRecent && req.header('x-auth-state') !== 'admin') {
       // Only admins can undo dated beverage transactions
-      return res.status(403).end();
+      res.status(403).end();
+      return;
     }
 
     await this.txnService.undoBeverageTransaction(id);

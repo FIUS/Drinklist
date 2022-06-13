@@ -38,7 +38,8 @@ export function runSetupWebsite(): Promise<void> {
 
       if (!valid) {
         res.setHeader('Connection', 'close'); // Add Connection header in case we are on HTTP 1
-        return res.status(400).end();
+        res.status(400).end();
+        return;
       }
 
       config.version = 2;
