@@ -25,7 +25,7 @@ export class AuthService implements IService {
   }
 
   shutdown(): Promise<void> {
-    // Nothing to shutdown
+    // Nothing to shut down
     return Promise.resolve();
   }
 
