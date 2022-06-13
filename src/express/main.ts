@@ -13,11 +13,13 @@ import {AuthService} from './services/api/auth.service';
 import {FrontendModule} from './frontend/frontend.module';
 import * as path from 'path';
 import {migrate} from './migrations';
+import {runSetupWebsite} from './setup';
 
 const cwd = process.cwd();
 
 export const configPath = path.join(cwd, 'data', 'config.json');
 export const userSettingsPath = path.join(cwd, 'data', 'user-settings.json');
+export const authPath = path.join(cwd, 'data', 'auth.json');
 export const dbPath = path.join(cwd, 'data', 'drinklist.sqlite');
 
 async function main(): Promise<void> {
@@ -26,9 +28,8 @@ async function main(): Promise<void> {
 
   if (process.env.hasOwnProperty('firstStart')) {
     // Start setup website
-    // import {runSetupWebsite} from './setup/setup';
-    // await runSetupWebsite();
-    return;
+    await runSetupWebsite();
+    console.log('Setup website is done!');
   }
 
   // Read config values

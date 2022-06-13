@@ -6,11 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/express/main.js",
-    "build": "npm run build-express && npm run build-angular",
+    "build": "npm run build-express && npm run build-angular && npm run copy-static-files",
     "build-angular": "ng b -c production",
     "build-express": "tsc -p tsconfig.express.json",
-    "setup-data-folder": "node src/setup-data-folder.js",
-    "postsetup-data-folder": "npm run build",
+    "copy-static-files": "copyfiles -u 2 src/first-start-page/**/* dist/first-start-page",
     "lint": "ng lint"
   },
   "repository": {
