@@ -4,7 +4,7 @@
       <fa-icon [rotate]="180" [icon]="faSignOutAlt"></fa-icon>
     </button>
     <ng-container *ngIf="isLoggedIn()">
-      <button *ngIf="!isAdmin(); else userPageLink" class="btn btn-outline-danger" role="link" routerLink="/admin">
+      <button *ngIf="!isAdminRoute(); else userPageLink" class="btn btn-outline-danger" role="link" routerLink="/admin">
         <fa-icon [icon]="faCogs"></fa-icon>
       </button>
       <ng-template #userPageLink>

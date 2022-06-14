@@ -37,9 +37,9 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     switch (route.routeConfig?.path) {
       case '':
-        return this.authService.isLoggedIn('user') ? true : this.redirectToLogin('user', state.url);
+        return this.authService.isLoggedInAsRole('user') ? true : this.redirectToLogin('user', state.url);
       case 'admin':
-        return this.authService.isLoggedIn('admin') ? true : this.redirectToLogin('admin', state.url);
+        return this.authService.isLoggedInAsRole('admin') ? true : this.redirectToLogin('admin', state.url);
       default:
         return true;
     }

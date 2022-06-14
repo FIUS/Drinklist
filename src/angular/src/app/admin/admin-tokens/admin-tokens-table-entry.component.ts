@@ -50,6 +50,6 @@ export class AdminTokensTableEntryComponent {
   });
 
   isOwnToken(): boolean {
-    return this.token.token === this.auth.getAdminToken();
+    return this.token.token === this.auth.getToken();
   }
 }

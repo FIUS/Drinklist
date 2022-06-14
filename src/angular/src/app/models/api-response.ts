@@ -1,3 +1,4 @@
+// This will be removed when error handling is refactored
 export class ApiResponse<T = null> {
   ok: boolean;
   status: number;

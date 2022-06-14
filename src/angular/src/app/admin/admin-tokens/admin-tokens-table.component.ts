@@ -84,6 +84,6 @@ export class AdminTokensTableComponent implements OnInit {
   }
 
   isOwnToken(token: Token): boolean {
-    return token.token === this.auth.getAdminToken();
+    return token.token === this.auth.getToken();
   }
 }

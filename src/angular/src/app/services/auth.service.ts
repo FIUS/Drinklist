@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {catchError} from 'rxjs/operators';
 import {handleError, handleForbiddenAdmin, ServiceUtil, toApiResponse} from './service.util';
@@ -7,10 +7,13 @@ import {Observable} from 'rxjs';
 import {ApiResponse} from '../models/api-response';
 import {Token} from '../models/token';
 import {environment} from '../../environments/environment';
+import jwtDecode from 'jwt-decode';
+import {JwtClaims} from '../models/jwt-claims';
 
 export enum LoginError {
   NETWORK_ERROR,
   WRONG_PASSWORD,
+  UNKNOWN_ERROR,
 }
 
 @Injectable({
@@ -29,66 +32,37 @@ export class AuthService {
     this.util = new ServiceUtil(this);
   }
 
-  // Admin Auth
-
-  private get adminToken(): string | null {
-    return localStorage.getItem('adminToken');
+  private get token(): string | null {
+    return localStorage.getItem('token');
   }
 
-  private set adminToken(value: string | null) {
+  private get claims(): JwtClaims | null {
+    return JSON.parse(localStorage.getItem('claims') as string);
+  }
+
+  private set token(value: string | null) {
     if (value === null) {
-      localStorage.removeItem('adminToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('claims');
       return;
     }
-    localStorage.setItem('adminToken', value);
+    const claims = jwtDecode<JwtClaims>(value);
+    localStorage.setItem('token', value);
+    localStorage.setItem('claims', JSON.stringify(claims));
   }
 
-  getAdminToken(): string | null {
-    return this.adminToken;
+  getToken(): string | null {
+    return this.token;
   }
 
-  logoutAdmin(noNavigation?: boolean): void {
-    if (!this.adminToken) {
+  logout(noNavigation?: boolean): void {
+    if (!this.token) {
       return;
     }
-    this.http.post(`${this.api}/auth/logout`, {token: this.adminToken}).subscribe(() => {
-      if (this.userToken === this.adminToken) {
-        this.userToken = null;
-      }
-      this.adminToken = null;
-      if (noNavigation) {
-        return;
-      }
-      this.router.navigateByUrl('/admin/login');
-    });
-  }
+    this.http.post(`${this.api}/auth/logout`, {token: this.token}).subscribe(() => {
+      // This ignores errors when trying to log out
 
-  // User Auth
-  private get userToken(): string | null {
-    return localStorage.getItem('userToken');
-  }
-
-  private set userToken(value: string | null) {
-    if (value === null) {
-      localStorage.removeItem('userToken');
-      return;
-    }
-    localStorage.setItem('userToken', value);
-  }
-
-  getUserToken(): string | null {
-    return this.userToken;
-  }
-
-  logoutUser(noNavigation?: boolean): void {
-    if (!this.userToken) {
-      return;
-    }
-    this.http.post(`${this.api}/auth/logout`, {token: this.userToken}).subscribe(() => {
-      if (this.adminToken === this.userToken) {
-        this.adminToken = null;
-      }
-      this.userToken = null;
+      this.token = null;
       if (noNavigation) {
         return;
       }
@@ -96,56 +70,56 @@ export class AuthService {
     });
   }
 
-  // General Auth
-
-  login(password: string, failOnUser?: boolean): Promise<void> {
-    // Invalidate old tokens (if any) since we're trying to log in.
-    this.logoutAdmin(true);
-    this.logoutUser(true);
+  login(password: string, requireAdmin?: boolean): Promise<void> { // TODO: Refactor to return an Observable
+    // Invalidate old token (if any) since we're trying to log in.
+    this.logout(true);
     return new Promise<void>((resolve, reject) => {
-      this.http.post<{ token: string, root: boolean }>(`${this.api}/auth/login`, {password}, {observe: 'response'})
-        .pipe(
-          toApiResponse<{ token: string, root: boolean }>(),
-          catchError(handleError<{ token: string, root: boolean }>()),
-        )
-        .subscribe(response => {
-          if (response.status === 200 && response.data) { // Login with user permissions successful.
-            this.userToken = response.data.token; /* This logs the user in, even if admin login is requested.
-                                                     This behaviour is intended since the backend sends a token anyway. */
-            if (response.data.root) { // Login with admin permissions successful.
-              this.adminToken = response.data.token;
-            } else if (failOnUser) {
+      this.http.post(`${this.api}/auth/login`, {password}, {responseType: 'text'})
+        .subscribe({
+          next: token => {
+            // Login successful
+            this.token = token;
+
+            if (requireAdmin && !this.isLoggedInAsRole('admin')) {
               // Fail here since we require the token to be admin capable.
+              this.logout(true); // Dispose "invalid" token
               return reject(LoginError.WRONG_PASSWORD);
             }
             return resolve();
-          }
-          if (response.status === 400 || response.status === 403) {
-            return reject(LoginError.WRONG_PASSWORD);
-          }
-          if (response.status === 0) {
-            return reject(LoginError.NETWORK_ERROR);
+          },
+          error: (error: HttpErrorResponse) => {
+            if (error.status === 400 || error.status === 401) {
+              return reject(LoginError.WRONG_PASSWORD);
+            }
+            if (error.status === 0) {
+              return reject(LoginError.NETWORK_ERROR);
+            }
+            console.error(`Unexpected error occurred while logging in: ${error.message}`, error);
+            return reject(LoginError.UNKNOWN_ERROR);
           }
         });
     });
   }
 
-  isLoggedIn(component: 'user' | 'admin' | 'any'): boolean {
-    switch (component) {
-      case 'user':
-        return this.userToken !== null;
-      case 'admin':
-        return this.adminToken !== null;
-      case 'any':
-        return this.userToken !== null || this.adminToken !== null;
+  isLoggedInAsRole(role: 'user' | 'admin' | 'any'): boolean {
+    const roles = this.claims?.roles;
+
+    if (!roles) {
+      return false;
     }
+
+    if (role === 'any') {
+      return true;
+    }
+
+    return roles.includes(role);
   }
 
-  getTokens(): Observable<ApiResponse<Token[]>> {
-    return this.http.get<Token[]>(`${this.api}/auth/tokens`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
+  getTokens(): Observable<ApiResponse<Session[]>> {
+    return this.http.get<Session[]>(`${this.api}/auth/tokens`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
       .pipe(
-        toApiResponse<Token[]>(),
-        catchError(handleError<Token[]>()),
+        toApiResponse<Session[]>(),
+        catchError(handleError<Session[]>()),
         handleForbiddenAdmin(this),
       );
   }

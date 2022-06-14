@@ -4,10 +4,12 @@ import {ApiResponse} from '../models/api-response';
 import {Observable, of} from 'rxjs';
 import {AuthService} from './auth.service';
 
+// This will be removed when error handling is refactored
 export const toApiResponse = <T = null>() => map((value: HttpResponse<T>) => {
   return new ApiResponse(value.ok, value.status, value.body);
 });
 
+// This will be removed when error handling is refactored
 export const handleError = <T = null>() => {
   return (err: HttpErrorResponse): Observable<ApiResponse<T>> => {
     console.error(err);
@@ -16,15 +18,17 @@ export const handleError = <T = null>() => {
   };
 };
 
+// This will be removed when error handling is refactored
 export const handleForbiddenUser = (auth: AuthService) => tap((value: ApiResponse<any>) => {
   if (value.status === 401) {
-    auth.logoutUser();
+    auth.logout();
   }
 });
 
+// This will be removed when error handling is refactored
 export const handleForbiddenAdmin = (auth: AuthService) => tap((value: ApiResponse<any>) => {
   if (value.status === 401 || value.status === 403) {
-    auth.logoutAdmin();
+    auth.logout();
   }
 });
 
@@ -35,15 +39,7 @@ export class ServiceUtil {
   }
 
   getTokenHeaders(type: 'user' | 'admin'): HttpHeaders {
-    let token: string;
-    switch (type) {
-      case 'admin':
-        token = this.auth.getAdminToken() || '';
-        break;
-      case 'user':
-        token = this.auth.getUserToken() || '';
-        break;
-    }
-    return new HttpHeaders({'X-Auth-Token': token});
+    // TODO: change signature when refactoring error handling
+    return new HttpHeaders({'X-Auth-Token': this.auth.getToken() || ''});
   }
 }
