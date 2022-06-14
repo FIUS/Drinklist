@@ -59,8 +59,7 @@
     "rxjs": "^6.6.3",
     "sqlite": "^4.0.23",
     "sqlite3": "^5.0.2",
-    "tslib": "^2.1.0",
-    "uuid": "^8.3.2"
+    "tslib": "^2.1.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.2.5",
