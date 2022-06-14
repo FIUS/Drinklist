@@ -1,16 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {Token} from '../../models/token';
+import {Session} from '../../models/session';
+import jwtDecode from 'jwt-decode';
+import {JwtClaims} from '../../models/jwt-claims';
 
 @Component({
-  selector: 'app-admin-tokens-table',
+  selector: 'app-admin-sessions-table',
   template: `
     <table class="table table-sm">
       <thead>
         <tr>
           <th scope="col" class="text-right" style="width: 2.5%">#</th>
-          <th scope="col" style="width: 15%">Token</th>
-          <th scope="col" style="width: 7.5%">Permissions</th>
+          <th scope="col" style="width: 15%">Token ID</th>
+          <th scope="col" style="width: 7.5%">Role</th>
           <th scope="col" style="width: 40%">User Agent</th>
           <th scope="col" style="width: 15%">Referrer</th>
           <th scope="col" style="width: 10%">Client-IP</th>
@@ -18,7 +20,7 @@ import {Token} from '../../models/token';
         </tr>
         <tr>
           <th class="text-right">{{tokens.filter(matchesSearch, this).length}}</th>
-          <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.token"></th>
+          <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.jti"></th>
           <th>
             <select class="form-control" [(ngModel)]="search.permissions">
               <option value="any">any</option>
@@ -33,19 +35,19 @@ import {Token} from '../../models/token';
         </tr>
       </thead>
       <tbody>
-        <tr app-admin-tokens-table-entry *ngFor="let token of tokens.filter(matchesSearch, this); index as i"
-            [token]="token" [number]="i + 1" [refresh]="refresh" [class.table-success]="isOwnToken(token)"></tr>
+        <tr app-admin-sessions-table-entry *ngFor="let token of tokens.filter(matchesSearch, this); index as i"
+            [session]="token" [number]="i + 1" [refresh]="refresh" [class.table-success]="isOwnToken(token)"></tr>
       </tbody>
     </table>
   `,
   styles: []
 })
-export class AdminTokensTableComponent implements OnInit {
+export class AdminSessionsTableComponent implements OnInit {
 
-  tokens: Token[] = [];
+  tokens: Session[] = [];
 
   search = {
-    token: '',
+    jti: '',
     permissions: 'any',
     userAgent: '',
     referrer: '',
@@ -71,19 +73,20 @@ export class AdminTokensTableComponent implements OnInit {
     });
   }
 
-  matchesSearch(token: Token): boolean {
-    const permissions = token.root ? 'admin' : 'user';
+  matchesSearch(session: Session): boolean {
+    const claims = jwtDecode<JwtClaims>(session.token);
+    const permissions = claims.roles.includes('admin') ? 'admin' : 'user';
 
-    const matchesToken = token.token.includes(this.search.token);
+    const matchesJti = claims.jti.includes(this.search.jti);
     const matchesPermissions = permissions === this.search.permissions || this.search.permissions === 'any';
-    const matchesUserAgent = token.userAgent.toLowerCase().includes(this.search.userAgent.toLowerCase());
-    const matchesReferrer = token.referrer.toLowerCase().includes(this.search.referrer.toLowerCase());
-    const matchesClientIP = token.clientIp.includes(this.search.clientIP);
+    const matchesUserAgent = session.userAgent.toLowerCase().includes(this.search.userAgent.toLowerCase());
+    const matchesReferrer = session.referrer.toLowerCase().includes(this.search.referrer.toLowerCase());
+    const matchesClientIP = session.clientIp.includes(this.search.clientIP);
 
-    return matchesToken && matchesPermissions && matchesUserAgent && matchesReferrer && matchesClientIP;
+    return matchesJti && matchesPermissions && matchesUserAgent && matchesReferrer && matchesClientIP;
   }
 
-  isOwnToken(token: Token): boolean {
-    return token.token === this.auth.getToken();
+  isOwnToken(session: Session): boolean {
+    return session.token === this.auth.getToken();
   }
 }

@@ -5,7 +5,7 @@ import {catchError} from 'rxjs/operators';
 import {handleError, handleForbiddenAdmin, ServiceUtil, toApiResponse} from './service.util';
 import {Observable} from 'rxjs';
 import {ApiResponse} from '../models/api-response';
-import {Token} from '../models/token';
+import {Session} from '../models/session';
 import {environment} from '../../environments/environment';
 import jwtDecode from 'jwt-decode';
 import {JwtClaims} from '../models/jwt-claims';
@@ -53,6 +53,10 @@ export class AuthService {
 
   getToken(): string | null {
     return this.token;
+  }
+
+  getTokenId(): string | null {
+    return this.claims?.jti || null;
   }
 
   logout(noNavigation?: boolean): void {
@@ -124,7 +128,7 @@ export class AuthService {
       );
   }
 
-  revokeToken(token: Token): Observable<ApiResponse> {
+  revokeToken(token: Session): Observable<ApiResponse> {
     return this.http.post(`${this.api}/auth/logout`, {token: token.token}, {observe: 'response'})
       .pipe(
         toApiResponse<any>(),

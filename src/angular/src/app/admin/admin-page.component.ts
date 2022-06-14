@@ -6,7 +6,7 @@ import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.compone
 import {AdminBeveragesComponent} from './admin-beverages/admin-beverages.component';
 import {AdminCashTransactionComponent} from './admin-cash-transactions/admin-cash-transaction.component';
 import {AdminUsersComponent} from './admin-users/admin-users.component';
-import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
+import {AdminSessionsComponent} from './admin-sessions/admin-sessions.component';
 import {BackupService} from '../services/backup.service';
 import {saveAs} from 'file-saver';
 import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
@@ -60,10 +60,10 @@ export class AdminPageComponent implements OnInit {
     },
     {
       id: 'tokens',
-      displayName: 'Active Tokens',
+      displayName: 'Active Sessions',
       icon: faKey,
       spacerAfter: true,
-      component: AdminTokensComponent,
+      component: AdminSessionsComponent,
     },
     {
       id: 'settings',
