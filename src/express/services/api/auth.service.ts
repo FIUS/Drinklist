@@ -2,6 +2,8 @@ import {Session} from '../../models/api/session';
 import * as fs from 'fs';
 import {IService} from '../service.interface';
 import {authPath} from '../../main';
+import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
 
 interface AuthConfig {
   kiosk: string;
@@ -13,7 +15,17 @@ export class AuthService implements IService {
   private auth: Map<string, boolean> = new Map<string, boolean>();
   private sessions: Map<string, Session> = new Map<string, Session>();
 
+  private secret!: Buffer; // Assert to not-null because error in generator would throw
+
   constructor() {
+    crypto.generateKey('hmac', {length: 256}, (err, key) => {
+      if (err) {
+        console.error('Could not generate secret for token signing!', err);
+        throw err;
+      }
+      this.secret = key.export();
+    });
+
     this.initAuth();
   }
 
@@ -29,18 +41,28 @@ export class AuthService implements IService {
     return Promise.resolve();
   }
 
+  private readonly createPayload = () => ({
+    roles: [
+      'user',
+    ]
+  });
+
   login(password: string, session: Session): boolean {
     if (!this.auth.has(password)) { // Password unknown/wrong
       console.log('[FAIL] [login] login attempt with wrong password');
       return false;
     }
-    if (this.auth.get(password) === true) { // Password is admin
-      session.root = true;
+    const payload = this.createPayload();
+    if (this.auth.get(password) === true) { // Password has admin privileges
+      payload.roles.push('admin');
     }
+
+    session.token = jwt.sign(payload, this.secret, {jwtid: crypto.randomUUID()});
+
     this.sessions.set(session.token, session);
 
     // Login successful
-    console.log(`[API] [ OK ] [login] login with token ${session.token}`);
+    console.log(`[API] [ OK ] [login] login with roles ${payload.roles.toString()}`);
     return true;
   }
 
@@ -49,11 +71,21 @@ export class AuthService implements IService {
   }
 
   isValid(token: string): boolean {
-    return this.sessions.has(token);
+    try {
+      jwt.verify(token, this.secret);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  isRole(token: string, role: string): boolean {
+    const payload = jwt.decode(token) as { roles: string[] };
+    return payload.roles.includes(role);
   }
 
   isAdmin(token: string): boolean {
-    return this.isValid(token) && (this.sessions.get(token)?.root || false);
+    return this.isValid(token) && this.isRole(token, 'admin');
   }
 
   getSessions(): Session[] {
