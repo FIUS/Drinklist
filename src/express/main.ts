@@ -57,10 +57,13 @@ async function main(): Promise<void> {
 
   server.listen();
 
-  process.on('beforeExit', async () => {
-    await server.shutdown();
-    process.exit(0);
-  });
+  function shutdown(signal: string) {
+    console.log(`${signal} signal received.`);
+    server.shutdown().then(() => process.exit(0));
+  }
+
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 }
 
 main().catch(e => {
