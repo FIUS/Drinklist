@@ -40,7 +40,7 @@ export class AuthController implements IController {
       res.status(200).json(session);
       return;
     }
-    res.status(403).end();
+    res.status(401).end();
   };
 
   logout = (req: Request, res: Response) => {
