@@ -3,6 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {AdminPageComponent} from './admin-page.component';
 
 const routes: Routes = [
+  // TODO: refactor with child routes
   {
     path: '',
     redirectTo: 'dashboard',

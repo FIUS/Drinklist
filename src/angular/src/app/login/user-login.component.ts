@@ -45,7 +45,7 @@ export class UserLoginComponent implements OnInit {
   error: string | undefined;
 
   ngOnInit(): void {
-    if (this.auth.isLoggedIn('user')) {
+    if (this.auth.isLoggedInAsRole('user')) {
       const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || ''; // substring(1) removes leading slash
       this.router.navigateByUrl('/' + returnTo);
     }

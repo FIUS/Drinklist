@@ -43,12 +43,12 @@ export class AppComponent implements OnInit {
     this.title.setTitle(AppConfig.config.title);
   }
 
-  isAdmin(): boolean {
+  isAdminRoute(): boolean {
     return this.route.snapshot.firstChild?.routeConfig?.path?.split('/')[0] === 'admin';
   }
 
   logout(): void {
-    this.isAdmin() ? this.authService.logoutAdmin() : this.authService.logoutUser();
+    this.authService.logout();
   }
 
   setLocale(): void {
@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
   }
 
   isLoggedIn(): boolean {
-    return this.authService.isLoggedIn(this.isAdmin() ? 'admin' : 'user');
+    return this.authService.isLoggedInAsRole(this.isAdminRoute() ? 'admin' : 'user');
   }
 
   showImprintBtn(): boolean {

@@ -52,7 +52,7 @@ export class AdminLoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.auth.isLoggedIn('admin')) {
+    if (this.auth.isLoggedInAsRole('admin')) {
       const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || ''; // substring(1) removes leading slash
       this.router.navigateByUrl(`/${returnTo ? '' : 'admin'}${returnTo}`);
     }

@@ -37,10 +37,10 @@ export class AuthController implements IController {
       req.ip
     );
     if (this.auth.login(password, session)) {
-      res.status(200).json(session);
+      res.status(200).send(session.token);
       return;
     }
-    res.status(403).end();
+    res.status(401).end();
   };
 
   logout = (req: Request, res: Response) => {
