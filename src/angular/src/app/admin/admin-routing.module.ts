@@ -1,17 +1,21 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AdminPageComponent} from './admin-page.component';
+import {subpages} from './admin-subpages';
+
 
 const routes: Routes = [
-  // TODO: refactor with child routes
   {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
-  },
-  {
-    path: ':module',
     component: AdminPageComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+      ...subpages.map(subpage => ({path: subpage.path, component: subpage.component}))
+    ]
   }
 ];
 
