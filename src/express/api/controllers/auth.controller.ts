@@ -18,6 +18,7 @@ export class AuthController implements IController {
     this.router.get('/tokens', requireAdmin, this.tokens);
     this.router.post('/login', this.login);
     this.router.post('/logout', this.logout);
+    this.router.post('/revoke', requireAdmin, this.revoke);
   }
 
   tokens = (req: Request, res: Response) => {
@@ -54,4 +55,16 @@ export class AuthController implements IController {
     this.auth.logout(token);
     res.status(200).end();
   };
+
+  revoke = (req: Request, res: Response) => {
+    const token = '' + req.body.token;
+
+    if (token === undefined || token === '') {
+      res.status(400).end();
+      return;
+    }
+
+    this.auth.revoke(token);
+    res.status(200).end();
+  }
 }

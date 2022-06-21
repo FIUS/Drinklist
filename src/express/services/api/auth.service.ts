@@ -73,7 +73,7 @@ export class AuthService implements IService {
   isValid(token: string): boolean {
     try {
       jwt.verify(token, this.secret);
-      return true;
+      return this.sessions.has(token);
     } catch (e) {
       return false;
     }
@@ -89,7 +89,32 @@ export class AuthService implements IService {
   }
 
   getSessions(): Session[] {
-    return Array.from(this.sessions.values());
+    return Array.from(this.sessions.values())
+      .map(session => {
+        const clone = session.clone();
+        if (clone.token) {
+          const sanitizedToken = clone.token.split('.').slice(0, 2);
+          clone.token = sanitizedToken.join('.');
+        }
+        return clone;
+      });
   }
 
+  revoke(token: string): void {
+    const base64 = Buffer.from(token.split('.')[1], 'base64');
+    const payload = JSON.parse(base64.toString());
+    if (!payload) {
+      return;
+    }
+    const jti = payload.jti;
+
+    for (const session of this.sessions.values()) {
+      if (session.id !== jti) {
+        continue;
+      }
+      console.log(`[API] revoking token with ID ${session.id}`);
+      this.sessions.delete(session.token!);
+      break;
+    }
+  }
 }

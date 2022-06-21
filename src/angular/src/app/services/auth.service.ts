@@ -129,7 +129,7 @@ export class AuthService {
   }
 
   revokeToken(token: Session): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/auth/logout`, {token: token.token}, {observe: 'response'})
+    return this.http.post(`${this.api}/auth/revoke`, {token: token.token}, {observe: 'response', headers: this.util.getTokenHeaders()})
       .pipe(
         toApiResponse<any>(),
         catchError(handleError()),
