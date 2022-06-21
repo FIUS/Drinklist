@@ -18,6 +18,7 @@
   "loginFail": "Login fehlgeschlagen",
   "loginFail0": "Verbindungsfehler",
   "loginFail1": "Das Passwort ist falsch",
+  "loginFail2": "Unbekannter Fehler",
   "adminPasswordLabel": "Admin Passwort:",
   "adminLoginInfo": "Dies ist der Admin-Login. Wenn du nur etwas zu trinken möchtest, klicke hier."
 }

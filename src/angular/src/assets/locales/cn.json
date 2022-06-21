@@ -18,6 +18,7 @@
   "loginFail": "Login failed",
   "loginFail0": "Network error",
   "loginFail1": "Wrong password",
+  "loginFail2": "Unknown error",
   "adminPasswordLabel": "Admin Password:",
   "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
 }

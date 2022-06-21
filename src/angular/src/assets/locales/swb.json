@@ -18,6 +18,7 @@
   "loginFail": "Åmelda hat ned klabbd",
   "loginFail0": "d'Verbindung isch verreckt",
   "loginFail1": "Des Passwort isch falsch.",
+  "loginFail2": "s'isch anders hee",
   "adminPasswordLabel": "Hier des Password vom Chef aigebba:",
   "adminLoginInfo": "Hier isch dem Chef sei Åmeldeseide. Wenn du bloß ebbes zum drenga willsch muasch hier druff druggga."
 }

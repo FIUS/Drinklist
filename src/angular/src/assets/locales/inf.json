@@ -18,6 +18,7 @@
   "loginFail": "Login failed",
   "loginFail0": "LoginError.NETWORK_ERROR",
   "loginFail1": "LoginError.WRONG_PASSWORD",
+  "loginFail2": "LoginError.UNKNOWN_ERROR",
   "adminPasswordLabel": "[sudo] password for root:",
   "adminLoginInfo": "This is the root login. If you are not on the sudoers file, click here."
 }
