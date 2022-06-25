@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {ILocale, ILocaleData} from '../models/i-locale';
 import {HttpClient} from '@angular/common/http';
+import {Observable, of} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,21 +28,22 @@ export class LocaleService {
   }
 
   private retrieveLocale(locale: string): void {
-    this.http.get<ILocaleData>(`/assets/locales/${locale}.json`).subscribe((localeData) => {
+    this.http.get<ILocaleData>(`/assets/locales/${locale}.json`).subscribe(localeData => {
       this.locale = localeData;
     });
   }
 
-  getLocales(): Promise<ILocale[]> {
-    return new Promise<ILocale[]>((resolve) => {
-      if (this.locales.length > 0) {
-        return resolve(this.locales);
-      }
-      this.http.get<ILocale[]>('/assets/locales.json').subscribe((response) => {
-        this.locales = response;
-        return resolve(response);
-      });
-    });
+  getLocales(): Observable<ILocale[]> {
+    if (this.locales.length > 0) {
+      return of(this.locales);
+    }
+    return this.http.get<ILocale[]>('/assets/locales.json').pipe(
+      tap({
+        next: locales => {
+          this.locales = locales;
+        }
+      })
+    );
   }
 
   getMessage(key: string): string {

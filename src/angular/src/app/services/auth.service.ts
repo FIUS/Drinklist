@@ -1,14 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {catchError} from 'rxjs/operators';
-import {handleError, handleForbiddenAdmin, ServiceUtil, toApiResponse} from './service.util';
-import {Observable} from 'rxjs';
-import {ApiResponse} from '../models/api-response';
+import {noop, Observable} from 'rxjs';
 import {Session} from '../models/session';
 import {environment} from '../../environments/environment';
 import jwtDecode from 'jwt-decode';
 import {JwtClaims} from '../models/jwt-claims';
+import {map, tap} from 'rxjs/operators';
 
 export enum LoginError {
   NETWORK_ERROR,
@@ -23,13 +21,10 @@ export class AuthService {
 
   readonly api = environment.apiRoot;
 
-  private util: ServiceUtil;
-
   constructor(
     private http: HttpClient,
     private router: Router,
   ) {
-    this.util = new ServiceUtil(this);
   }
 
   private get token(): string | null {
@@ -74,12 +69,12 @@ export class AuthService {
     });
   }
 
-  login(password: string, requireAdmin?: boolean): Promise<void> { // TODO: Refactor to return an Observable
+  login(password: string, requireAdmin?: boolean): Observable<void> {
     // Invalidate old token (if any) since we're trying to log in.
     this.logout(true);
-    return new Promise<void>((resolve, reject) => {
-      this.http.post(`${this.api}/auth/login`, {password}, {responseType: 'text'})
-        .subscribe({
+    return this.http.post(`${this.api}/auth/login`, {password}, {responseType: 'text'})
+      .pipe(
+        tap({
           next: token => {
             // Login successful
             this.token = token;
@@ -87,22 +82,22 @@ export class AuthService {
             if (requireAdmin && !this.isLoggedInAsRole('admin')) {
               // Fail here since we require the token to be admin capable.
               this.logout(true); // Dispose "invalid" token
-              return reject(LoginError.WRONG_PASSWORD);
+              throw LoginError.WRONG_PASSWORD;
             }
-            return resolve();
           },
           error: (error: HttpErrorResponse) => {
             if (error.status === 400 || error.status === 401) {
-              return reject(LoginError.WRONG_PASSWORD);
+              throw LoginError.WRONG_PASSWORD;
             }
             if (error.status === 0) {
-              return reject(LoginError.NETWORK_ERROR);
+              throw LoginError.NETWORK_ERROR;
             }
             console.error(`Unexpected error occurred while logging in: ${error.message}`, error);
-            return reject(LoginError.UNKNOWN_ERROR);
+            throw LoginError.UNKNOWN_ERROR;
           }
-        });
-    });
+        }),
+        map(noop), // return void
+      );
   }
 
   isLoggedInAsRole(role: 'user' | 'admin' | 'any'): boolean {
@@ -119,20 +114,13 @@ export class AuthService {
     return roles.includes(role);
   }
 
-  getTokens(): Observable<ApiResponse<Session[]>> {
-    return this.http.get<Session[]>(`${this.api}/auth/tokens`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
-      .pipe(
-        toApiResponse<Session[]>(),
-        catchError(handleError<Session[]>()),
-        handleForbiddenAdmin(this),
-      );
+  getSessions(): Observable<Session[]> {
+    return this.http.get<Session[]>(`${this.api}/auth/tokens`);
   }
 
-  revokeToken(token: Session): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/auth/revoke`, {token: token.token}, {observe: 'response', headers: this.util.getTokenHeaders()})
-      .pipe(
-        toApiResponse<any>(),
-        catchError(handleError()),
-      );
+  revokeSession(session: Session): Observable<void> {
+    return this.http.post(`${this.api}/auth/revoke`, {token: session.token}).pipe(
+      map(noop), //return void
+    );
   }
 }

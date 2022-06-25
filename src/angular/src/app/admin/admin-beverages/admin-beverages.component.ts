@@ -36,12 +36,12 @@ export class AdminBeveragesComponent implements OnInit {
 
   refresh = () => {
     this.loadBeverages();
-  }
+  };
 
   loadBeverages(): void {
-    this.beverageService.getBeveragesAdmin().subscribe(response => {
-      if (response.status === 200 && response.data) {
-        this.beverages = response.data;
+    this.beverageService.getBeverages().subscribe({
+      next: beverages => {
+        this.beverages = beverages;
       }
     });
   }

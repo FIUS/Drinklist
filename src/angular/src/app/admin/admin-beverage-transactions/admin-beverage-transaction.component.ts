@@ -39,9 +39,9 @@ export class AdminBeverageTransactionComponent implements OnInit {
   };
 
   loadOrders(): void {
-    this.txnService.getBeverageTxns().subscribe(response => {
-      if (response.status === 200 && response.data) {
-        this.transactions = response.data;
+    this.txnService.getBeverageTxns().subscribe({
+      next: txns => {
+        this.transactions = txns;
       }
     });
   }

@@ -75,8 +75,8 @@ export class AdminUserAddMoneyComponent {
       return;
     }
     this.busy = true;
-    this.txnService.newCashTransaction(0, this.user.id, this.moneyToAdd, this.reason).subscribe(response => {
-      if (response.ok) {
+    this.txnService.newCashTransaction(0, this.user.id, this.moneyToAdd, this.reason).subscribe({
+      next: () => {
         this.modal?.close();
         this.busy = false;
         this.refresh();

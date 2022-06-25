@@ -55,8 +55,8 @@ export class AdminUserAddComponent {
 
   addUser(): void {
     this.busy = true;
-    this.userService.addUser(this.username).subscribe(response => {
-      if (response.status === 200) {
+    this.userService.addUser(this.username).subscribe({
+      next: () => {
         this.modal?.close();
         this.busy = false;
         this.refresh();

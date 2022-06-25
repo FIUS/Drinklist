@@ -54,21 +54,21 @@ export class UserDetailPageComponent implements OnInit {
       return;
     }
 
-    this.userService.getUser(userId).subscribe(response => {
-      if (response.status === 200) {
-        this.user = response.data;
+    this.userService.getUser(userId).subscribe({
+      next: user => {
+        this.user = user;
       }
     });
 
-    this.beverageService.getBeverages().subscribe(response => {
-      if (response.status === 200 && response.data) {
-        this.beverages = response.data;
+    this.beverageService.getBeverages().subscribe({
+      next: beverages => {
+        this.beverages = beverages;
       }
     });
 
-    this.txnService.getBeverageTxnsByUser(userId).subscribe(res => {
-      if (res.ok && res.data) {
-        this.transactions = res.data;
+    this.txnService.getBeverageTxnsByUser(userId).subscribe({
+      next: txns => {
+        this.transactions = txns;
       }
     });
   }
@@ -88,8 +88,8 @@ export class UserDetailPageComponent implements OnInit {
       return;
     }
 
-    this.txnService.orderBeverage(this.user, beverage).subscribe(response => {
-      if (response.ok) {
+    this.txnService.orderBeverage(this.user, beverage).subscribe({
+      next: () => {
         // Give the DB some time to process the order.
         setTimeout(() => {
           this.loadData(this.user?.id || -1);
@@ -102,8 +102,8 @@ export class UserDetailPageComponent implements OnInit {
     if (!txn.isFresh()) {
       return;
     }
-    this.txnService.deleteBeverageTxn(txn).subscribe(res => {
-      if (res.ok) {
+    this.txnService.deleteBeverageTxn(txn).subscribe({
+      next: () => {
         // Give the DB some time to process the deletion.
         setTimeout(() => {
           this.loadData(this.user?.id || -1);

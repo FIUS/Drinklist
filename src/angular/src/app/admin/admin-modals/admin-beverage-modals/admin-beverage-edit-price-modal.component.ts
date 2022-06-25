@@ -60,8 +60,8 @@ export class AdminBeverageEditPriceModalComponent {
 
   updatePrice(): void {
     this.busy = true;
-    this.beverageService.updatePrice(this.beverage, this.newPrice).subscribe(response => {
-      if (response.status === 200) {
+    this.beverageService.updatePrice(this.beverage, this.newPrice).subscribe({
+      next: () => {
         this.modal?.close();
         this.busy = false;
         this.refresh();

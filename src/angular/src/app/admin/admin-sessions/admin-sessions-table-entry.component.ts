@@ -11,7 +11,7 @@ import jwtDecode from 'jwt-decode';
   template: `
     <th scope="row" class="text-right">{{number}}</th>
     <td>{{claims.jti}}</td>
-    <td>{{isAdminToken() ? 'Admin' : 'User'}}</td>
+    <td>{{isAdminSession() ? 'Admin' : 'User'}}</td>
     <td>{{session.userAgent}}</td>
     <td>{{session.referrer}}</td>
     <td class="text-right pr-3">{{session.clientIp}}</td>
@@ -21,9 +21,9 @@ import jwtDecode from 'jwt-decode';
         Revoke Session
       </button>
     </td>
-    <app-admin-confirmation-modal #revokeConfirmation [callback]="revokeToken">
+    <app-admin-confirmation-modal #revokeConfirmation [callback]="revokeSession">
       <span *ngIf="isOwnSession()" class="h2 text-danger d-block"><strong>WARNING: THIS IS YOUR OWN SESSION!</strong></span>
-      Do you really want to revoke {{isAdminToken() ? 'admin' : 'user'}} session with token ID <strong>{{claims.jti}}</strong>?<br>
+      Do you really want to revoke {{isAdminSession() ? 'admin' : 'user'}} session with token ID <strong>{{claims.jti}}</strong>?<br>
       The client with this token will no longer be able to perform any action and be prompted for re-login on the next API call.
     </app-admin-confirmation-modal>
   `,
@@ -51,13 +51,16 @@ export class AdminSessionsTableEntryComponent implements OnInit {
     this.claims = jwtDecode<JwtClaims>(this.session.token);
   }
 
-  revokeToken = () => this.auth.revokeToken(this.session).subscribe(response => {
-    if (response.status === 200) {
+  revokeSession = () => this.auth.revokeSession(this.session).subscribe({
+    next: () => {
       this.refresh();
+    },
+    error: err => {
+      console.error('could not revoke session!', err);
     }
   });
 
-  isAdminToken(): boolean {
+  isAdminSession(): boolean {
     return this.claims.roles.includes('admin');
   }
 

@@ -52,11 +52,11 @@ export class AdminBeveragesActionsComponent {
   }
 
   deleteBeverage = () => {
-    this.beverageService.deleteBeverage(this.beverage).subscribe(response => {
-      if (response.status === 200) {
+    this.beverageService.deleteBeverage(this.beverage).subscribe({
+      next: () => {
         this.refresh();
       }
     });
-  }
+  };
 
 }

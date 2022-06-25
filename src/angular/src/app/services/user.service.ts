@@ -1,11 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AuthService} from './auth.service';
 import {User} from '../models/user';
-import {Observable} from 'rxjs';
-import {catchError} from 'rxjs/operators';
-import {ApiResponse} from '../models/api-response';
-import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
+import {noop, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {environment} from '../../environments/environment';
 
 
@@ -15,124 +12,61 @@ import {environment} from '../../environments/environment';
 export class UserService {
 
   private readonly api = environment.apiRoot;
-
-  private util: ServiceUtil;
+  private readonly usersUrl = `${this.api}/users`;
 
   constructor(
     private http: HttpClient,
-    private auth: AuthService,
   ) {
-    this.util = new ServiceUtil(auth);
   }
 
-  getUsers(): Observable<ApiResponse<User[]>> {
-    return this.http.get<User[]>(`${this.api}/users`, {
-      observe: 'response',
-      headers: this.util.getTokenHeaders('user')
-    }).pipe(
-      toApiResponse<User[]>(),
-      catchError(handleError<User[]>()),
-      handleForbiddenUser(this.auth),
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.usersUrl);
+  }
+
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.usersUrl}/${id}`);
+  }
+
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.usersUrl}/${id}`);
+  }
+
+  addUser(name: string): Observable<void> {
+    return this.http.post(`${this.usersUrl}/${name}`, '').pipe(
+      map(noop), // return void
     );
   }
 
-  getUsersAdmin(): Observable<ApiResponse<User[]>> {
-    return this.http.get<User[]>(`${this.api}/users`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
-      .pipe(
-        toApiResponse<User[]>(),
-        catchError(handleError<User[]>()),
-        handleForbiddenAdmin(this.auth),
-      );
-  }
-
-  getUser(id: number): Observable<ApiResponse<User>> {
-    return this.http.get<User>(`${this.api}/users/${id}`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
-      .pipe(
-        toApiResponse<User>(),
-        catchError(handleError<User>()),
-        handleForbiddenUser(this.auth),
-      );
-  }
-
-  getUserById(id: number): Observable<ApiResponse<User>> {
-    return this.http.get<User>(`${this.api}/users/${id}`, {observe: 'response', headers: this.util.getTokenHeaders('user')})
-      .pipe(
-        toApiResponse<User>(),
-        catchError(handleError<User>()),
-        handleForbiddenUser(this.auth),
-      );
-  }
-
-  addUser(name: string): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/users/${name}`, '', {
-      observe: 'response',
-      headers: this.util.getTokenHeaders('admin'),
-    }).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenAdmin(this.auth),
+  deleteUser(user: User): Observable<void> {
+    return this.http.delete(`${this.usersUrl}/${user.name}`).pipe(
+      map(noop), // return void
     );
   }
 
-  deleteUser(user: User): Observable<ApiResponse> {
-    return this.http.delete(`${this.api}/users/${user.name}`, {
-      observe: 'response',
-      headers: this.util.getTokenHeaders('admin'),
-    }).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenAdmin(this.auth),
+  // TODO: check if this is still needed
+  updateBalance(user: User, moneyToAdd: number, reason: string): Observable<void> {
+    return this.http.patch(`${this.usersUrl}/${user.name}`, {amount: moneyToAdd, reason}).pipe(
+      map(noop), // return void
     );
   }
 
-  updateBalance(user: User, moneyToAdd: number, reason: string): Observable<ApiResponse> {
-    return this.http.patch(`${this.api}/users/${user.name}`, {amount: moneyToAdd, reason}, {
-      observe: 'response',
-      headers: this.util.getTokenHeaders('admin'),
-    }).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenAdmin(this.auth),
-    );
-  }
-
-  toggleVisibility(user: User): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/users/${user.name}/${user.hidden ? 'show' : 'hide'}`, '', {
-      observe: 'response',
-      headers: this.util.getTokenHeaders('admin'),
-    }).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenAdmin(this.auth),
+  toggleVisibility(user: User): Observable<void> {
+    return this.http.post(`${this.usersUrl}/${user.name}/${user.hidden ? 'show' : 'hide'}`, '').pipe(
+      map(noop), // return void
     );
   }
 
   // Statistics for admin dashboard
 
-  getTopDebtors(): Observable<ApiResponse<User[]>> {
-    return this.http.get<User[]>(`${this.api}/stats/top/debtors`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
-      .pipe(
-        toApiResponse<User[]>(),
-        catchError(handleError<User[]>()),
-        handleForbiddenAdmin(this.auth),
-      );
+  getTopDebtors(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.api}/stats/top/debtors`);
   }
 
-  getTopSavers(): Observable<ApiResponse<User[]>> {
-    return this.http.get<User[]>(`${this.api}/stats/top/savers`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
-      .pipe(
-        toApiResponse<User[]>(),
-        catchError(handleError<User[]>()),
-        handleForbiddenAdmin(this.auth),
-      );
+  getTopSavers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.api}/stats/top/savers`);
   }
 
-  getUserCount(): Observable<ApiResponse<number>> {
-    return this.http.get<number>(`${this.api}/stats/users`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
-      .pipe(
-        toApiResponse<number>(),
-        catchError(handleError<number>()),
-        handleForbiddenAdmin(this.auth),
-      );
+  getUserCount(): Observable<number> {
+    return this.http.get<number>(`${this.api}/stats/users`);
   }
 }

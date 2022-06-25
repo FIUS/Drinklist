@@ -70,9 +70,9 @@ export class AdminUsersTableComponent implements OnInit {
   }
 
   private loadUsers(): void {
-    this.userService.getUsersAdmin().subscribe(response => {
-      if (response.status === 200 && response.data) {
-        this.users = response.data;
+    this.userService.getUsers().subscribe({
+      next: users => {
+        this.users = users;
       }
     });
   }

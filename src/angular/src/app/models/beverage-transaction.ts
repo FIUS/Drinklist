@@ -4,6 +4,7 @@ import {User} from './user';
 import {Beverage} from './beverage';
 import {UserService} from '../services/user.service';
 import {BeverageService} from '../services/beverage.service';
+import {retry} from 'rxjs/operators';
 
 export class BeverageTransaction implements IBeverageTransaction {
 
@@ -24,17 +25,25 @@ export class BeverageTransaction implements IBeverageTransaction {
     beverageService: BeverageService,
     public cashTxn?: number,
   ) {
-    userService.getUserById(user).subscribe(res => {
-      if (res.ok && res.data) {
-        this.userSubject.next(res.data);
-      } else {
+    userService.getUserById(user).pipe(
+      retry(3), // retry up to three times on error
+    ).subscribe({
+      next: user => {
+        this.userSubject.next(user);
+      },
+      error: err => {
+        console.error(err);
         this.userSubject.next({id: -1, name: '[Unkown User]', balance: 0, hidden: 0, deleted: 0});
       }
     });
-    beverageService.getBeverageById(beverage).subscribe(res => {
-      if (res.ok && res.data) {
-        this.beverageSubject.next(res.data);
-      } else {
+    beverageService.getBeverageById(beverage).pipe(
+      retry(3), // retry up to three times on error
+    ).subscribe({
+      next: beverage => {
+        this.beverageSubject.next(beverage);
+      },
+      error: err => {
+        console.error(err);
         this.beverageSubject.next({id: -1, name: '[Unknown Beverage]', stock: 0, price: 0});
       }
     });
@@ -46,7 +55,7 @@ export class BeverageTransaction implements IBeverageTransaction {
   }
 
   isFresh(): boolean {
-    const deadline = new Date (new Date(this.timestamp).getTime() + 30000);
+    const deadline = new Date(new Date(this.timestamp).getTime() + 30000);
     return deadline > new Date();
   }
 }

@@ -47,9 +47,9 @@ export class AdminPageComponent implements OnInit {
   }
 
   downloadDB(): void {
-    this.backupService.getDatabaseBackup().subscribe(response => {
-      if (response.status === 200 && response.data) {
-        saveAs(response.data, `dump-${Date.now()}.sql`);
+    this.backupService.getDatabaseBackup().subscribe({
+      next: data => {
+        saveAs(data, `dump-${Date.now()}.sql`);
       }
     });
   }

@@ -25,15 +25,15 @@ export class AdminStatUserToplistComponent implements OnInit {
     this.text = `These are the top 5 users with the ${this.debt ? 'lowest' : 'highest'} balance:`;
 
     if (this.debt) {
-      this.userService.getTopDebtors().subscribe(response => {
-        if (response.status === 200 && response.data) {
-          this.userList = this.prepareToplist(response.data);
+      this.userService.getTopDebtors().subscribe({
+        next: debtors => {
+          this.userList = this.prepareToplist(debtors);
         }
       });
     } else {
-      this.userService.getTopSavers().subscribe(response => {
-        if (response.status === 200 && response.data) {
-          this.userList = this.prepareToplist(response.data);
+      this.userService.getTopSavers().subscribe({
+        next: savers => {
+          this.userList = this.prepareToplist(savers);
         }
       });
     }

@@ -40,9 +40,9 @@ export class AdminCashTransactionComponent implements OnInit {
   };
 
   loadTransactions(): void {
-    this.txnService.getCashTxns().subscribe(res => {
-      if (res.ok && res.data) {
-        this.transactions = res.data;
+    this.txnService.getCashTxns().subscribe({
+      next: tnxs => {
+        this.transactions = tnxs;
       }
     });
   }

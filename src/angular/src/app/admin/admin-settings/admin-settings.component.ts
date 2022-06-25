@@ -33,8 +33,8 @@ export class AdminSettingsComponent implements OnInit {
   }
 
   save(): void {
-    this.settingsService.save(this.settings).subscribe(response => {
-      if (response.status === 200) {
+    this.settingsService.save(this.settings).subscribe({
+      next: () => {
         this.appConfig.load().then(() => {
           this.title.setTitle(AppConfig.config.title);
         });

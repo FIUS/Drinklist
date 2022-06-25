@@ -54,16 +54,16 @@ export class AdminUsersActionsComponent {
   }
 
   deleteUser = () => {
-    this.userService.deleteUser(this.user).subscribe(response => {
-      if (response.status === 200) {
+    this.userService.deleteUser(this.user).subscribe({
+      next: () => {
         this.refresh();
       }
     });
   };
 
   toggleVisibility(): void {
-    this.userService.toggleVisibility(this.user).subscribe(response => {
-      if (response.status === 200) {
+    this.userService.toggleVisibility(this.user).subscribe({
+      next: () => {
         this.refresh();
       }
     });

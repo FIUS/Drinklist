@@ -1,12 +1,9 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {handleError, handleForbiddenAdmin, handleForbiddenUser, ServiceUtil, toApiResponse} from './service.util';
 import {HttpClient} from '@angular/common/http';
-import {AuthService} from './auth.service';
-import {Observable} from 'rxjs';
-import {ApiResponse} from '../models/api-response';
+import {noop, Observable} from 'rxjs';
 import {ICashTransaction} from '../models/i-cash-transaction';
-import {catchError, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {IBeverageTransaction} from '../models/i-beverage-transaction';
 import {BeverageTransaction} from '../models/beverage-transaction';
 import {UserService} from './user.service';
@@ -20,151 +17,78 @@ import {Beverage} from '../models/beverage';
 })
 export class TransactionsService {
   private readonly api = environment.apiRoot;
-
-  private util: ServiceUtil;
+  private readonly txnUrl = `${this.api}/transactions`;
 
   constructor(
     private http: HttpClient,
-    private auth: AuthService,
     private userService: UserService,
     private beverageService: BeverageService,
   ) {
-    this.util = new ServiceUtil(auth);
   }
 
-  getCashTxns(): Observable<ApiResponse<CashTransaction[]>> {
-    return this.http.get<ICashTransaction[]>(`${this.api}/transactions/cash`, {
-      headers: this.util.getTokenHeaders('admin'),
-      observe: 'response'
-    }).pipe(
-      toApiResponse<ICashTransaction[]>(),
-      catchError(handleError<ICashTransaction[]>()),
-      handleForbiddenAdmin(this.auth),
-      map((res: ApiResponse<ICashTransaction[]>) => {
-        if (res.data) {
-          for (const txn of res.data) {
-            txn.timestamp = new Date(txn.timestamp);
-          }
+  getCashTxns(): Observable<CashTransaction[]> {
+    return this.http.get<ICashTransaction[]>(`${this.txnUrl}/cash`).pipe(
+      map((txns: ICashTransaction[]) => {
+        for (const txn of txns) {
+          txn.timestamp = new Date(txn.timestamp);
         }
-        return res;
-      }),
-      map(res => {
-        if (res.ok && res.data) {
-          return new ApiResponse<CashTransaction[]>(res.ok, res.status,
-            res.data.map(txn => CashTransaction.fromInterface(txn, this.userService)));
-        } else {
-          return res as ApiResponse<CashTransaction[]>;
-        }
+        return txns.map(txn => CashTransaction.fromInterface(txn, this.userService));
       })
     );
   }
 
-  newCashTransaction(userFrom: number, userTo: number, amount: number, reason: string): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/transactions/cash`, {userFrom, userTo, amount, reason}, {
-      observe: 'response',
-      headers: this.util.getTokenHeaders('admin')
-    }).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenAdmin(this.auth),
+  newCashTransaction(userFrom: number, userTo: number, amount: number, reason: string): Observable<void> {
+    return this.http.post(`${this.txnUrl}/cash`, {userFrom, userTo, amount, reason}).pipe(
+      map(noop), // return void
     );
   }
 
-  deleteCashTxn(txn: ICashTransaction): Observable<ApiResponse> {
-    return this.http.delete(`${this.api}/transactions/cash/${txn.id}`, {
-      headers: this.util.getTokenHeaders('user'),
-      observe: 'response'
-    }).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenUser(this.auth)
+  deleteCashTxn(txn: ICashTransaction): Observable<void> {
+    return this.http.delete(`${this.txnUrl}/cash/${txn.id}`).pipe(
+      map(noop), // return void
     );
   }
 
-  getBeverageTxns(limit?: number): Observable<ApiResponse<BeverageTransaction[]>> {
-    return this.http.get<IBeverageTransaction[]>(`${this.api}/transactions/beverages${limit ? `?limit=${limit}` : ''}`, {
-      headers: this.util.getTokenHeaders('user'),
-      observe: 'response'
-    }).pipe(
-      toApiResponse<IBeverageTransaction[]>(),
-      catchError(handleError<IBeverageTransaction[]>()),
-      handleForbiddenUser(this.auth),
-      map((res: ApiResponse<IBeverageTransaction[]>) => {
-        if (res.data) {
-          for (const txn of res.data) {
-            txn.timestamp = new Date(txn.timestamp);
-          }
+  getBeverageTxns(limit?: number): Observable<BeverageTransaction[]> {
+    return this.http.get<IBeverageTransaction[]>(`${this.txnUrl}/beverages${limit ? `?limit=${limit}` : ''}`).pipe(
+      map((txns: IBeverageTransaction[]) => {
+        for (const txn of txns) {
+          txn.timestamp = new Date(txn.timestamp);
         }
-        return res;
+        return txns.map(txn => BeverageTransaction.fromInterface(txn, this.userService, this.beverageService));
       }),
-      map(res => {
-        if (res.ok && res.data) {
-          return new ApiResponse<BeverageTransaction[]>(res.ok, res.status,
-            res.data.map(txn => BeverageTransaction.fromInterface(txn, this.userService, this.beverageService)));
-        } else {
-          return res as ApiResponse<BeverageTransaction[]>;
-        }
-      })
     );
   }
 
-  getBeverageTxnsByUser(userId: number): Observable<ApiResponse<BeverageTransaction[]>> {
-    return this.http.get<IBeverageTransaction[]>(`${this.api}/transactions/beverages/${userId}`, {
-      observe: 'response',
-      headers: this.util.getTokenHeaders('user')
-    }).pipe(
-      toApiResponse<IBeverageTransaction[]>(),
-      catchError(handleError<IBeverageTransaction[]>()),
-      handleForbiddenUser(this.auth),
-      map((res: ApiResponse<IBeverageTransaction[]>) => {
-        if (res.data) {
-          for (const txn of res.data) {
-            txn.timestamp = new Date(txn.timestamp);
-          }
+  getBeverageTxnsByUser(userId: number): Observable<BeverageTransaction[]> {
+    return this.http.get<IBeverageTransaction[]>(`${this.txnUrl}/beverages/${userId}`).pipe(
+      map((tnxs: IBeverageTransaction[]) => {
+        for (const txn of tnxs) {
+          txn.timestamp = new Date(txn.timestamp);
         }
-        return res;
+        return tnxs.map(txn => BeverageTransaction.fromInterface(txn, this.userService, this.beverageService));
       }),
-      map(res => {
-        if (res.ok && res.data) {
-          return new ApiResponse<BeverageTransaction[]>(res.ok, res.status,
-            res.data.map(txn => BeverageTransaction.fromInterface(txn, this.userService, this.beverageService)));
-        } else {
-          return res as ApiResponse<BeverageTransaction[]>;
-        }
-      })
     );
   }
 
-  orderBeverage(user: User, beverage: Beverage): Observable<ApiResponse> {
-    return this.http.post(`${this.api}/transactions/beverages/order`, {
+  orderBeverage(user: User, beverage: Beverage): Observable<void> {
+    return this.http.post(`${this.txnUrl}/beverages/order`, {
       user: user.id,
       beverage: beverage.id
-    }, {observe: 'response', headers: this.util.getTokenHeaders('user')}).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenUser(this.auth),
+    }).pipe(
+      map(noop), // return void
     );
   }
 
-  deleteBeverageTxn(txn: IBeverageTransaction): Observable<ApiResponse> {
-    return this.http.delete(`${this.api}/transactions/beverages/${txn.id}`, {
-      headers: this.util.getTokenHeaders('user'),
-      observe: 'response'
-    }).pipe(
-      toApiResponse(),
-      catchError(handleError()),
-      handleForbiddenUser(this.auth)
+  deleteBeverageTxn(txn: IBeverageTransaction): Observable<void> {
+    return this.http.delete(`${this.txnUrl}/beverages/${txn.id}`).pipe(
+      map(noop), // return void
     );
   }
 
   // Admin dashboard statistics
 
-  getTransactionCount(): Observable<ApiResponse<number>> {
-    return this.http.get<number>(`${this.api}/stats/transactions`, {observe: 'response', headers: this.util.getTokenHeaders('admin')})
-      .pipe(
-        toApiResponse<number>(),
-        catchError(handleError<number>()),
-        handleForbiddenAdmin(this.auth),
-      );
+  getTransactionCount(): Observable<number> {
+    return this.http.get<number>(`${this.api}/stats/transactions`);
   }
 }

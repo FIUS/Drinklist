@@ -2,6 +2,7 @@ import {ICashTransaction} from './i-cash-transaction';
 import {Observable, ReplaySubject} from 'rxjs';
 import {User} from './user';
 import {UserService} from '../services/user.service';
+import {retry} from 'rxjs/operators';
 
 export class CashTransaction implements ICashTransaction {
 
@@ -22,17 +23,25 @@ export class CashTransaction implements ICashTransaction {
     userService: UserService,
     public beverageTxn?: number,
   ) {
-    userService.getUserById(userFrom).subscribe(res => {
-      if (res.ok && res.data) {
-        this.userFromSubject.next(res.data);
-      } else {
+    userService.getUserById(userFrom).pipe(
+      retry(3), // retry up to three times on error
+    ).subscribe({
+      next: user => {
+        this.userFromSubject.next(user);
+      },
+      error: err => {
+        console.error(err);
         this.userFromSubject.next({id: -1, name: '[Unkown User]', balance: 0, hidden: 0, deleted: 0});
       }
     });
-    userService.getUserById(userTo).subscribe(res => {
-      if (res.ok && res.data) {
-        this.userToSubject.next(res.data);
-      } else {
+    userService.getUserById(userTo).pipe(
+      retry(3), // retry up to three times on error
+    ).subscribe({
+      next: user => {
+        this.userToSubject.next(user);
+      },
+      error: err => {
+        console.error(err);
         this.userToSubject.next({id: -1, name: '[Unkown User]', balance: 0, hidden: 0, deleted: 0});
       }
     });
@@ -44,7 +53,7 @@ export class CashTransaction implements ICashTransaction {
   }
 
   isFresh(): boolean {
-    const deadline = new Date (new Date(this.timestamp).getTime() + 30000);
+    const deadline = new Date(new Date(this.timestamp).getTime() + 30000);
     return deadline > new Date();
   }
 }

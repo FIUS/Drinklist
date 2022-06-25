@@ -50,8 +50,8 @@ export class AdminBeverageTransactionActionsComponent {
   }
 
   deleteOrder = () => {
-    this.txnService.deleteBeverageTxn(this.transaction).subscribe(response => {
-      if (response.status === 200) {
+    this.txnService.deleteBeverageTxn(this.transaction).subscribe({
+      next: () => {
         this.refresh();
       }
     });

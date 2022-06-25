@@ -64,8 +64,8 @@ export class AdminNewBeverageModalComponent {
 
   addBeverage(): void {
     this.busy = true;
-    this.beverageService.addBeverage(this.beverage).subscribe(response => {
-      if (response.status === 200) {
+    this.beverageService.addBeverage(this.beverage).subscribe({
+      next: () => {
         this.modal?.close();
         this.busy = false;
         this.refresh();

@@ -48,8 +48,8 @@ export class AdminCashTransactionActionsComponent {
   }
 
   deleteTransaction = () => {
-    this.txnService.deleteCashTxn(this.transaction).subscribe(response => {
-      if (response.status === 200) {
+    this.txnService.deleteCashTxn(this.transaction).subscribe({
+      next: () => {
         this.refresh();
       }
     });

@@ -19,7 +19,7 @@ import {JwtClaims} from '../../models/jwt-claims';
           <th scope="col"></th>
         </tr>
         <tr>
-          <th class="text-right">{{tokens.filter(matchesSearch, this).length}}</th>
+          <th class="text-right">{{sessions.filter(matchesSearch, this).length}}</th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.jti"></th>
           <th>
             <select class="form-control" [(ngModel)]="search.permissions">
@@ -35,8 +35,8 @@ import {JwtClaims} from '../../models/jwt-claims';
         </tr>
       </thead>
       <tbody>
-        <tr app-admin-sessions-table-entry *ngFor="let token of tokens.filter(matchesSearch, this); index as i"
-            [session]="token" [number]="i + 1" [refresh]="refresh" [class.table-success]="isOwnToken(token)"></tr>
+        <tr app-admin-sessions-table-entry *ngFor="let session of sessions.filter(matchesSearch, this); index as i"
+            [session]="session" [number]="i + 1" [refresh]="refresh" [class.table-success]="isOwnToken(session)"></tr>
       </tbody>
     </table>
   `,
@@ -44,7 +44,7 @@ import {JwtClaims} from '../../models/jwt-claims';
 })
 export class AdminSessionsTableComponent implements OnInit {
 
-  tokens: Session[] = [];
+  sessions: Session[] = [];
 
   search = {
     jti: '',
@@ -60,15 +60,18 @@ export class AdminSessionsTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadTokens();
+    this.loadSessions();
   }
 
-  refresh = () => this.loadTokens();
+  refresh = () => this.loadSessions();
 
-  private loadTokens(): void {
-    this.auth.getTokens().subscribe(response => {
-      if (response.status === 200 && response.data) {
-        this.tokens = response.data;
+  private loadSessions(): void {
+    this.auth.getSessions().subscribe({
+      next: tokens => {
+        this.sessions = tokens;
+      },
+      error: err => {
+        console.error('error retrieving active sessions: ', err);
       }
     });
   }

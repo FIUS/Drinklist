@@ -55,21 +55,21 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userService.getUserCount().subscribe(response => {
-      if (response.status === 200 && response.data !== null) {
-        this.userCount = response.data;
+    this.userService.getUserCount().subscribe({
+      next: count => {
+        this.userCount = count;
       }
     });
 
-    this.beverageService.getBeverageCount().subscribe(response => {
-      if (response.status === 200 && response.data !== null) {
-        this.beverageCount = response.data;
+    this.beverageService.getBeverageCount().subscribe({
+      next: count => {
+        this.beverageCount = count;
       }
     });
 
-    this.txnService.getTransactionCount().subscribe(response => {
-      if (response.status === 200 && response.data !== null) {
-        this.orderCount = response.data;
+    this.txnService.getTransactionCount().subscribe({
+      next: count => {
+        this.orderCount = count;
       }
     });
   }

@@ -21,9 +21,9 @@ export class AdminStatBeverageToplistComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.beverageService.getTopBeverages().subscribe(response => {
-      if (response.status === 200 && response.data) {
-        this.beverages = this.prepareToplist(response.data);
+    this.beverageService.getTopBeverages().subscribe({
+      next: beverages => {
+        this.beverages = this.prepareToplist(beverages);
       }
     });
   }

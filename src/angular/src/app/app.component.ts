@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
   faUser = faUser;
 
   ngOnInit(): void {
-    this.localeService.getLocales().then((locales) => {
+    this.localeService.getLocales().subscribe((locales) => {
       this.locales = locales;
     });
     this.selectedLocale = this.localeService.activeLocale;

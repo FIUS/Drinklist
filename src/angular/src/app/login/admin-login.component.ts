@@ -62,15 +62,17 @@ export class AdminLoginComponent implements OnInit {
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter' && this.password.length > 0) {
       this.auth.login(this.password, true)
-        .then(() => {
-          const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || ''; // substring(1) removes leading slash
-          this.router.navigateByUrl(`/${returnTo ? '' : 'admin'}${returnTo}`);
-        })
-        .catch(reason => {
-          if (reason === LoginError.WRONG_PASSWORD) {
-            this.loginForm?.resetForm();
+        .subscribe({
+          next: () => {
+            const returnTo = this.route.snapshot.queryParamMap.get('returnTo')?.substring(1) || ''; // substring(1) removes leading slash
+            this.router.navigateByUrl(`/${returnTo ? '' : 'admin'}${returnTo}`);
+          },
+          error: err => {
+            if (err === LoginError.WRONG_PASSWORD) {
+              this.loginForm?.resetForm();
+            }
+            this.error = `${this.locale.getMessage('loginFail')}: ${this.locale.getMessage('loginFail' + err)}`;
           }
-          this.error = `${this.locale.getMessage('loginFail')}: ${this.locale.getMessage('loginFail' + reason)}`;
         });
     }
   }
