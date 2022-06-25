@@ -8,7 +8,7 @@ import {UserService} from '../../services/user.service';
   template: `
     <div class="row">
       <div class="col">
-        <button class="btn btn-warning btn-sm w-100" (click)="addMoney.open()">
+        <button class="btn btn-warning btn-sm w-100" (click)="addMoney.open()" [disabled]="user.id === 0">
           <fa-icon [icon]="icons.money"></fa-icon>
           Add Money
         </button>

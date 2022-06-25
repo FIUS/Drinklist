@@ -43,13 +43,6 @@ export class UserService {
     );
   }
 
-  // TODO: check if this is still needed
-  updateBalance(user: User, moneyToAdd: number, reason: string): Observable<void> {
-    return this.http.patch(`${this.usersUrl}/${user.name}`, {amount: moneyToAdd, reason}).pipe(
-      map(noop), // return void
-    );
-  }
-
   toggleVisibility(user: User): Observable<void> {
     return this.http.post(`${this.usersUrl}/${user.name}/${user.hidden ? 'show' : 'hide'}`, '').pipe(
       map(noop), // return void

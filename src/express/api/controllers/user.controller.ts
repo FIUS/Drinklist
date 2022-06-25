@@ -17,7 +17,6 @@ export class UserController implements IController {
     this.router.get('/', requireUser, asyncHandler(this.users));
     this.router.post('/', requireAdmin, asyncHandler(this.postUser));
     this.router.get('/:id', requireUser, asyncHandler(this.getUser));
-    this.router.patch('/:id', requireAdmin, asyncHandler(this.patchUser));
     this.router.delete('/:id', requireAdmin, asyncHandler(this.deleteUser));
     this.router.post('/:id/hide', requireAdmin, asyncHandler(this.hideUser));
     this.router.post('/:id/show', requireAdmin, asyncHandler(this.showUser));
@@ -71,23 +70,6 @@ export class UserController implements IController {
     }
     await this.userService.setVisibility(false, id);
     res.status(200).end();
-  };
-
-  private patchUser = async (req: Request, res: Response) => {
-    res.status(501).end();
-    return;
-    // TODO: change functionality. this is no longer needed with transactions
-    /*
-    const id = +req.params.id;
-    const reason = req.body.reason as string;
-    const amount = +req.body.amount;
-    if (isNaN(id) || reason === undefined || reason === '' || isNaN(amount)) {
-      res.status(400).end();
-      return;
-    }
-    await this.userService.updateBalance(id, reason, amount);
-    res.status(200).end();
-    */
   };
 
   private deleteUser = async (req: Request, res: Response) => {
