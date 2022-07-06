@@ -1,3 +1,5 @@
+# This is a basic workflow to help you get started with Actions
+
 name: Main CI
 
 # Controls when the action will run.
@@ -6,6 +8,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - v*
   pull_request:
     branches:
       - master
@@ -23,10 +27,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
 
@@ -34,7 +38,7 @@ jobs:
         run: npm -g install npm
 
       - name: Cache
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v3
         with:
           path: .npm
           key: npm-${{ hashFiles('package-lock.json') }}
@@ -46,7 +50,7 @@ jobs:
         run: npm run build
 
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-output
           path: dist
@@ -55,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v2
@@ -66,7 +70,7 @@ jobs:
         run: npm -g install npm
 
       - name: Cache
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v3
         with:
           path: .npm
           key: npm-${{ hashFiles('package-lock.json') }}
