@@ -1,5 +1,6 @@
 /.angular/cache
 node_modules
+package-lock.json
 src/data/*
 data/*
 .vscode
