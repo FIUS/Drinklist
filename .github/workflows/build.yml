@@ -19,82 +19,13 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      - name: Update NPM
-        run: npm -g install npm
-
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: .npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Install NPM dependencies
-        run: npm ci --cache .npm --prefer-offline
-
-      - name: Build Drinklist
-        run: npm run build
-
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-output
-          path: dist
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Update NPM
-        run: npm -g install npm
-
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: .npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Install NPM dependencies
-        run: npm ci --cache .npm --prefer-offline
-
-      - name: Lint Drinklist
-        run: npm run lint
-
+# This workflow contains a single job called "docker"
   docker:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    needs:
-      - build
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Download build output
-        uses: actions/download-artifact@v2
-        with:
-          name: build-output
-          path: dist
 
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v1
