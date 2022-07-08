@@ -19,67 +19,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Update NPM
-        run: npm -g install npm
-
-      - name: Cache
-        uses: actions/cache@v2.1.5
-        with:
-          path: .npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Install NPM dependencies
-        run: npm ci --cache .npm --prefer-offline
-
-      - name: Build Drinklist
-        run: npm run build
-
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-output
-          path: dist
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Update NPM
-        run: npm -g install npm
-
-      - name: Cache
-        uses: actions/cache@v2.1.5
-        with:
-          path: .npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Install NPM dependencies
-        run: npm ci --cache .npm --prefer-offline
-
-      - name: Lint Drinklist
-        run: npm run lint
+  # This workflow contains a single job called "docker"
 
   docker:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -90,63 +30,26 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Download build output
-        uses: actions/download-artifact@v2
-        with:
-          name: build-output
-          path: dist
-
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v1
 
       - name: Docker Setup Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Docker Login
-        uses: docker/login-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Save lowercase repository name in ENV
-        run:
-          echo "repo_name=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
-
-      - name: Set docker tag (tags)
-        if: github.ref_type == 'tag'
-        run: |
-          VERSION=$(echo ${{ github.ref_name }} | sed -e 's/v//')
-          TAGS=ghcr.io/${{ env.repo_name }}:${{ github.sha }}
-          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:$VERSION
-          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:$(echo $VERSION | sed -Ee 's/([0-9]+\.[0-9]+)\.[0-9]+$/\1/')
-          echo "docker_tags=$TAGS" >> $GITHUB_ENV
-
-      - name: Set docker tag (master)
-        if: github.ref_type == 'branch' && github.ref_name == 'master'
-        run: |
-          TAGS=ghcr.io/${{ env.repo_name }}:${{ github.sha }}
-          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:${{ github.ref_name }}
-          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:latest
-          echo "docker_tags=$TAGS" >> $GITHUB_ENV
-
-      - name: Set docker tag (other branches)
-        if: github.ref_type == 'branch' && github.ref_name != 'master'
-        run: |
-          TAGS=ghcr.io/${{ env.repo_name }}:${{ github.sha }}
-          TAGS=$TAGS,ghcr.io/${{ env.repo_name }}:${{ github.ref_name }}
-          echo "docker_tags=$TAGS" >> $GITHUB_ENV
-
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v3
         with:
-          context: .
-          pull: true
           push: true
-          platforms: |
-            linux/amd64
-            linux/arm64
-            linux/arm/v7
+          context: .
+          tags: fius/drinklist:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ${{ env.docker_tags }}
+
+  
