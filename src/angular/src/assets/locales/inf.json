@@ -1,0 +1,23 @@
+{
+	"legal": "I don't like data krakens",
+	"imprint": "Whom to blame",
+	"header01": "Drinklist",
+	"header02": "github.com/FIUS/Drinklist",
+	"header1": "Authenticate yourself, please!",
+	"header21": "Hello world, and",
+	"header22": "Here is your private information!",
+	"plabel": "What is the music of life?",
+	"rlabel": "Recently spied upon:",
+	"blabel": "Product Backlog ...",
+	"mlabel": "Work-Life-Balance:",
+	"hlabel": "/var/log/transactions",
+	"hcol1": "tx.reason",
+	"hcol2": "tx.price",
+	"hcol3": "tx.timestamp",
+	"btnfinish": "goto auth;",
+  "loginFail": "Login failed",
+  "loginFail0": "LoginError.NETWORK_ERROR",
+  "loginFail1": "LoginError.WRONG_PASSWORD",
+  "adminPasswordLabel": "[sudo] password for root:",
+  "adminLoginInfo": "This is the root login. If you are not on the sudoers file, click here."
+}

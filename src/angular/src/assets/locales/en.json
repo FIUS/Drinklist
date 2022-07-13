@@ -1,0 +1,23 @@
+{
+  "legal": "Dataprotection",
+  "imprint": "Imprint",
+  "header01": "TOBL",
+  "header02": "The Other Beverage List",
+  "header1": "Who are You?",
+  "header21": "Hello",
+  "header22": "Here is your Account!",
+  "plabel": "Access Password:",
+  "rlabel": "Recently Purchased:",
+  "blabel": "I take ...",
+  "mlabel": "Balance:",
+  "hlabel": "History:",
+  "hcol1": "Reason",
+  "hcol2": "Price",
+  "hcol3": "Date",
+  "btnfinish": "Back",
+  "loginFail": "Login failed",
+  "loginFail0": "Network error",
+  "loginFail1": "Wrong password",
+  "adminPasswordLabel": "Admin Password:",
+  "adminLoginInfo": "This is the administrator login. If you just want something to drink click here."
+}

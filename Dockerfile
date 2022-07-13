@@ -1,14 +1,15 @@
-FROM node:8.16-buster
-
-RUN apt-get -y update
-#RUN apt-get -y upgrade
-RUN apt-get install -y sqlite3 libsqlite3-dev
-
+FROM node:16
 COPY . /app
 WORKDIR /app
 
-RUN npm install
+RUN apt update
+RUN apt upgrade -y
+RUN apt install sqlite3
 
-EXPOSE 8080 8081 8082
+RUN npm install
+RUN npm run build
+
+EXPOSE 8080
 
 CMD ["npm", "run", "start-prod"]
+

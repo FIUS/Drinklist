@@ -11,134 +11,176 @@
 
 // Imports
 const fs       = require('fs');
-const sqlite3  = require('sqlite3');
+const Database = require('better-sqlite3');
 const os       = require('os');
 
 // Constants
-const dirname      = fs.realpathSync('./');
-const databaseFile = dirname + '/data/history.db';
-const authFile     = dirname + '/data/auth.json';
-const settingsFile = dirname + '/data/settings.json';
-const legalFile    = dirname + '/data/legal.html';
-const imprintFile    = dirname + '/data/imprint.html';
+const dirname          = fs.realpathSync('./');
+const databaseFile     = dirname + '/data/history.db';
+const authFile         = dirname + '/data/auth.json';
+const settingsFile     = dirname + '/data/settings.json';
+const userSettingsFile = dirname + '/data/user-settings.json';
+const legalFile        = dirname + '/data/legal.html';
+const imprintFile      = dirname + '/data/imprint.html';
 
 exports.checkAndCreateFiles = checkAndCreateFiles;
+exports.migrateSettings = migrateSettings;
 exports.writeFile = writeFile;
 exports.recreateDB = recreateDB;
 exports.createEmptyLegalFile = createEmptyLegalFile;
 exports.createEmptyImprintFile = createEmptyImprintFile;
 
 function checkAndCreateFiles() {
-	if(!fs.existsSync(databaseFile)) {
-		recreateDB();
-	}
+  if (!fs.existsSync(databaseFile)) {
+    recreateDB();
+  }
 
-	if(!fs.existsSync(authFile)) {
-		writeDefaultAuthFile();
-	}
+  if (!fs.existsSync(authFile)) {
+    writeDefaultAuthFile();
+  }
 
-	if(!fs.existsSync(settingsFile)) {
-		writeDefaultSettingsFile();
-	}
+  if (!fs.existsSync(settingsFile)) {
+    writeDefaultSettingsFile();
+  }
 
-	if (!fs.existsSync(legalFile)) {
-		createEmptyLegalFile()
-	}
+  if (!fs.existsSync(userSettingsFile)) {
+    writeDefaultUserSettingsFile()
+  }
 
-	if (!fs.existsSync(imprintFile)) {
-		createEmptyImprintFile()
-	}
+  if (!fs.existsSync(legalFile)) {
+    createEmptyLegalFile()
+  }
+
+  if (!fs.existsSync(imprintFile)) {
+    createEmptyImprintFile()
+  }
+}
+
+function migrateSettings() {
+
+  // Load settings
+  const userSettings = JSON.parse(fs.readFileSync(`${dirname}/data/user-settings.json`, 'utf-8'));
+
+  // Migrate old settings
+  if ('data-protection' in userSettings) {
+    userSettings.dataProtection = userSettings['data-protection'];
+    delete userSettings['data-protection'];
+  }
+  if ('recently-purchased' in userSettings) {
+    userSettings.recentlyPurchased = userSettings['recently-purchased'];
+    delete userSettings['recently-purchased'];
+  }
+
+  // Add new settings
+  if (!('stock' in userSettings)) {
+    userSettings.stock = true;
+  }
+
+  // Save migrated settings
+  fs.writeFileSync(`${dirname}/data/user-settings.json`, JSON.stringify(userSettings));
 }
 
 function writeDefaultAuthFile() {
-	//Default data
-	let authData = [
-		{
-			"password": "secret",
-			"root": false
-		},
-		{
-			"password": "superSecret",
-			"root": true
-		}
-	];
+  //Default data
+  let authData = [
+    {
+      password: "secret",
+      root: false
+    },
+    {
+      password: "superSecret",
+      root: true
+    }
+  ];
 
-	writeFile('auth', authFile, authData);
+  writeFile('auth', authFile, authData);
 }
 
 function writeDefaultSettingsFile() {
-	//Default data
-	let settingsData = {
-		"apiPort":   8080,
-		"userPort":  8081,
-		"adminPort": 8082,
-		"apiPath":   "http://localhost:8080/",
-		"userPath":  "http://localhost:8081/",
-		"adminPath": "http://localhost:8082/"
-	}
+  //Default data
+  let settingsData = {
+    host: "http://localhost:8080",
+    port: 8080,
+  };
 
-	writeFile('settings', settingsFile, settingsData);
+  writeFile('settings', settingsFile, settingsData);
 }
 
-function writeFile(name, path, data, raw=false) {
-	try {
-		if (raw) {
-			fs.writeFileSync(path, data);
-		} else {
-			fs.writeFileSync(path, JSON.stringify(data));
-		}
-	} catch(e) {
-		console.log("Error creating the " + name + " file at: " + path);
-		console.log(err);
-	}
+function writeDefaultUserSettingsFile() {
+  //Default data
+  let userSettingsData = {
+    imprint: true,
+    dataProtection: true,
+    recentlyPurchased: true,
+    title: "daGl / TOBL",
+    currencySymbol: "€",
+    stock: true,
+  };
 
-	console.log("The " + name + " file was created at: " + path);
+  writeFile('settings', userSettingsFile, userSettingsData);
+}
+
+function writeFile(name, path, data, raw = false) {
+  try {
+    if (raw) {
+      fs.writeFileSync(path, data);
+    } else {
+      fs.writeFileSync(path, JSON.stringify(data));
+    }
+  } catch (e) {
+    console.log("Error creating the " + name + " file at: " + path);
+    console.log(err);
+  }
+
+  console.log("The " + name + " file was created at: " + path);
 }
 
 function recreateDB() {
-	let db = new sqlite3.Database(databaseFile);
-	db.serialize(function() {
-		// create DB tables
-		db.run('DROP TABLE IF EXISTS History;');
-		db.run("CREATE TABLE History (id VARCHAR(255), user VARCHAR(255) NOT NULL, reason VARCHAR(255), amount INTEGER NOT NULL DEFAULT 0, beverage VARCHAR(255) NOT NULL DEFAULT '', beverage_count INTEGER NOT NULL DEFAULT 0, timestamp DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime')));");
-		db.run('DROP TABLE IF EXISTS Users;');
-		db.run("CREATE TABLE Users (name VARCHAR(255) PRIMARY KEY, balance INTEGER NOT NULL DEFAULT 0, hidden INTEGER NOT NULL DEFAULT 0);");
-		db.run('DROP TABLE IF EXISTS Beverages;');
-		db.run("CREATE TABLE Beverages (name VARCHAR(255) PRIMARY KEY, stock INTEGER NOT NULL DEFAULT 0, price INTEGER NOT NULL DEFAULT 0);");
+  let db = new Database(databaseFile);
+  db.exec(
+    // create DB tables
+    "DROP TABLE IF EXISTS History;" +
+    "CREATE TABLE History (id VARCHAR(255), user VARCHAR(255) NOT NULL, reason VARCHAR(255), amount INTEGER NOT NULL DEFAULT 0, beverage VARCHAR(255) NOT NULL DEFAULT '', beverage_count INTEGER NOT NULL DEFAULT 0, timestamp DATETIME NOT NULL DEFAULT (DATETIME('now', 'localtime')));" +
+    "DROP TABLE IF EXISTS Users;" +
+    "CREATE TABLE Users (name VARCHAR(255) PRIMARY KEY, balance INTEGER NOT NULL DEFAULT 0, hidden INTEGER NOT NULL DEFAULT 0);" +
+    "DROP TABLE IF EXISTS Beverages;" +
+    "CREATE TABLE Beverages (name VARCHAR(255) PRIMARY KEY, stock INTEGER NOT NULL DEFAULT 0, price INTEGER NOT NULL DEFAULT 0);" +
 
-		// fill with standard dummy data
-		db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Sample Juice', 10, 100);");
-		db.run("INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Supreme Sample Juice', 5, 150);");
-		db.run("INSERT INTO `Users` (`name`) VALUES ('Max Mustermann');");
-		db.run("INSERT INTO `Users` (`name`) VALUES ('Maria Mustermann');");
-	});
-	db.close();
+    // fill with standard dummy data
+    "INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Sample Juice', 10, 100);" +
+    "INSERT INTO `Beverages` (`name`, `stock`, `price`) VALUES ('Supreme Sample Juice', 5, 150);" +
+    "INSERT INTO `Users` (`name`) VALUES ('Max Mustermann');" +
+    "INSERT INTO `Users` (`name`) VALUES ('Maria Mustermann');"
+  );
+  db.close();
 
-	console.log("The database was created at: " + databaseFile);
+  console.log("The database was created at: " + databaseFile);
 }
 
 function createEmptyLegalFile() {
-	const data = `
-<html>
+  const data = `
+<html lang="en">
 	<head>
+	  <title>Legal</title>
 	</head>
 	<body>
 		Example Legal Text and Dataprotection Statements
 	</body>
 </html>
 `;
-	writeFile('legal', legalFile, data, true);
+  writeFile('legal', legalFile, data, true);
 }
 
 function createEmptyImprintFile() {
-	const data = `
-<html>
+  const data = `
+<html lang="en">
 	<head>
+	  <title>Imprint</title>
 	</head>
 	<body>
 		Example Imprint
 	</body>
 </html>
 `;
-	writeFile('imprint', imprintFile, data, true);
+  writeFile('imprint', imprintFile, data, true);
 }

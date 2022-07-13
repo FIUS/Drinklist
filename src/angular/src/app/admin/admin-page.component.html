@@ -1,0 +1,25 @@
+<div class="row mx-0">
+  <div class="col-md-2 px-0 bg-light text-dark admin-module-selector border-right">
+    <h1 class="h4 pl-3 my-2">Admin Area</h1>
+    <ul class="list-unstyled">
+      <ng-container *ngFor="let module of modules">
+        <li class="admin-module"
+            [class.admin-module-active]="activeModule===module.id"
+            [routerLink]="'../' + module.id">
+          <fa-icon *ngIf="module.icon" [icon]="module.icon"></fa-icon>
+          {{module.displayName}}
+        </li>
+        <li *ngIf="module.spacerAfter" class="admin-module spacer">
+          &#8203;
+        </li>
+      </ng-container>
+      <li class="admin-module" (click)="downloadDB()">
+        <fa-icon [icon]="icons.download"></fa-icon>
+        Download DB Dump
+      </li>
+    </ul>
+  </div>
+  <div class="col">
+    <ng-container [ngComponentOutlet]="activeModuleComponent"></ng-container>
+  </div>
+</div>

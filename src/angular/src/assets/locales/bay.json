@@ -1,0 +1,23 @@
+{
+	"legal": "Datenschutz",
+	"imprint": "Impressum",
+	"header01": "naML",
+	"header02": "no a Mundwasserl Listn",
+	"header1": "Wos wuisst? Wer bist na du?",
+	"header21": "Servus",
+	"header22": "Des is dei Konto!",
+	"plabel": "Omeldn most di, Kennwort is gfrogt:",
+	"rlabel": "Letzter Dreck, densd verzapft host:",
+	"blabel": "I nimm ...",
+	"mlabel": "Geldsacklstand:",
+	"hlabel": "As letzte wosd drunga host:",
+	"hcol1": "Wo fia",
+	"hcol2": "Kostn",
+	"hcol3": "Sunnastand",
+	"btnfinish": "Macha!",
+  "loginFail": "Login fehlgeschlagen",
+  "loginFail0": "Verbindungsfehler",
+  "loginFail1": "Das Passwort ist falsch",
+  "adminPasswordLabel": "Admin Passwort:",
+  "adminLoginInfo": "Dies ist der Admin-Login. Wenn du nur etwas zu trinken möchtest, klicke hier."
+}

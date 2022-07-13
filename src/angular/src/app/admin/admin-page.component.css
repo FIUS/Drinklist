@@ -1,0 +1,43 @@
+.admin-module-selector {
+  min-height: 94vh;
+  border-color: #eee;
+}
+
+.admin-module {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.admin-module:hover {
+  color: black;
+  background-color: rgba(0, 0, 0, .05);
+}
+
+.admin-module.spacer {
+  cursor: default;
+  transition: unset;
+}
+
+.admin-module.spacer:hover {
+  cursor: inherit;
+  background-color: inherit;
+}
+
+.admin-module-active {
+  background-color: #ffc107; /* bootstrap warning color */
+  color: black;
+  cursor: default;
+}
+
+.admin-module-active:hover {
+  background-color: #ffc107; /* bootstrap warning color */
+}
+
+/* remove fill on smaller screens where cols wrap
+   equal to bootstrap md breakpoint */
+@media (max-width: 768px) {
+  .admin-module-selector {
+    min-height: unset;
+  }
+}

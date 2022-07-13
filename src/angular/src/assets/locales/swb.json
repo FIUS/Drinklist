@@ -1,0 +1,23 @@
+{
+	"legal": "Datenschutz",
+	"imprint": "Impressum",
+	"header01": "aSdl",
+	"header02": "a Schdrichlischde",
+	"header1": "Wer von denne bisch denn du?",
+	"header21": "Hallo",
+	"header22": "Des isch dai Lischde!",
+	"plabel": "Scharf nochdenga ond password aigebba:",
+	"rlabel": "Des isch ällas basiert, wo' d ned do warsch:",
+	"blabel": "I nemm ...",
+	"mlabel": "Des muasch blecha odr hosch halt no guat:",
+	"hlabel": "Des hosch scho ällas dronga:",
+	"hcol1": "Worom",
+	"hcol2": "Koschda",
+	"hcol3": "Dadom",
+	"btnfinish": "Ben ferdich",
+  "loginFail": "Åmelda hat ned klabbd",
+  "loginFail0": "d'Verbindung isch verreckt",
+  "loginFail1": "Des Passwort isch falsch.",
+  "adminPasswordLabel": "Hier des Password vom Chef aigebba:",
+  "adminLoginInfo": "Hier isch dem Chef sei Åmeldeseide. Wenn du bloß ebbes zum drenga willsch muasch hier druff druggga."
+}
