@@ -24,4 +24,4 @@ COPY dist dist/
 
 EXPOSE 8080
 
-CMD node dist/express/main.js
+CMD ["node", "dist/express/main.js"]
