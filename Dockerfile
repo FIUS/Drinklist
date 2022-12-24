@@ -9,7 +9,6 @@ FROM base AS deps
 WORKDIR /build
 
 RUN apk add --no-cache --virtual .gyp python3 make g++
-RUN ln -s $(which python3) /usr/bin/python
 
 # Install NPM dependencies
 RUN --mount=source=package.json,target=package.json --mount=source=package-lock.json,target=package-lock.json \
