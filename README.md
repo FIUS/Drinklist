@@ -1,103 +1,142 @@
 # Drinklist
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [![Docker](http://dockeri.co/image/kienhoefr/drinklist)](https://hub.docker.com/r/kienhoefr/drinklist)
 
+The Drinklist is essentially a digital tally sheet which is intended for tracking coffee or beverage self-service sales
+in offices or communities. It is intended to be used very quickly and with very minimal user interaction. This project
+also includes a management view to manage and track the inventory and the sales.
 
-The Drinklist is essentially a digital tally sheet which is intended for tracking coffee or beverage self service sales in offices or communities. It is intended to be used very quickly and with very minimal user interaction. This project also includes a management view to manage and track the inventory and the sales.
+> Drinklist was originally designed and built for the [FIUS](https://fius.de) by its members.
 
-> Drinklist was originally designed and built for the [FIUS](https://fius.informatik.uni-stuttgart.de) by its members.
+<!-- TOC -->
+* [Drinklist](#drinklist)
+  * [Prerequisites](#prerequisites)
+  * [Install locally](#install-locally)
+  * [Run with Docker (recommended)](#run-with-docker--recommended-)
+  * [Configuration](#configuration)
+    * [user-settings.json](#user-settingsjson)
+    * [config.json](#configjson)
+    * [auth.json](#authjson)
+  * [Upgrading](#upgrading)
+  * [Interfaces](#interfaces)
+<!-- TOC -->
 
+## Prerequisites
 
-## Prerequisites:
+* npm
+* sqlite3
 
- *  npm
- *  sqlite3
+## Install locally
 
+First install all dependencies and build the typescript sources with:
 
-## Install
-
-First install all dependencies and setup the data folder with:
 ```shell
 npm install
-npm run setup-data-folder
+npm build
 ```
-This will also compile the TypeScript source, which might take a moment depending on your machine. 
 
 Then start the node js server with:
+
 ```shell
 npm start
 ```
 
 or run it directly with:
+
 ```shell
-node src/server.js
+node .
+# OR
+node dist/express/main.js
 ```
 
-Lastly navigate to the [Admin Page](http://localhost:8080/admin) or the [User Page](http://localhost:8080) and start using the system.
+Now go to http://localhost:8080 to start using Drinklist.
 
+## Run with Docker (recommended)
 
-## Install with Docker
-Container: kienhoefr/drinklist
+Image: `kienhoefr/drinklist`
 
 Start with mapped config dir and forwarded ports:
+
 ```shell
 docker run -e TZ="Europe/Berlin" -p 8080:8080 -v ~/drinklistData:/app/data kienhoefr/drinklist
 ```
 
+You can also run Drinklist using docker-compose:
 
-## Update from 1.0.0
+```yaml
+services:
+  drinklist:
+    image: kienhoefr/drinklist
+    # You may also use the GitHub registry:
+    #image: ghcr.io/kienhoefr/drinklist
+    container_name: drinklist
+    restart: unless-stopped
+    ports:
+      # Change to your liking or don't expose the port when you use an internal reverse proxy
+      - 8080:8080
+    volumes:
+      # Use local bind mount
+      - ./data:/app/data
+      # Alternatively use docker volume
+      #- drinklist-data:/app/data
+    environment:
+      # Optionally set the containers timezone. As all dates are saved in UTC there is not real need.
+      # HOWEVER, it is recommended to set the timezone when upgrading from 1.x, as Drinklist will automatically migrate the database.
+      TZ: Europe/Berlin
 
-Since version 1.1.0 contains breaking changes you need to migrate your data. There are two paths for this. Either open the `data/history.db` file with any sqlite programm of your choosing and run:
-```SQL
-ALTER TABLE users ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;
+# When using docker volume to store the data
+#volumes:
+#  drinklist-data:
+#    name: drinklist-data
 ```
 
-Or go to the install directory with the data folder inside and run this command in a shell:
-```shell
-sqlite3 data/history.db "ALTER TABLE users ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;"
-```
+## Configuration
 
-Additionally it is necessary to create the `data/user-settings.json` file with the following content:
-```json
-{"imprint":true,"data-protection":true,"recently-purchased":true,"history":true,"money":true}
-```
+When first starting Drinklist, it will display a configuration page that can be used to configure Drinklist to your
+liking.
 
-## Update from 1.1
+These settings are available:
 
-Update 1.2 brings two new configuration settings that must be added to your `data/user-settings.json`.
-These two new settings are:
-* title - Set the title displayed in the browser's tab when accessing the frontend.
-* curencySymbol - Set the currency symbol Drinklist uses to display money values.
+### user-settings.json
 
-Your `data/user-settings.json` file should look like this:
-```json
-{
-  "imprint": true,
-  "data-protection": true,
-  "recently-purchased": true,
-  "history": true,
-  "money": true,
-  "title": "daGl / TOBL",
-  "currencySymbol": "€"
-}
-```
+| Setting           | Default       | Explanation                                                             |
+|-------------------|---------------|-------------------------------------------------------------------------|
+| title             | `"dagl/TOBL"` | The page title displayed in the Browser. You can use this for branding. |
+| currencySymbol    | `"€"`         | Symbol used to display monetary values.                                 |
+| stock             | `true`        | Whether to display stock counts on the user page                        |
+| imprint           | `true`        | Whether to display the button for the imprint                           |
+| dataProtection    | `true`        | Whether to display the button for the privacy statement.                |
+| recentlyPurchased | `true`        | Enable/disable the ticker on the user selection page.                   |    
 
-## Update from 1.2
-Update 1.3.0 requires your `data/settings.json` to be changed.
+### config.json
 
-Your `data/settings.json` file should look like this:
+| Setting | Default | Explanation           |
+|---------|---------|-----------------------|
+| port    | 8080    | The port to listen on |
 
-```json
-{
-  "host": "http://localhost:8080",
-  "port": 8080
-}
-```
+### auth.json
 
+This file contains the passwords for the Drinklist users in plaintext for greater ease of use.
+In the future, Drinklist might change to hashing/salting the passwords.
+
+| Account | Explanation                                                                                                                                                                                                                   |
+|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| kiosk   | The account for your users to use or for the fridge tablet to login with.<br/>This account can see all users' accounts/balances and "buy" beverages for every user.                                                           |
+| admin   | This account can do all of the above, plus is able to manage Drinklist (i.e. login on the admin area and add/remove/edit users, beverages and more settings.<br/>You should only use this account for administering Drinklist |
+
+## Upgrading
+
+Updates prior to 2.0 need manual steps to be done when updating. Instructions for these can be
+found [here](UPGRADING.md).
+
+When updating to version 2.0, Drinklist will back up all you data files to a `backup` directory in your data folder, so
+you can roll back if anything goes wrong.
 
 ## Interfaces
-| Name       | URL                       | Description                                                   |
-|------------|---------------------------|---------------------------------------------------------------|
-| API        | http://localhost:8080/api | This is the api used to store and manage all information      |
-| Frontend   | http://localhost:8080/    | Frontend for user interaction and administration              |
+
+| Name     | URL                       | Description                                              |
+|----------|---------------------------|----------------------------------------------------------|
+| API      | http://localhost:8080/api | This is the api used to store and manage all information |
+| Frontend | http://localhost:8080/    | Frontend for user interaction and administration         |
