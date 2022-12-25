@@ -3,11 +3,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [
+      "@angular/localize"
+    ]
   },
   "files": [
-    "src/angular/src/main.ts",
-    "src/angular/src/polyfills.ts"
+    "src/angular/src/main.ts"
   ],
   "include": [
     "src/angular/src/**/*.d.ts"
