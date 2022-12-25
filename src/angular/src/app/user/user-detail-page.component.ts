@@ -6,7 +6,7 @@ import {BeverageService} from '../services/beverage.service';
 import {Beverage} from '../models/beverage';
 import {LocaleService} from '../services/locale.service';
 import {Util} from '../util';
-import {faTrash} from '@fortawesome/free-solid-svg-icons/faTrash';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import {AppConfig} from '../app.config';
 import {TransactionsService} from '../services/transactions.service';
 import {BeverageTransaction} from '../models/beverage-transaction';

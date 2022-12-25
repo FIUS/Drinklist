@@ -3,7 +3,7 @@ import {LocaleService} from '../services/locale.service';
 import {NgForm} from '@angular/forms';
 import {AuthService, LoginError} from '../services/auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {faInfo} from '@fortawesome/free-solid-svg-icons/faInfo';
+import {faInfo} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-admin-login',
