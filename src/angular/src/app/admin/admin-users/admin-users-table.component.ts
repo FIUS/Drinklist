@@ -17,9 +17,9 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
           <th scope="col"></th>
         </tr>
         <tr>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.id"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.id"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.name"></th>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.balance"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.balance"></th>
           <th>
             <select class="form-control" [(ngModel)]="search.visibility">
               <option value="any">any</option>

@@ -15,14 +15,15 @@ import {BeverageTransaction} from '../../models/beverage-transaction';
           <th scope="col">Units</th>
           <th scope="col">Cash TXN#</th>
           <th scope="col">Timestamp</th>
-          <th scope="col"></th>
+          <th scope="col" class="col-1"></th>
         </tr>
         <tr>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.id"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.id"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.user"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.beverage"></th>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.money"></th>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.cashTxn"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.money"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.units"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.cashTxn"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.timestamp"></th>
           <th></th>
         </tr>
@@ -45,6 +46,7 @@ export class AdminBeverageTransactionTableComponent {
     user: '',
     beverage: '',
     money: '',
+    units: '',
     cashTxn: '',
     timestamp: '',
   };
@@ -57,10 +59,11 @@ export class AdminBeverageTransactionTableComponent {
     const matchesUser = txn.user.toString().includes(this.search.user.toLowerCase());
     const matchesBeverage = txn.beverage.toString().includes(this.search.beverage.toLowerCase());
     const matchesMoney = Util.moneyFormat(txn.money).toLowerCase().includes(this.search.money.toLowerCase());
+    const matchesUnits = txn.units.toString().toLowerCase().includes(this.search.units.toLowerCase());
     const matchesCashTxn = txn.timestamp.toISOString().includes(this.search.cashTxn.toLowerCase());
     const matchesTimestamp = txn.timestamp.toISOString().includes(this.search.timestamp.toLowerCase());
 
-    return matchesID && matchesUser && matchesBeverage && matchesMoney && matchesCashTxn && matchesTimestamp;
+    return matchesID && matchesUser && matchesBeverage && matchesMoney && matchesUnits && matchesCashTxn && matchesTimestamp;
   }
 
 }

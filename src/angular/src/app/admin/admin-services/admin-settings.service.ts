@@ -6,10 +6,7 @@ import {environment} from '../../../environments/environment';
 import {map} from 'rxjs/operators';
 
 
-@Injectable({
-  // We are creating this service directly for the component that uses it
-  providedIn: null
-})
+@Injectable()
 export class AdminSettingsService {
 
   constructor(

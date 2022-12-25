@@ -13,13 +13,13 @@ import {BeverageService} from '../../services/beverage.service';
           Add Stock
         </button>
       </div>
-      <div class="col pl-0">
+      <div class="col ps-0">
         <button class="btn btn-sm btn-warning w-100" (click)="editPrice.open()">
           <fa-icon [icon]="icons.cog"></fa-icon>
           Edit Price
         </button>
       </div>
-      <div class="col pl-0">
+      <div class="col ps-0">
         <button class="btn btn-sm btn-warning w-100" (click)="deleteConfirmation.open()">
           <fa-icon [icon]="icons.minus"></fa-icon>
           Remove

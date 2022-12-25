@@ -7,23 +7,27 @@
 <main class="row mx-0 mb-8vh">
   <div class="col-lg-6">
     <h1>{{locale.getMessage('blabel')}}</h1>
-    <ng-container *ngFor="let beverage of beverages">
-      <button type="button" class="btn btn-beverage btn-lg btn-block mt-2" (click)="order(beverage)">
-        <span *ngIf="showStock">({{beverage.stock}}) </span>{{beverage.name}} [{{moneyFormat(beverage.price)}}]
-      </button>
-    </ng-container>
+    <div class="d-flex flex-column gap-1">
+      <ng-container *ngFor="let beverage of beverages">
+        <button type="button" class="btn btn-beverage btn-lg mt-2" (click)="order(beverage)">
+          <span *ngIf="showStock">({{beverage.stock}}) </span>{{beverage.name}} [{{moneyFormat(beverage.price)}}]
+        </button>
+      </ng-container>
+    </div>
   </div>
   <div class="col-lg-6">
-    <div class="jumbotron"
+    <div class="p-3 rounded-3"
+         [class.bg-light]="getSafeUserBalance() > -2000"
          [class.bg-danger]="getSafeUserBalance() <= -2000">
-      <span class="d-block h1">{{locale.getMessage('mlabel')}}</span>
-      <span class="d-block h1 display-1 text-right"
+      <span class="d-block h1"
+            [class.text-bg-danger]="getSafeUserBalance() <= -2000">{{locale.getMessage('mlabel')}}</span>
+      <span class="d-block h1 display-1 text-end"
             [class.text-success]="getSafeUserBalance() >= 0"
             [class.text-danger]="getSafeUserBalance() < 0 && getSafeUserBalance() > -2000"
-            [class.text-white]="getSafeUserBalance() <= -2000">{{moneyFormat(getSafeUserBalance())}}</span>
+            [class.text-bg-danger]="getSafeUserBalance() <= -2000">{{moneyFormat(getSafeUserBalance())}}</span>
     </div>
     <h1>{{locale.getMessage('hlabel')}}</h1>
-    <table class="table table-hover table-striped">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th>{{locale.getMessage('hcol1')}}</th>
@@ -34,12 +38,14 @@
       </thead>
       <tbody>
         <ng-container *ngFor="let txn of transactions">
-          <tr>
+          <tr class="vertical-align-middle">
             <td>{{(txn.beverage$ | async)?.name}}</td>
             <td>{{moneyFormat(txn.money)}}</td>
             <td>{{txn.timestamp | date: 'd.MM.yyyy HH:mm'}}</td>
-            <td (click)="deleteFreshOrder(txn)">
-              <fa-icon *ngIf="txn.isFresh()" [icon]="faTrash"></fa-icon>
+            <td>
+              <button *ngIf="txn.isFresh()" class="btn btn-light" (click)="deleteFreshOrder(txn)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
             </td>
           </tr>
         </ng-container>
@@ -48,6 +54,6 @@
   </div>
 </main>
 <footer class="container-fluid fixed-bottom border-top bg-white">
-  <button class="btn btn-warning btn-lg btn-block my-2" type="button"
+  <button class="btn btn-warning btn-lg my-2 w-100" type="button"
           routerLink="/">{{locale.getMessage('btnfinish')}}</button>
 </footer>

@@ -9,22 +9,20 @@ import {Beverage} from '../../../models/beverage';
     <ng-template #content let-modal>
       <div class="modal-header">
         <h4 class="modal-title">Add Beverage</h4>
-        <button type="button" class="close" (click)="modal.dismiss()">
-          <span>&times;</span>
-        </button>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
       </div>
       <div class="modal-body">
         <form #form="ngForm">
-          <div class="form-group">
-            <label for="name">Name</label>
+          <div class="mb-3">
+            <label class="form-label" for="name">Name</label>
             <input type="text" class="form-control" ngbAutofocus [required]="true" [(ngModel)]="beverage.name" name="name">
           </div>
-          <div class="form-group">
-            <label for="price">Price (cents)</label>
+          <div class="mb-3">
+            <label class="form-label" for="price">Price (cents)</label>
             <input type="number" class="form-control" [(ngModel)]="beverage.price" name="price">
           </div>
-          <div class="form-group">
-            <label for="stock">Stock</label>
+          <div class="mb-3">
+            <label class="form-label" for="stock">Stock</label>
             <input type="number" class="form-control" [(ngModel)]="beverage.stock" name="stock">
           </div>
         </form>

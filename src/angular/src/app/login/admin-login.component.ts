@@ -24,8 +24,8 @@ import {faInfo} from '@fortawesome/free-solid-svg-icons/faInfo';
           <!-- Hidden username field for accessibility https://goo.gl/9p2vKq -->
           <input hidden type="text" name="username" autocomplete="username">
 
-          <label for="password">{{locale.getMessage('adminPasswordLabel')}}</label>
-          <input class="form-control" name="password" autocomplete="current-password" type="password" placeholder="********" autofocus
+          <label class="form-label" for="password">{{locale.getMessage('adminPasswordLabel')}}</label>
+          <input class="form-control" id="password" autocomplete="current-password" type="password" placeholder="********" autofocus
                  [(ngModel)]="password">
           <div class="alert alert-danger mt-3" *ngIf="error">{{error}}</div>
         </form>

@@ -10,7 +10,7 @@ import {JwtClaims} from '../../models/jwt-claims';
     <table class="table table-sm">
       <thead>
         <tr>
-          <th scope="col" class="text-right" style="width: 2.5%">#</th>
+          <th scope="col" class="text-end" style="width: 2.5%">#</th>
           <th scope="col" style="width: 15%">Token ID</th>
           <th scope="col" style="width: 7.5%">Role</th>
           <th scope="col" style="width: 40%">User Agent</th>
@@ -19,7 +19,7 @@ import {JwtClaims} from '../../models/jwt-claims';
           <th scope="col"></th>
         </tr>
         <tr>
-          <th class="text-right">{{sessions.filter(matchesSearch, this).length}}</th>
+          <th class="text-end">{{sessions.filter(matchesSearch, this).length}}</th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.jti"></th>
           <th>
             <select class="form-control" [(ngModel)]="search.permissions">
@@ -30,7 +30,7 @@ import {JwtClaims} from '../../models/jwt-claims';
           </th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.userAgent"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.referrer"></th>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.clientIP"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.clientIP"></th>
           <th></th>
         </tr>
       </thead>

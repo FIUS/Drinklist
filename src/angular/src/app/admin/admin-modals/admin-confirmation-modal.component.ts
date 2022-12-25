@@ -7,9 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
     <ng-template #content let-modal>
       <div class="modal-header">
         <h4 class="modal-title">Confirmation</h4>
-        <button type="button" class="close" (click)="modal.dismiss()">
-          <span>&times;</span>
-        </button>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
       </div>
       <div class="modal-body">
         <ng-content></ng-content>

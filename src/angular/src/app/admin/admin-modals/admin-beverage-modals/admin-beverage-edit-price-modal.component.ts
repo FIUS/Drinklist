@@ -10,13 +10,11 @@ import {Util} from '../../../util';
     <ng-template #content let-modal>
       <div class="modal-header">
         <h4 class="modal-title">Edit price of {{beverage.name}}</h4>
-        <button type="button" class="close" (click)="modal.dismiss()">
-          <span>&times;</span>
-        </button>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
       </div>
       <div class="modal-body">
-        <div class="form-group">
-          <label for="stock">New price (in cents):</label>
+        <div class="mb-3">
+          <label class="form-label" for="stock">New price (in cents):</label>
           <input #input="ngModel" class="form-control" type="number" ngbAutofocus [(ngModel)]="newPrice">
         </div>
         {{beverage.name}}'s new price will be <strong>{{moneyFormat(newPrice)}}</strong>.

@@ -9,13 +9,11 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
     <ng-template #content let-modal>
       <div class="modal-header">
         <h4 class="modal-title">Add Stock to {{beverage.name}}</h4>
-        <button type="button" class="close" (click)="modal.dismiss()">
-          <span>&times;</span>
-        </button>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
       </div>
       <div class="modal-body">
-        <div class="form-group">
-          <label for="stock">Stock to add:</label>
+        <div class="mb-3">
+          <label class="form-label" for="stock">Stock to add:</label>
           <input class="form-control" type="number" ngbAutofocus [(ngModel)]="stockToAdd">
         </div>
         {{beverage.name}} currently has {{beverage.stock}} units in stock.<br/>

@@ -1,12 +1,12 @@
 <div class="row mx-0">
-  <div class="col-md-2 px-0 bg-light text-dark admin-module-selector border-right">
-    <h1 class="h4 pl-3 my-2">Admin Area</h1>
+  <div class="col-md-2 px-0 bg-light text-bg-light admin-module-selector border-right">
+    <h1 class="h4 ps-3 my-2">Admin Area</h1>
     <ul class="list-unstyled">
       <ng-container *ngFor="let subpage of subpages">
         <li class="admin-module"
-            [class.admin-module-active]="activeModule===subpage.path"
+            routerLinkActive="admin-module-active"
             [routerLink]="subpage.path">
-          <fa-icon *ngIf="subpage.icon" [icon]="subpage.icon"></fa-icon>
+          <fa-icon *ngIf="subpage.icon" [icon]="subpage.icon" class="me-1"></fa-icon>
           {{subpage.displayName}}
         </li>
         <li *ngIf="subpage.spacerAfter" class="admin-module spacer">
@@ -14,7 +14,7 @@
         </li>
       </ng-container>
       <li class="admin-module" (click)="downloadDB()">
-        <fa-icon [icon]="icons.download"></fa-icon>
+        <fa-icon [icon]="icons.download" class="me-1"></fa-icon>
         Download DB Dump
       </li>
     </ul>

@@ -19,8 +19,8 @@ import {BeverageTransaction} from '../models/beverage-transaction';
       <div class="row mx-0">
         <ng-container *ngFor="let user of users">
           <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
-            <button class="btn btn-lg btn-block mt-2" [class.btn-warning]="matchesSearch(user)"
-                    [routerLink]="'/user/' + user.id">{{user.name}}</button>
+            <button class="btn btn-lg btn-block mt-2 w-100" [class.btn-warning]="matchesSearch(user)"
+                    [routerLink]="['user', user.id]">{{user.name}}</button>
           </div>
         </ng-container>
       </div>

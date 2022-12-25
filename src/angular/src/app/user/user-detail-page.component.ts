@@ -22,6 +22,10 @@ import {BeverageTransaction} from '../models/beverage-transaction';
     .btn-beverage:hover {
       background-color: #dfdfdf;
     }
+
+    .vertical-align-middle td {
+      vertical-align: middle;
+    }
   `]
 })
 export class UserDetailPageComponent implements OnInit {

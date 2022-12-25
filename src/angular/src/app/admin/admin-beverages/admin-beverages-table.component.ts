@@ -16,10 +16,10 @@ import {Util} from '../../util';
           <th scope="col"></th>
         </tr>
         <tr>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.id"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.id"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.name"></th>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.stock"></th>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.price"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.stock"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.price"></th>
           <th>
             <button type="button" class="btn btn-warning w-100" (click)="newBeverage.open()">
               <fa-icon [icon]="icons.plus"></fa-icon>

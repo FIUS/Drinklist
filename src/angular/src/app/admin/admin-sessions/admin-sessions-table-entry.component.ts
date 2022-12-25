@@ -9,12 +9,12 @@ import jwtDecode from 'jwt-decode';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[app-admin-sessions-table-entry]',
   template: `
-    <th scope="row" class="text-right">{{number}}</th>
+    <th scope="row" class="text-end">{{number}}</th>
     <td>{{claims.jti}}</td>
     <td>{{isAdminSession() ? 'Admin' : 'User'}}</td>
     <td>{{session.userAgent}}</td>
     <td>{{session.referrer}}</td>
-    <td class="text-right pr-3">{{session.clientIp}}</td>
+    <td class="text-end pe-3">{{session.clientIp}}</td>
     <td>
       <button class="btn btn-sm btn-warning w-100" (click)="revokeConfirmation.open()">
         <fa-icon [icon]="icons.ban"></fa-icon>

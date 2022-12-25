@@ -6,10 +6,10 @@ import {Util} from '../../util';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[app-admin-beverages-table-entry]',
   template: `
-    <th scope="row" class="text-right pr-3">{{beverage.id}}</th>
+    <th scope="row" class="text-end pe-3">{{beverage.id}}</th>
     <td>{{beverage.name}}</td>
-    <td class="text-right pr-3">{{beverage.stock}}</td>
-    <td class="text-right pr-3">{{moneyFormat(beverage.price)}}</td>
+    <td class="text-end pe-3">{{beverage.stock}}</td>
+    <td class="text-end pe-3">{{moneyFormat(beverage.price)}}</td>
     <td>
       <app-admin-beverages-actions [beverage]="beverage" [refresh]="refresh"></app-admin-beverages-actions>
     </td>

@@ -13,13 +13,13 @@ import {UserService} from '../../services/user.service';
           Add Money
         </button>
       </div>
-      <div class="col pl-0">
+      <div class="col ps-0">
         <button class="btn btn-warning btn-sm w-100" (click)="toggleVisibility()">
           <fa-icon [icon]="user.hidden ? icons.eye : icons.eyeSlash"></fa-icon>
           {{user.hidden ? 'Show' : 'Hide'}} User
         </button>
       </div>
-      <div class="col pl-0">
+      <div class="col ps-0">
         <button class="btn btn-warning btn-sm w-100" (click)="deleteConfirm.open()">
           <fa-icon [icon]="icons.trash"></fa-icon>
           Delete User

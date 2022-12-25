@@ -16,13 +16,12 @@ import {TransactionsService} from '../../services/transactions.service';
       Doing so will:
       <ul>
         <li *ngIf="transaction.beverageTxn">Also revert beverage transaction #<strong>{{transaction.beverageTxn}}</strong>.</li>
-        <!-- TODO: bring this to current featureset
+        <!-- TODO: show changes to beverage stock with new transaction system
         <li>
           <span class="font-weight-bold" [class.text-success]="order.amount < 0" [class.text-danger]="order.amount > 0">
           {{order.amount < 0 ? 'In' : 'De'}}crease
         </span> the balance of <strong>{{order.user}}</strong> by {{moneyFormat(abs(order.amount))}}
         </li> -->
-        <li>TBD</li>
       </ul>
     </app-admin-confirmation-modal>
   `,

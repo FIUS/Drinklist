@@ -6,11 +6,11 @@ import {Util} from '../../util';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[app-admin-users-table-entry]',
   template: `
-    <th class="text-right pr-3">{{user.id}}</th>
+    <th class="text-end pe-3">{{user.id}}</th>
     <td>{{user.name}}</td>
-    <td class="text-right pr-3" [class.text-danger]="user.balance < 0"
+    <td class="text-end pe-3" [class.text-danger]="user.balance < 0"
         [class.text-success]="user.balance > 0" [class.font-weight-bold]="user.balance < -2000">{{moneyFormat(user.balance)}}</td>
-    <td class="pl-4">{{!!user.hidden ? 'hidden' : 'visible'}}</td>
+    <td class="ps-3">{{!!user.hidden ? 'hidden' : 'visible'}}</td>
     <td>
       <app-admin-users-actions [user]="user" [refresh]="refresh"></app-admin-users-actions>
     </td>

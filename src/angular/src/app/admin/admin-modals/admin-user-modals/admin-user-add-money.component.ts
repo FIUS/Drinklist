@@ -11,18 +11,16 @@ import {TransactionsService} from '../../../services/transactions.service';
     <ng-template #content let-modal>
       <div class="modal-header">
         <h4 class="modal-title">Add money to {{user.name}}</h4>
-        <button type="button" class="close" (click)="modal.dismiss()">
-          <span>&times;</span>
-        </button>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
       </div>
       <div class="modal-body">
         <form #form="ngForm">
-          <div class="form-group">
-            <label for="money">Money to add (in cents):</label>
+          <div class="mb-3">
+            <label class="form-label" for="money">Money to add (in cents):</label>
             <input class="form-control" ngbAutofocus type="number" name="money" [required]="true" [(ngModel)]="moneyToAdd">
           </div>
-          <div class="form-group">
-            <label for="reason">Reason:</label>
+          <div class="mb-3">
+            <label class="form-label" for="reason">Reason:</label>
             <input class="form-control" type="text" name="reason" placeholder="Cash deposit" [required]="true" [(ngModel)]="reason">
           </div>
         </form>

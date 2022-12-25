@@ -18,10 +18,11 @@ import {CashTransaction} from '../../models/cash-transaction';
           <th scope="col"></th>
         </tr>
         <tr>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.id"></th>
-          <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.user"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.id"></th>
+          <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.userFrom"></th>
+          <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.userTo"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.reason"></th>
-          <th><input class="form-control text-right" placeholder="Search..." [(ngModel)]="search.amount"></th>
+          <th><input class="form-control text-end" placeholder="Search..." [(ngModel)]="search.amount"></th>
           <th><input class="form-control" placeholder="Search..." [(ngModel)]="search.timestamp"></th>
           <th></th>
         </tr>
@@ -41,7 +42,8 @@ export class AdminCashTransactionTableComponent {
 
   search = {
     id: '',
-    user: '',
+    userFrom: '',
+    userTo: '',
     reason: '',
     amount: '',
     timestamp: '',
@@ -52,8 +54,8 @@ export class AdminCashTransactionTableComponent {
 
   matchesSearch(txn: ICashTransaction): boolean {
     const matchesID = txn.id.toString().includes(this.search.id.toLowerCase());
-    const matchesUserFrom = txn.userFrom.toString().includes(this.search.user.toLowerCase());
-    const matchesUserTo = txn.userTo.toString().includes(this.search.user.toLowerCase());
+    const matchesUserFrom = txn.userFrom.toString().includes(this.search.userFrom.toLowerCase());
+    const matchesUserTo = txn.userTo.toString().includes(this.search.userTo.toLowerCase());
     const matchesReason = txn.reason.toLowerCase().includes(this.search.reason.toLowerCase());
     const matchesAmount = Util.moneyFormat(txn.amount).toLowerCase().includes(this.search.amount.toLowerCase());
     const matchesTimestamp = txn.timestamp.toISOString().includes(this.search.timestamp.toLowerCase());
