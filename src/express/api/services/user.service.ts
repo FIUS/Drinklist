@@ -27,6 +27,11 @@ class UserService {
     return sql.get(name);
   }
 
+  getUserFavourites(name: string): {name: string, count: number}[] {
+    const sql = this.dbService.prepare('SELECT beverage as name, COUNT(beverage) as count FROM History WHERE user = ? AND beverage != \'\' AND reason = beverage GROUP BY beverage ORDER BY count DESC LIMIT 5;');
+    return sql.all(name) as {name: string, count: number}[];
+  }
+
   createUser(name: string): void {
     const sql = this.dbService.prepare('INSERT INTO Users (name) VALUES (?);');
     sql.run(name);

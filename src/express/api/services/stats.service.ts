@@ -24,7 +24,7 @@ class StatsService {
   }
 
   getTopBeverages(): Beverage[] {
-    const sql = this.dbService.prepare('SELECT b.name, b.stock, b.price FROM (SELECT beverage, COUNT(beverage) AS count FROM History WHERE beverage != \'\' GROUP BY beverage ORDER BY count DESC) t INNER JOIN Beverages b ON t.beverage = b.name LIMIT 5;');
+    const sql = this.dbService.prepare('SELECT b.name, b.stock, b.price FROM (SELECT beverage, COUNT(beverage) AS count FROM History WHERE beverage != \'\' AND reason = beverage GROUP BY beverage ORDER BY count DESC) t INNER JOIN Beverages b ON t.beverage = b.name LIMIT 5;');
     return sql.all();
   }
 

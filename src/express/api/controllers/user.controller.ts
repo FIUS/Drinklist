@@ -16,6 +16,7 @@ class UserController implements IController {
   private initRoutes(): void {
     this.router.get('/', requireUser, this.users);
     this.router.get('/:name', requireUser, this.getUser);
+    this.router.get('/:name/favourites', requireUser, this.getUserFavourites);
     this.router.post('/:name', requireAdmin, this.postUser);
     this.router.patch('/:name', requireAdmin, this.patchUser);
     this.router.delete('/:name', requireAdmin, this.deleteUser);
@@ -41,6 +42,16 @@ class UserController implements IController {
       return;
     }
     res.status(200).json(user);
+  };
+
+  private getUserFavourites = (req: Request, res: Response) => {
+    const name = req.params.name;
+    if (name === undefined || name === '') {
+      res.status(404).end();
+      return;
+    }
+    const favourites = this.userService.getUserFavourites(name);
+    res.status(200).json(favourites);
   };
 
   private postUser = (req: Request, res: Response) => {
