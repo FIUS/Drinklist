@@ -27,6 +27,7 @@ import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
 import {AdminTokensTableComponent} from './admin-tokens/admin-tokens-table.component';
 import {AdminTokensTableEntryComponent} from './admin-tokens/admin-tokens-table-entry.component';
 import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
+import {AdminBankImportComponent} from './admin-bank-import/admin-bank-import.component';
 
 
 @NgModule({
@@ -53,6 +54,7 @@ import {AdminSettingsComponent} from './admin-settings/admin-settings.component'
     AdminTokensTableComponent,
     AdminTokensTableEntryComponent,
     AdminSettingsComponent,
+    AdminBankImportComponent,
   ],
   imports: [
     CommonModule,

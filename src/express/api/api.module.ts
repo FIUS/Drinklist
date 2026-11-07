@@ -15,6 +15,8 @@ import {exec} from 'child_process';
 import StatsController from './controllers/stats.controller';
 import StatsService from './services/stats.service';
 import SettingsController from './controllers/settings.controller';
+import BankImportController from './controllers/bank-import.controller';
+import BankImportService from './services/bank-import.service';
 
 class ApiModule implements IController {
   path = '/api';
@@ -41,6 +43,7 @@ class ApiModule implements IController {
     const ordersService = new OrdersService(this.dbService);
     const beveragesService = new BeveragesService(this.dbService);
     const statsService = new StatsService(this.dbService);
+    const bankImportService = new BankImportService(this.dbService);
 
     this.controllers = [
       // API Controllers
@@ -50,6 +53,7 @@ class ApiModule implements IController {
       new BeveragesController(beveragesService),
       new StatsController(statsService),
       new SettingsController(),
+      new BankImportController(bankImportService),
     ];
   }
 

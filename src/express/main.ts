@@ -30,7 +30,7 @@ const server = new Server({
   port: settings.port,
   fullHost: settings.host,
   middlewares: [
-    bodyParser.json(),
+    bodyParser.json({limit: '10mb'}),
   ],
   modules: [
     new ApiModule(dbService, auth),

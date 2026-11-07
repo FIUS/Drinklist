@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt update
 RUN apt upgrade -y
-RUN apt install sqlite3
+RUN apt install -y sqlite3 texlive-latex-base texlive-latex-recommended texlive-fonts-recommended
 
 RUN npm install
 RUN npm run build

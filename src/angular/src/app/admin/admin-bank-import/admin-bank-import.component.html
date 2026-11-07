@@ -1,0 +1,354 @@
+<div class="container-fluid pb-4">
+  <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+    <h1 class="mb-0">
+      <fa-icon [icon]="icons.invoice"></fa-icon>
+      Bank CSV Import &amp; LaTeX Invoices
+    </h1>
+    <div class="btn-group">
+      <button class="btn" [class.btn-warning]="activeTab === 'import'" [class.btn-outline-secondary]="activeTab !== 'import'"
+              (click)="switchTab('import')">
+        <fa-icon [icon]="icons.upload"></fa-icon>
+        CSV Import
+      </button>
+      <button class="btn" [class.btn-warning]="activeTab === 'history'" [class.btn-outline-secondary]="activeTab !== 'history'"
+              (click)="switchTab('history')">
+        <fa-icon [icon]="icons.history"></fa-icon>
+        Invoices &amp; History ({{history.length}})
+      </button>
+      <button class="btn" [class.btn-warning]="activeTab === 'settings'" [class.btn-outline-secondary]="activeTab !== 'settings'"
+              (click)="switchTab('settings')">
+        <fa-icon [icon]="icons.cog"></fa-icon>
+        Invoice Schema &amp; LaTeX Template
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="statusMessage" class="alert" [ngClass]="'alert-' + statusType" role="alert">
+    {{statusMessage}}
+  </div>
+
+  <!-- ==================== TAB 1: CSV IMPORT ==================== -->
+  <div *ngIf="activeTab === 'import'">
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <label class="font-weight-bold mb-1">Standard Bank Export CSV auswählen</label>
+            <input type="file" class="form-control-file" accept=".csv,.txt" (change)="onFileSelected($event)">
+            <small class="text-muted">
+              Unterstützt Standard-Bank-Exporte (`;` oder `,` getrennt, UTF-8 &amp; ISO-8859-1, Spalten wie Buchungstag, Auftraggeber/Name, IBAN, Verwendungszweck, Betrag).
+            </small>
+          </div>
+          <div class="col-md-6 text-md-right mt-3 mt-md-0" *ngIf="previewRows.length > 0">
+            <span class="badge badge-success p-2 mr-2">Erkannt: {{countByStatus('matched')}}</span>
+            <span class="badge badge-warning p-2 mr-2">Manuell / Unklar: {{countByStatus('unmatched')}}</span>
+            <span class="badge badge-secondary p-2 mr-2">Duplikate: {{countByStatus('duplicate')}}</span>
+            <div class="custom-control custom-switch d-inline-block ml-2">
+              <input type="checkbox" class="custom-control-input" id="showIgnoredSwitch" [(ngModel)]="showIgnored">
+              <label class="custom-control-label" for="showIgnoredSwitch">
+                Ausgaben/Ignoriert ({{countByStatus('ignored')}})
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last imported batch result banner -->
+    <div class="card border-success mb-3" *ngIf="lastImportedRecords.length > 0">
+      <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <span>
+          <fa-icon [icon]="icons.check"></fa-icon>
+          <strong>{{lastImportedRecords.length}} Buchung(en) erfolgreich durchgeführt &amp; als PDF gespeichert!</strong>
+        </span>
+        <button class="btn btn-light btn-sm font-weight-bold" (click)="downloadBatchPdfForRecords(lastImportedRecords)">
+          <fa-icon [icon]="icons.pdf"></fa-icon>
+          Sammel-PDF für diesen Import herunterladen
+        </button>
+      </div>
+      <div class="card-body py-2">
+        <span *ngFor="let rec of lastImportedRecords" class="mr-2 mb-1 d-inline-block">
+          <button class="btn btn-outline-success btn-sm" (click)="downloadSinglePdf(rec)">
+            <fa-icon [icon]="icons.pdf"></fa-icon>
+            {{rec.invoice_number}} – {{rec.user}} (+{{moneyFormat(rec.amount)}})
+          </button>
+        </span>
+      </div>
+    </div>
+
+    <!-- Preview Table -->
+    <div *ngIf="previewRows.length > 0">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <strong>Vorschau ({{visiblePreviewRows().length}} Zeilen)</strong>
+          <span class="text-muted ml-2">
+            Nächste Rechnungsnummer startet bei: <code>{{formatInvoicePreview()}}</code>
+          </span>
+        </div>
+        <button class="btn btn-success font-weight-bold"
+                [disabled]="isProcessing || selectedImportRows().length === 0"
+                (click)="confirmSelectedImports()">
+          <fa-icon [icon]="icons.check"></fa-icon>
+          {{selectedImportRows().length}} ausgewählte buchen ({{moneyFormat(selectedImportTotal())}}) &amp; PDFs generieren
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th style="width: 3%" class="text-center">Import</th>
+              <th style="width: 4%" class="text-right">#</th>
+              <th style="width: 9%">Datum</th>
+              <th style="width: 18%">Auftraggeber / IBAN</th>
+              <th>Verwendungszweck</th>
+              <th style="width: 9%" class="text-right">Betrag</th>
+              <th style="width: 12%">Status</th>
+              <th style="width: 18%">Drinklist User</th>
+              <th style="width: 8%" class="text-center">Mapping merken</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of visiblePreviewRows()"
+                [class.table-success]="row.status !== 'duplicate' && row.status !== 'ignored' && row.selected && row.selectedUser"
+                [class.table-warning]="row.status === 'unmatched' && !row.selectedUser"
+                [class.table-secondary]="row.status === 'duplicate' || row.status === 'ignored'">
+              <td class="text-center align-middle">
+                <input type="checkbox"
+                       [disabled]="row.status === 'duplicate' || row.status === 'ignored' || !row.selectedUser"
+                       [(ngModel)]="row.selected">
+              </td>
+              <td class="text-right align-middle">{{row.rowIndex}}</td>
+              <td class="align-middle">{{row.bookingDate}}</td>
+              <td class="align-middle">
+                <div class="font-weight-bold">{{row.bankName || '-'}}</div>
+                <small class="text-muted" *ngIf="row.bankIban">{{row.bankIban}}</small>
+              </td>
+              <td class="align-middle"><small>{{row.purpose}}</small></td>
+              <td class="text-right align-middle font-weight-bold"
+                  [class.text-success]="row.amount > 0"
+                  [class.text-danger]="row.amount <= 0">
+                {{moneyFormat(row.amount)}}
+              </td>
+              <td class="align-middle">
+                <span *ngIf="row.status === 'matched' && row.matchSource === 'purpose'" class="badge badge-success">
+                  Verwendungszweck
+                </span>
+                <span *ngIf="row.status === 'matched' && row.matchSource === 'mapping'" class="badge badge-info">
+                  Gespeichertes Mapping
+                </span>
+                <span *ngIf="row.status === 'matched' && row.matchSource === 'fuzzy_name'" class="badge badge-success">
+                  Name erkannt
+                </span>
+                <span *ngIf="row.status === 'unmatched'" class="badge badge-warning">
+                  Bitte zuordnen
+                </span>
+                <span *ngIf="row.status === 'duplicate'" class="badge badge-secondary">
+                  Duplikat ({{row.existingInvoiceNumber}})
+                </span>
+                <span *ngIf="row.status === 'ignored'" class="badge badge-light">
+                  Ignoriert (&le; 0)
+                </span>
+              </td>
+              <td class="align-middle">
+                <select *ngIf="row.status !== 'duplicate' && row.status !== 'ignored'"
+                        class="form-control form-control-sm"
+                        [(ngModel)]="row.selectedUser"
+                        (ngModelChange)="onUserSelectionChange(row)">
+                  <option value="">-- Nicht zuordnen --</option>
+                  <option *ngFor="let u of users" [value]="u.name">
+                    {{u.name}} ({{moneyFormat(u.balance)}})
+                  </option>
+                </select>
+                <span *ngIf="row.status === 'duplicate'" class="text-muted small">Bereits verbucht</span>
+                <span *ngIf="row.status === 'ignored'" class="text-muted small">Ausgabe / Ignoriert</span>
+              </td>
+              <td class="text-center align-middle">
+                <input *ngIf="row.status !== 'duplicate' && row.status !== 'ignored'"
+                       type="checkbox"
+                       [(ngModel)]="row.rememberMapping"
+                       title="IBAN / Auftraggebername für künftige Importe diesem User zuordnen">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 2: INVOICES & HISTORY ==================== -->
+  <div *ngIf="activeTab === 'history'">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="w-50">
+        <input class="form-control" placeholder="Suche nach Rechnungsnummer, User, Auftraggeber, Verwendungszweck..."
+               [(ngModel)]="historySearch">
+      </div>
+      <div>
+        <button class="btn btn-warning font-weight-bold"
+                [disabled]="filteredHistory().length === 0 || isProcessing"
+                (click)="downloadBatchPdfForRecords(selectedOrFilteredHistory())">
+          <fa-icon [icon]="icons.pdf"></fa-icon>
+          Sammel-PDF herunterladen ({{selectedOrFilteredHistory().length}})
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th style="width: 3%" class="text-center">
+              <input type="checkbox" [checked]="allHistorySelected()" (change)="toggleSelectAllHistory($event)">
+            </th>
+            <th style="width: 11%">Rechnungs-Nr.</th>
+            <th style="width: 9%">Buchungstag</th>
+            <th style="width: 14%">User</th>
+            <th style="width: 18%">Auftraggeber / IBAN</th>
+            <th>Verwendungszweck</th>
+            <th style="width: 8%" class="text-right">Betrag</th>
+            <th style="width: 13%" class="text-right">Kontostand (Alt &rarr; Neu)</th>
+            <th style="width: 12%" class="text-center">PDF</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rec of filteredHistory()">
+            <td class="text-center align-middle">
+              <input type="checkbox" [(ngModel)]="rec.selected">
+            </td>
+            <td class="align-middle font-weight-bold">{{rec.invoice_number}}</td>
+            <td class="align-middle">{{rec.booking_date}}</td>
+            <td class="align-middle">{{rec.user}}</td>
+            <td class="align-middle">
+              <div>{{rec.bank_name || '-'}}</div>
+              <small class="text-muted" *ngIf="rec.bank_iban">{{rec.bank_iban}}</small>
+            </td>
+            <td class="align-middle"><small>{{rec.purpose}}</small></td>
+            <td class="text-right align-middle font-weight-bold text-success">
+              +{{moneyFormat(rec.amount)}}
+            </td>
+            <td class="text-right align-middle small">
+              {{moneyFormat(rec.old_balance)}} &rarr; <strong>{{moneyFormat(rec.new_balance)}}</strong>
+            </td>
+            <td class="text-center align-middle">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-warning" (click)="downloadSinglePdf(rec, false)" title="Gespeicherte PDF herunterladen">
+                  <fa-icon [icon]="icons.pdf"></fa-icon> PDF
+                </button>
+                <button class="btn btn-outline-secondary" (click)="downloadSinglePdf(rec, true)" title="PDF mit aktuellem LaTeX-Template neu kompilieren & speichern">
+                  <fa-icon [icon]="icons.sync"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredHistory().length === 0">
+            <td colspan="9" class="text-center text-muted py-3">Keine importierten Rechnungen gefunden.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 3: SETTINGS & LATEX TEMPLATE ==================== -->
+  <div *ngIf="activeTab === 'settings'">
+    <div class="row">
+      <div class="col-md-5">
+        <div class="card mb-3">
+          <div class="card-header font-weight-bold">Rechnungsnummern-Schema (Prefix &amp; Zähler)</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Prefix Schema</label>
+              <input class="form-control" [(ngModel)]="invoiceSettings.prefix" placeholder="z. B. RE-2026-">
+              <small class="text-muted">Fester Prefix vor der fortlaufenden Rechnungsnummer.</small>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label>Ziffern-Padding (Stellen)</label>
+                <input type="number" min="1" max="12" class="form-control" [(ngModel)]="invoiceSettings.padding">
+                <small class="text-muted">z. B. 4 für <code>0001</code></small>
+              </div>
+              <div class="form-group col-6">
+                <label>Nächste Nummer (Zähler)</label>
+                <input type="number" min="1" class="form-control" [(ngModel)]="invoiceSettings.next_counter">
+                <small class="text-muted">Wird automatisch hochgezählt.</small>
+              </div>
+            </div>
+            <div class="alert alert-secondary mb-0 py-2">
+              Vorschau nächste Rechnungsnummer: <strong><code>{{formatInvoicePreview()}}</code></strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-header font-weight-bold">Verfügbare LaTeX-Platzhalter</div>
+          <div class="card-body py-2 small">
+            <ul class="list-unstyled mb-0">
+              <li><code>&#123;&#123;INVOICE_NUMBER&#125;&#125;</code> – Fortlaufende Rechnungsnummer</li>
+              <li><code>&#123;&#123;INVOICE_DATE&#125;&#125;</code> – Ausstellungsdatum</li>
+              <li><code>&#123;&#123;BOOKING_DATE&#125;&#125;</code> – Buchungsdatum aus Bank-CSV</li>
+              <li><code>&#123;&#123;USER_NAME&#125;&#125;</code> – Drinklist-Username</li>
+              <li><code>&#123;&#123;BANK_NAME&#125;&#125;</code> – Auftraggeber laut Bank-CSV</li>
+              <li><code>&#123;&#123;BANK_IBAN&#125;&#125;</code> – IBAN laut Bank-CSV</li>
+              <li><code>&#123;&#123;PURPOSE&#125;&#125;</code> – Verwendungszweck</li>
+              <li><code>&#123;&#123;AMOUNT&#125;&#125;</code> – Gutgeschriebener Betrag (z. B. 15,00)</li>
+              <li><code>&#123;&#123;OLD_BALANCE&#125;&#125;</code> / <code>&#123;&#123;NEW_BALANCE&#125;&#125;</code> – Alter / Neuer Kontostand</li>
+              <li><code>&#123;&#123;CURRENCY&#125;&#125;</code> – Währung (z. B. EUR)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header font-weight-bold">Gespeicherte User-Mappings ({{mappings.length}})</div>
+          <div class="card-body p-0" style="max-height: 240px; overflow-y: auto;">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Bank-Kennung</th>
+                  <th>Drinklist User</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let m of mappings">
+                  <td><small><code>{{m.bank_identifier}}</code></small></td>
+                  <td>{{m.user}}</td>
+                  <td class="text-right">
+                    <button class="btn btn-sm btn-outline-danger py-0" (click)="removeMapping(m.bank_identifier)">
+                      <fa-icon [icon]="icons.trash"></fa-icon>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="mappings.length === 0">
+                  <td colspan="3" class="text-center text-muted small py-2">Noch keine gespeicherten Mappings.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-7">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="font-weight-bold">LaTeX-Template (<code>data/invoice-template.tex</code>)</span>
+            <div>
+              <button class="btn btn-outline-secondary btn-sm mr-2" [disabled]="isProcessing" (click)="previewSamplePdf()">
+                <fa-icon [icon]="icons.pdf"></fa-icon>
+                Test-PDF Vorschau
+              </button>
+              <button class="btn btn-success btn-sm font-weight-bold" [disabled]="isProcessing" (click)="saveSettingsAndTemplate()">
+                <fa-icon [icon]="icons.check"></fa-icon>
+                Einstellungen &amp; Template speichern
+              </button>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <textarea class="form-control border-0 text-monospace"
+                      rows="24"
+                      style="font-family: monospace; font-size: 0.85rem;"
+                      [(ngModel)]="latexTemplate"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

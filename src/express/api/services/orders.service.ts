@@ -103,6 +103,7 @@ class OrdersService {
     const updateUser = this.dbService.prepare('UPDATE Users SET balance = balance - ? WHERE name = ?;');
     const updateBeverage = this.dbService.prepare('UPDATE Beverages SET stock = stock + ? WHERE name = ?');
     const deleteOrder = this.dbService.prepare('DELETE FROM History WHERE id = ?;');
+    const deleteBankImport = this.dbService.prepare('DELETE FROM BankImports WHERE history_id = ?;');
 
     if (order.amount !== 0 && order.user !== '') {
       updateUser.run(order.amount, order.user);
@@ -110,6 +111,7 @@ class OrdersService {
     if (order.beverage !== '') {
       updateBeverage.run(order.beverage_count, order.beverage);
     }
+    deleteBankImport.run(order.id);
     deleteOrder.run(order.id);
   }
 

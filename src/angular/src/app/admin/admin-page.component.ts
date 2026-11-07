@@ -1,6 +1,6 @@
 import {Component, OnInit, Type} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {faBeer, faCog, faDownload, faHistory, faHome, faKey, faUsers} from '@fortawesome/free-solid-svg-icons';
+import {faBeer, faCog, faDownload, faFileInvoiceDollar, faHistory, faHome, faKey, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {AdminPageModule} from './admin-page-module';
 import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.component';
 import {AdminBeveragesComponent} from './admin-beverages/admin-beverages.component';
@@ -10,6 +10,7 @@ import {AdminTokensComponent} from './admin-tokens/admin-tokens.component';
 import {BackupService} from '../services/backup.service';
 import {saveAs} from 'file-saver';
 import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
+import {AdminBankImportComponent} from './admin-bank-import/admin-bank-import.component';
 
 @Component({
   selector: 'app-admin-page',
@@ -49,6 +50,13 @@ export class AdminPageComponent implements OnInit {
       icon: faUsers,
       spacerAfter: false,
       component: AdminUsersComponent,
+    },
+    {
+      id: 'bank-import',
+      displayName: 'Bank Import',
+      icon: faFileInvoiceDollar,
+      spacerAfter: false,
+      component: AdminBankImportComponent,
     },
     {
       id: 'tokens',
